@@ -3,11 +3,9 @@
 namespace App\Livewire\Frontend;
 
 use App\Models\FavoriteSalon;
-use App\Models\User;
 use App\Services\AuthActionLimiter;
 use App\Services\PublicCatalogue;
 use App\Services\SalonReviewService;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -30,16 +28,7 @@ class SalonActions extends Component
         $user = auth()->user();
         abort_unless($user?->hasVerifiedEmail(), 403);
         app(AuthActionLimiter::class)->check('favorite', $user->email, 20, 'rating');
-        app(PublicCatalogue::class)->find($this->salonId);
-        DB::transaction(function () use ($user) {
-            User::whereKey($user->id)->lockForUpdate()->firstOrFail();
-            $favorite = FavoriteSalon::where('user_id', $user->id)->where('salon_id', $this->salonId)->first();
-            if ($favorite) {
-                $favorite->delete();
-            } else {
-                FavoriteSalon::create(['user_id' => $user->id, 'salon_id' => $this->salonId]);
-            }
-        }, 3);
+        app(\App\Services\FavoriteService::class)->toggle($user, $this->salonId);
     }
 
     public function submitReview(): void

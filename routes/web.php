@@ -9,25 +9,6 @@ use App\Http\Controllers\SubscriptionRequiredController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-$frontendUrl = static function (): string {
-    if (config('app.env') === 'local') {
-        return rtrim((string) env('FRONTEND_URL', 'http://localhost:5173'), '/');
-    }
-
-    return rtrim((string) env('FRONTEND_URL', 'https://bookmystyle.limach.lk'), '/');
-};
-
-$redirectToFrontend = static function (Request $request, string $path = '') use ($frontendUrl) {
-    $target = $frontendUrl().($path !== '' ? "/{$path}" : '');
-    $query = $request->getQueryString();
-
-    if (! empty($query)) {
-        $target .= "?{$query}";
-    }
-
-    return redirect()->away($target);
-};
-
 Route::middleware(\App\Http\Middleware\RecordPublicVisit::class)->group(function () {
     Route::get('/', [\App\Http\Controllers\StorefrontController::class, 'directory'])->name('home');
     Route::get('/salons', [\App\Http\Controllers\StorefrontController::class, 'directory'])->name('salons');
@@ -50,24 +31,32 @@ Route::get('/dashboard', function () {
     if ($user->hasRole('owner') && $user->is_approved) {
         return redirect()->route('filament.admin.pages.owner-dashboard');
     }
+    if ($user->hasRole('customer') && ! $user->hasRole('owner')) {
+        return app(\App\Http\Controllers\CustomerDashboardController::class)->overview(request(), app(\App\Services\CustomerDashboard::class));
+    }
 
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard/{any}', function (Request $request, string $any) use ($redirectToFrontend, $frontendUrl) {
-    // Retain the already-deployed React customer bundle while public routes use Blade.
-    if (! app()->environment('local') && is_file(public_path('index.html'))) {
-        return response()->file(public_path('index.html'), ['Cache-Control' => 'no-store']);
-    }
-    // Avoid redirecting back to this route if a deployment omitted the legacy bundle.
-    if (rtrim($frontendUrl(), '/') === $request->getSchemeAndHttpHost()) {
-        return redirect()->route('dashboard');
-    }
-
-    return $redirectToFrontend($request, 'dashboard/'.$any);
-})->where('any', 'upcoming|history|favorites|profile|change-password');
-Route::view('/profile', 'profile')->middleware('auth')->name('profile');
-Route::middleware('auth')->group(function () {
+Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'role:customer'])->prefix('dashboard')->group(function () {
+    Route::redirect('/profile', '/profile')->name('customer.profile');
+    Route::redirect('/change-password', '/settings/password')->name('customer.password');
+    Route::middleware('verified')->controller(\App\Http\Controllers\CustomerDashboardController::class)->group(function () {
+        Route::get('/upcoming', 'upcoming')->name('customer.upcoming');
+        Route::get('/history', 'history')->name('customer.history');
+        Route::get('/favorites', 'favorites')->name('customer.favorites');
+        Route::post('/bookings/{id}/cancel', 'cancel')->whereNumber('id')->middleware('throttle:20,1')->name('customer.cancel');
+        Route::delete('/favorites/{id}', 'removeFavorite')->whereNumber('id')->middleware('throttle:20,1')->name('customer.favorite.remove');
+        Route::get('/notifications', 'notifications')->name('customer.notifications');
+        Route::post('/notifications/read-all', 'readAllNotifications')->middleware('throttle:20,1')->name('customer.notifications.read-all');
+        Route::post('/notifications/{id}/read', 'readNotification')->whereUuid('id')->middleware('throttle:20,1')->name('customer.notifications.read');
+        Route::delete('/notifications', 'deleteAllNotifications')->middleware('throttle:20,1')->name('customer.notifications.clear');
+        Route::delete('/notifications/{id}', 'deleteNotification')->whereUuid('id')->middleware('throttle:20,1')->name('customer.notifications.delete');
+        Route::redirect('/bookings', '/dashboard/upcoming'); // Previously issued notification links.
+    });
+});
+Route::view('/profile', 'profile')->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth'])->name('profile');
+Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth'])->group(function () {
     \Livewire\Volt\Volt::route('/settings/profile', 'settings.profile')->name('profile.edit');
     \Livewire\Volt\Volt::route('/settings/password', 'settings.password')->name('password.edit');
     \Livewire\Volt\Volt::route('/settings/appearance', 'settings.appearance')->name('appearance.edit');

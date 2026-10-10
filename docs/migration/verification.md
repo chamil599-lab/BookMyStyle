@@ -78,3 +78,24 @@ See [public Blade pages and cutover notes](step-5-public-blade.md).
 | Imported schema changes | None; pending migrations remain unexecuted |
 
 The longer full suite exceeded the CLI's 128 MB memory limit during Filament rendering. The successful run used `php -d memory_limit=512M vendor/bin/pest --compact`; production memory configuration was not changed. Synthetic fixture tests suppress delivery and never use imported data. Browser artifacts are private under `.local/migration-baseline/auth-smoke-20261010_193918_112ca2/` (artifact timestamps use host UTC before Laravel boots). Automated checks establish behavior, not pixel-perfect React parity or production Apache/email/Google/dependency-audit readiness. Remaining customer pages and dashboard bookmark cutover remain the next gates.
+
+## Step six verification - 11 October 2026
+
+See [native customer dashboard and account journeys](step-6-customer-blade.md).
+
+| Check | Result |
+|---|---|
+| Final full suite | 155 passed, 656 assertions; CLI memory 512 MB |
+| Customer regression coverage | 17 tests covering private routes, role/verification gates, native profile/password aliases, booking classification/API parity, guest identity, cross-account/repeated cancellation, hidden prices, deleted services, pagination, favorites, notifications, password revocation and malformed API identifiers |
+| Real HTTP checks | 41 passed plus successful browser runner; includes customer pages, private cache directives, foreign booking denial, CSRF failures, account aliases and existing public/auth checks |
+| Real Chrome checks | 19 passed; actual guest booking, customer session login, cancellation confirmation/submission/history, favorite removal, notification read/delete/clear, desktop/mobile layouts and no uncaught JavaScript errors |
+| Visual inspection | Inspected desktop and mobile customer dashboard and mobile history fixture screenshots |
+| Root assets | Build passed; storefront CSS 25.34 KB / 6.01 KB gzip; existing empty app JS and old Browserslist warnings |
+| Blade compilation | All templates cached successfully; generated cache cleared afterward |
+| Formatting/syntax | Changed PHP passed Pint; Node syntax and git whitespace checks passed |
+| Imported data | Counts unchanged: 35 tables, users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51 |
+| Import integrity/schema | No FK orphans, missing media originals/conversions or nontransactional tables; no migrations, seeds or imported writes |
+
+Final real HTTP/browser artifacts are private under `.local/migration-baseline/auth-smoke-20261010_200139_f191ec/`. Fixtures and their temporary credentials are synthetic, ignored and never exposed as public assets. Real mail is suppressed. Browser tests account for the cancellation notification generated during the journey rather than assuming a single notification remains. Header tests assert no-store/private directives and permit additional restrictions applied by the session layer.
+
+Customer React redirects are removed. Profile/password use the established native forms; notifications refresh on page visits/actions rather than the old SSE stream. Full Filament resource parity, admin/owner bookmarks, production integrations, deployment and broader security audit remain outstanding. No production deployment was performed.

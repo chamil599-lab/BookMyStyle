@@ -113,13 +113,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/stats', [CustomerController::class, 'stats']);
         Route::get('/bookings/upcoming', [CustomerController::class, 'upcomingBookings']);
         Route::get('/bookings/history', [CustomerController::class, 'bookingHistory']);
-        Route::patch('/bookings/{id}/cancel', [CustomerController::class, 'cancelBooking']);
+        Route::patch('/bookings/{id}/cancel', [CustomerController::class, 'cancelBooking'])->whereNumber('id')->middleware(['verified', 'throttle:20,1']);
         Route::get('/profile', [CustomerController::class, 'profile']);
         Route::put('/profile', [CustomerController::class, 'updateProfile']);
 
         Route::get('/favorites', [CustomerController::class, 'getFavorites']);
-        Route::post('/favorites/{salonId}/toggle', [CustomerController::class, 'toggleFavorite']);
-        Route::get('/favorites/{salonId}/check', [CustomerController::class, 'checkFavorite']);
+        Route::post('/favorites/{salonId}/toggle', [CustomerController::class, 'toggleFavorite'])->whereNumber('salonId')->middleware(['verified', 'throttle:20,1']);
+        Route::get('/favorites/{salonId}/check', [CustomerController::class, 'checkFavorite'])->whereNumber('salonId');
     });
 
     Route::post('/image-cycles', [PublicContentController::class, 'storeImageCycle'])->middleware('role:admin');

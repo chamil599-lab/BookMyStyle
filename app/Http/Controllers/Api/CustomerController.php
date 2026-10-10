@@ -5,342 +5,114 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\SalonHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\FavoriteSalon;
-use App\Models\Salon;
-use App\Models\User;
+use App\Services\BookingService;
+use App\Services\CustomerDashboard;
+use App\Services\FavoriteService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
-    /**
-     * Get upcoming bookings for authenticated customer
-     */
-    public function upcomingBookings(Request $request)
+    public function upcomingBookings(Request $request, CustomerDashboard $dashboard)
     {
-        $user = Auth::user();
-
-        $bookings = Booking::with(['salon', 'service'])
-            ->forCustomer($user)
-            ->upcoming()
-            ->get()
-            ->map(function ($booking) {
-                return [
-                    'id' => $booking->id,
-                    'salon' => [
-                        'id' => $booking->salon?->id,
-                        'name' => $booking->salon?->name,
-                        'address' => $booking->salon?->location ?? null,
-                    ],
-                    'service' => [
-                        'id' => $booking->service?->id,
-                        'name' => $booking->service?->title,
-                        'price' => $booking->service?->price,
-                        'duration' => $booking->service?->duration,
-                    ],
-                    'date' => $booking->date->format('Y-m-d'),
-                    'time' => $booking->time,
-                    'status' => $booking->status,
-                    'created_at' => $booking->created_at->format('Y-m-d H:i:s'),
-                ];
-            });
-
-        return response()->json([
-            'success' => true,
-            'data' => $bookings,
-        ]);
+        return response()->json(['success' => true,
+            'data' => $dashboard->upcoming($request->user())->get()->map(fn ($booking) => $this->bookingPayload($booking))]);
     }
 
-    /**
-     * Get booking history for authenticated customer
-     */
-    public function bookingHistory(Request $request)
+    public function bookingHistory(Request $request, CustomerDashboard $dashboard)
     {
-        $user = Auth::user();
+        $request->validate(['page' => 'nullable|integer|min:1|max:100000']);
+        $bookings = $dashboard->history($request->user())->paginate(10);
 
-        $bookings = Booking::with(['salon', 'service'])
-            ->forCustomer($user)
-            ->past()
-            ->paginate(10);
-
-        $data = $bookings->map(function ($booking) {
-            return [
-                'id' => $booking->id,
-                'salon' => [
-                    'id' => $booking->salon?->id,
-                    'name' => $booking->salon?->name,
-                    'address' => $booking->salon?->location ?? null,
-                ],
-                'service' => [
-                    'id' => $booking->service?->id,
-                    'name' => $booking->service?->title,
-                    'price' => $booking->service?->price,
-                    'duration' => $booking->service?->duration,
-                ],
-                'date' => $booking->date->format('Y-m-d'),
-                'time' => $booking->time,
-                'status' => $booking->status,
-                'created_at' => $booking->created_at->format('Y-m-d H:i:s'),
-            ];
-        });
-
-        return response()->json([
-            'success' => true,
-            'data' => $data,
-            'meta' => [
-                'current_page' => $bookings->currentPage(),
-                'last_page' => $bookings->lastPage(),
-                'per_page' => $bookings->perPage(),
-                'total' => $bookings->total(),
-            ],
-        ]);
+        return response()->json(['success' => true,
+            'data' => $bookings->getCollection()->map(fn ($booking) => $this->bookingPayload($booking)),
+            'meta' => ['current_page' => $bookings->currentPage(), 'last_page' => $bookings->lastPage(),
+                'per_page' => $bookings->perPage(), 'total' => $bookings->total()]]);
     }
 
-    /**
-     * Get customer profile
-     */
+    private function bookingPayload(Booking $booking): array
+    {
+        return ['id' => $booking->id,
+            'salon' => ['id' => $booking->salon?->id, 'name' => $booking->salon?->name, 'address' => $booking->salon?->location],
+            'service' => ['id' => $booking->service?->id, 'name' => $booking->service?->title,
+                'price' => $booking->salon?->show_price ? $booking->service?->price : null, 'duration' => $booking->service?->duration],
+            'date' => $booking->date->format('Y-m-d'), 'time' => $booking->time, 'status' => $booking->status,
+            'created_at' => $booking->created_at->format('Y-m-d H:i:s')];
+    }
+
     public function profile(Request $request)
     {
-        $user = Auth::user();
+        $data = $request->user()->only(['id', 'name', 'email', 'email_verified_at']);
+        $data['created_at'] = $request->user()->created_at->format('Y-m-d H:i:s');
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'email_verified_at' => $user->email_verified_at,
-                'created_at' => $user->created_at->format('Y-m-d H:i:s'),
-            ],
-        ]);
+        return response()->json(['success' => true,
+            'data' => $data]);
     }
 
-    /**
-     * Update customer profile
-     */
     public function updateProfile(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.Auth::id(),
-        ]);
+        $validated = $request->validate(['name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,'.$request->user()->id]);
+        $request->user()->update($validated);
 
-        /** @var User $user */
-        $user = Auth::user();
-        $user->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Profile updated successfully',
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-        ]);
+        return response()->json(['success' => true, 'message' => 'Profile updated successfully',
+            'data' => $request->user()->only(['id', 'name', 'email'])]);
     }
 
-    /**
-     * Get dashboard statistics
-     */
-    public function stats(Request $request)
+    public function stats(Request $request, CustomerDashboard $dashboard)
     {
-        $user = Auth::user();
-        $today = now()->toDateString();
-
-        $bookingStats = Booking::forCustomer($user)
-            ->selectRaw(
-                'COUNT(*) as total_bookings,
-                SUM(CASE WHEN date >= ? THEN 1 ELSE 0 END) as upcoming_bookings,
-                SUM(CASE WHEN date < ? AND status = ? THEN 1 ELSE 0 END) as completed_bookings,
-                SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as cancelled_bookings',
-                [$today, $today, Booking::STATUS_APPROVED, Booking::STATUS_REJECTED]
-            )
-            ->first();
-
-        $favoriteCount = FavoriteSalon::where('user_id', $user->id)->count();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'total_bookings' => (int) ($bookingStats->total_bookings ?? 0),
-                'upcoming_bookings' => (int) ($bookingStats->upcoming_bookings ?? 0),
-                'completed_bookings' => (int) ($bookingStats->completed_bookings ?? 0),
-                'cancelled_bookings' => (int) ($bookingStats->cancelled_bookings ?? 0),
-                'favorite_salons' => $favoriteCount,
-            ],
-        ]);
+        return response()->json(['success' => true, 'data' => $dashboard->stats($request->user())]);
     }
 
-    /**
-     * Cancel a booking
-     */
-    public function cancelBooking(Request $request, $id)
+    public function cancelBooking(Request $request, int $id, BookingService $service)
     {
-        $booking = Booking::where('id', $id)
-            ->forCustomer(Auth::user())
-            ->first();
-
-        if (! $booking) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Booking not found',
-            ], 404);
+        $booking = Booking::forCustomer($request->user())->findOrFail($id);
+        if (! in_array($booking->status, ['pending', 'approved'], true)) {
+            return response()->json(['success' => false, 'message' => 'This booking cannot be cancelled'], 400);
         }
+        $service->cancel($booking, $request->user());
 
-        // Only allow cancellation of pending or approved bookings
-        if (! in_array($booking->status, ['pending', 'approved'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This booking cannot be cancelled',
-            ], 400);
-        }
-
-        app(\App\Services\BookingService::class)->cancel($booking, $request->user());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Booking cancelled successfully',
-        ]);
+        return response()->json(['success' => true, 'message' => 'Booking cancelled successfully']);
     }
 
-    /**
-     * Get all favorite salons for authenticated customer
-     */
-    public function getFavorites(Request $request)
+    public function getFavorites(Request $request, FavoriteService $favorites)
     {
-        $favorites = FavoriteSalon::with('salon')
-            ->where('user_id', Auth::id())
-            ->get()
-            ->map(function ($favorite) {
-                $data = SalonHelper::formatSalonWithMedia($favorite->salon, true);
+        $data = $favorites->salons($request->user())->orderBy('name')->orderBy('id')->get()->map(function ($salon) {
+            $data = SalonHelper::formatSalonWithMedia($salon, true);
+            $data['image'] = $data['cover_url'] ?? $data['cover_thumb_url'] ?? null;
+            $data['address'] = $data['location'] ?? null;
 
-                // Backwards-compatible fields for frontend
-                $data['image'] = $data['cover_url'] ?? ($data['cover_thumb_url'] ?? null);
-                $data['address'] = $data['location'] ?? null;
+            return $data;
+        });
 
-                return $data;
-            });
-
-        return response()->json([
-            'success' => true,
-            'data' => $favorites,
-        ]);
+        return response()->json(['success' => true, 'data' => $data]);
     }
 
-    /**
-     * Add salon to favorites
-     */
-    public function addFavorite(Request $request, $salonId)
+    public function addFavorite(Request $request, int $salonId, FavoriteService $favorites)
     {
-        $salon = Salon::find($salonId);
-
-        if (! $salon) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Salon not found',
-            ], 404);
+        if (! $favorites->add($request->user(), $salonId)) {
+            return response()->json(['success' => false, 'message' => 'Salon is already in your favorites'], 400);
         }
 
-        // Check if already in favorites
-        $exists = FavoriteSalon::where('user_id', Auth::id())
-            ->where('salon_id', $salonId)
-            ->exists();
-
-        if ($exists) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Salon is already in your favorites',
-            ], 400);
-        }
-
-        FavoriteSalon::create([
-            'user_id' => Auth::id(),
-            'salon_id' => $salonId,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Salon added to favorites successfully',
-        ], 201);
+        return response()->json(['success' => true, 'message' => 'Salon added to favorites successfully'], 201);
     }
 
-    /**
-     * Remove salon from favorites
-     */
-    public function removeFavorite(Request $request, $salonId)
+    public function removeFavorite(Request $request, int $salonId, FavoriteService $favorites)
     {
-        $favorite = FavoriteSalon::where('user_id', Auth::id())
-            ->where('salon_id', $salonId)
-            ->first();
+        abort_unless($favorites->remove($request->user(), $salonId), 404);
 
-        if (! $favorite) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Salon not found in favorites',
-            ], 404);
-        }
-
-        $favorite->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Salon removed from favorites successfully',
-        ]);
+        return response()->json(['success' => true, 'message' => 'Salon removed from favorites successfully']);
     }
 
-    /**
-     * Check if salon is in favorites
-     */
-    public function checkFavorite(Request $request, $salonId)
+    public function checkFavorite(Request $request, int $salonId, FavoriteService $favorites)
     {
-        $isFavorite = FavoriteSalon::where('user_id', Auth::id())
-            ->where('salon_id', $salonId)
-            ->exists();
-
-        return response()->json([
-            'success' => true,
-            'favorited' => (bool) $isFavorite,
-        ]);
+        return response()->json(['success' => true, 'favorited' => $favorites->salons($request->user())->whereKey($salonId)->exists()]);
     }
 
-    /**
-     * Toggle favorite status for a salon (add/remove)
-     */
-    public function toggleFavorite(Request $request, $salonId)
+    public function toggleFavorite(Request $request, int $salonId, FavoriteService $favorites)
     {
-        $salon = Salon::find($salonId);
+        $favorited = $favorites->toggle($request->user(), $salonId);
 
-        if (! $salon) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Salon not found',
-            ], 404);
-        }
-
-        $favorite = FavoriteSalon::where('user_id', Auth::id())
-            ->where('salon_id', $salonId)
-            ->first();
-
-        if ($favorite) {
-            $favorite->delete();
-
-            return response()->json([
-                'success' => true,
-                'favorited' => false,
-                'message' => 'Removed from favorites',
-            ]);
-        }
-
-        FavoriteSalon::create([
-            'user_id' => Auth::id(),
-            'salon_id' => $salonId,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'favorited' => true,
-            'message' => 'Added to favorites',
-        ], 201);
+        return response()->json(['success' => true, 'favorited' => $favorited,
+            'message' => $favorited ? 'Added to favorites' : 'Removed from favorites'], $favorited ? 201 : 200);
     }
 }

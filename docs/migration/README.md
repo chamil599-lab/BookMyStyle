@@ -20,6 +20,7 @@ Read these documents before changing behavior:
 - [Step three shared booking and subscription services](step-3-shared-services.md)
 - [Step four Blade authentication and Filament session handoff](step-4-blade-auth.md)
 - [Step five public Blade pages and security checks](step-5-public-blade.md)
+- [Step six native customer dashboard and account journeys](step-6-customer-blade.md)
 
 Machine-readable evidence is in `baseline/`: the booted Laravel route collection, scheduler events, and a sanitized environment summary. The database schema is emitted only when the configured database is reachable. Database records, credentials, build/test logs, uploads, and backup archives belong exclusively under ignored `.local/migration-baseline/`.
 

@@ -69,6 +69,18 @@ $package = \App\Models\SubscriptionPackage::create(['name' => 'Fixture', 'slug' 
 \App\Models\UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id, 'amount_paid' => 100, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth()]);
 \App\Models\ServicePage::create(['title' => 'Signature beauty', 'status' => 'published', 'description' => 'Care for your style.', 'price' => 2500, 'duration' => 60]);
 \App\Models\DealsPage::create(['title' => 'A little extra', 'status' => 1, 'original_price' => 2500, 'discounted_price' => 2000, 'salon' => $salon->name]);
+$bookingData = ['user_id' => $user->id, 'salon_id' => $salon->id, 'service_id' => $service->id,
+    'name' => $user->name, 'email' => $user->email, 'phone' => '0700000000', 'date' => today()->addDays(2)->format('Y-m-d'), 'time' => '10:00', 'status' => 'approved'];
+$customerBooking = \App\Models\Booking::create($bookingData);
+\App\Models\Booking::create(array_merge($bookingData, ['date' => today()->subDay()->format('Y-m-d'), 'status' => 'completed']));
+$otherCustomer = User::factory()->create();
+$foreignBooking = \App\Models\Booking::create(array_merge($bookingData, ['user_id' => $otherCustomer->id]));
+\App\Models\FavoriteSalon::create(['user_id' => $user->id, 'salon_id' => $salon->id]);
+$user->notifications()->create(['id' => (string) \Illuminate\Support\Str::uuid(), 'type' => 'fixture',
+    'data' => ['title' => 'Booking approved', 'message' => 'Your appointment at Amber Studio was approved.']]);
+$fixtureFile = $directory.'/customer-fixture.json';
+file_put_contents($fixtureFile, json_encode(['email' => $user->email, 'password' => $password,
+    'bookingId' => $customerBooking->id], JSON_THROW_ON_ERROR));
 $log = $directory.'/server.log';
 $environment = array_merge(getenv(), ['BMS_AUTH_SMOKE_DIRECTORY' => $directory, 'BMS_AUTH_SMOKE_PORT' => (string) $port]);
 $process = proc_open([PHP_BINARY, '-S', '127.0.0.1:'.$port, '-t', $root.'/public', __FILE__],
@@ -116,6 +128,20 @@ try {
     $expect($response->getStatusCode() === 200 && str_ends_with($payload['components'][0]['effects']['redirect'] ?? '', '/dashboard'), 'livewire_session_login');
     $response = $client->get('/dashboard');
     $expect($response->getStatusCode() === 200 && str_contains((string) $response->getBody(), 'Your account'), 'authenticated_dashboard');
+    foreach (['upcoming', 'history', 'favorites', 'notifications'] as $page) {
+        $response = $client->get('/dashboard/'.$page);
+        $html = (string) $response->getBody();
+        $expect($response->getStatusCode() === 200 && str_contains($html, 'Account navigation'), 'customer:'.$page);
+        $expect(str_contains($response->getHeaderLine('Cache-Control'), 'no-store'), 'private:'.$page);
+        $expect(! str_contains($html, 'data-booking-id="'.$foreignBooking->id.'"'), 'ownership:'.$page);
+        file_put_contents($directory.'/customer-'.$page.'.html', $html);
+    }
+    $expect($client->post('/dashboard/bookings/'.$customerBooking->id.'/cancel')->getStatusCode() === 419, 'customer_cancel_requires_csrf');
+    preg_match('/name="csrf-token" content="([^"]+)"/', $html, $csrf);
+    $expect($client->post('/dashboard/bookings/'.$foreignBooking->id.'/cancel', ['form_params' => ['_token' => $csrf[1]]])->getStatusCode() === 404, 'customer_cannot_cancel_foreign_booking');
+    $expect($client->delete('/dashboard/favorites/'.$salon->id)->getStatusCode() === 419, 'favorite_remove_requires_csrf');
+    $expect(parse_url($client->get('/dashboard/profile')->getHeaderLine('Location'), PHP_URL_PATH) === '/profile', 'customer_profile_native');
+    $expect(parse_url($client->get('/dashboard/change-password')->getHeaderLine('Location'), PHP_URL_PATH) === '/settings/password', 'customer_password_native');
     $response = $client->get('/profile');
     $html = (string) $response->getBody();
     $expect($response->getStatusCode() === 200 && str_contains($html, 'Profile Information'), 'authenticated_profile');
@@ -134,7 +160,7 @@ try {
     }
     $chrome = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
     if (is_file($chrome)) {
-        $browser = proc_open(['node', __DIR__.'/verify-storefront-browser.mjs', $url, $directory, $chrome, today()->addDay()->format('Y-m-d')],
+        $browser = proc_open(['node', __DIR__.'/verify-storefront-browser.mjs', $url, $directory, $chrome, today()->addDay()->format('Y-m-d'), $fixtureFile],
             [0 => ['pipe', 'r'], 1 => ['file', $directory.'/browser.log', 'w'], 2 => ['file', $directory.'/browser.log', 'a']], $browserPipes, $root);
         if (! is_resource($browser)) {
             throw new RuntimeException('Unable to start browser checks.');

@@ -1,8 +1,8 @@
 import { spawn } from 'node:child_process';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const [base, directory, executable, appointmentDate] = process.argv.slice(2);
+const [base, directory, executable, appointmentDate, fixtureFile] = process.argv.slice(2);
 if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(base) || !/^auth-smoke-\d{8}_\d{6}_[a-f0-9]{6}$/.test(path.basename(directory))) throw new Error('Use the isolated smoke server and private artifact directory.');
 const port = 23000 + Math.floor(Math.random() * 5000);
 await mkdir(path.join(directory, 'browser-profile'), { recursive: true });
@@ -42,11 +42,12 @@ try {
     };
     const until = async (expression, label) => {
         for (let i = 0; i < 80; i++) { if (await evaluate(expression)) return; await sleep(250); }
+        await writeFile(path.join(directory, 'browser-timeout.html'), await evaluate('document.documentElement.outerHTML'));
         throw new Error(`Timed out waiting for ${label}`);
     };
     const navigate = async route => {
         await call('Page.navigate', { url: base + route });
-        await until(`location.pathname === ${JSON.stringify(route)} && document.querySelector('main') && typeof Alpine !== 'undefined'`, route);
+        await until(`location.pathname === ${JSON.stringify(route)} && document.querySelector('main, form') && typeof Alpine !== 'undefined'`, route);
         await sleep(300);
     };
     const viewport = (width, height) => call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 });
@@ -91,6 +92,49 @@ try {
     [...document.querySelectorAll('form')].find(el => el.getAttribute('wire:submit') === 'submit').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));`);
     await until("document.querySelector('#booking').textContent.includes('Your booking request has been sent')", 'guest booking submission');
     checks.livewire_guest_booking = true;
+    if (fixtureFile) {
+        if (path.resolve(fixtureFile) !== path.resolve(directory, 'customer-fixture.json')) throw new Error('Customer credentials must come from the private synthetic fixture.');
+        const fixture = JSON.parse(await readFile(fixtureFile, 'utf8'));
+        await navigate('/login');
+        await evaluate(`for (const [field, value] of Object.entries(${JSON.stringify({ 'form.email': fixture.email, 'form.password': fixture.password })})) {
+            const input = [...document.querySelectorAll('input')].find(el => el.getAttribute('wire:model') === field);
+            input.value = value; input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        document.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));`);
+        await until("location.pathname === '/dashboard' && document.body.textContent.includes('Your next appointments')", 'customer native login');
+        checks.customer_session_login = true;
+        await viewport(1440, 1000); await screenshot('desktop-customer-dashboard');
+        await viewport(390, 844);
+        expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'mobile_customer_dashboard_no_overflow');
+        await screenshot('mobile-customer-dashboard');
+        await navigate('/dashboard/upcoming');
+        expect(await evaluate(`!!document.querySelector('[data-booking-id="${fixture.bookingId}"]')`), 'customer_upcoming_booking');
+        await evaluate(`document.querySelector('[data-booking-id="${fixture.bookingId}"] button[type=submit]').click()`);
+        await until(`getComputedStyle(document.querySelector('[data-booking-id="${fixture.bookingId}"] form div')).display !== 'none'`, 'cancellation confirmation');
+        expect(await evaluate(`getComputedStyle(document.querySelector('[data-booking-id="${fixture.bookingId}"] [x-cloak]') || document.querySelector('[data-booking-id="${fixture.bookingId}"] form div')).display !== 'none'`), 'customer_cancel_confirmation');
+        await evaluate(`const buttons = document.querySelector('[data-booking-id="${fixture.bookingId}"]').querySelectorAll('button'); [...buttons].find(b => b.textContent.includes('Yes, cancel')).click()`);
+        await until("document.body.textContent.includes('Booking cancelled.')", 'customer cancellation');
+        checks.customer_cancel_booking = true;
+        await navigate('/dashboard/history');
+        expect(await evaluate(`!!document.querySelector('[data-booking-id="${fixture.bookingId}"]')`), 'cancelled_booking_in_history');
+        expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'mobile_customer_history_no_overflow');
+        await screenshot('mobile-customer-history');
+        await navigate('/dashboard/favorites');
+        await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.includes('from favorites')).click()");
+        await until("document.body.textContent.includes('Salon removed from favorites.') && document.body.textContent.includes('No favorite salons yet.')", 'remove favorite');
+        checks.customer_remove_favorite = true;
+        await navigate('/dashboard/notifications');
+        await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Mark all as read').click()");
+        await until("document.body.textContent.includes('Notifications marked as read.')", 'read notifications');
+        checks.customer_read_notifications = true;
+        const notificationCount = await evaluate("document.querySelectorAll('main article').length");
+        await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Delete notification').click()");
+        await until(`document.body.textContent.includes('Notification deleted.') && document.querySelectorAll('main article').length === ${notificationCount - 1}`, 'delete notification');
+        checks.customer_delete_notification = true;
+        await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Clear all notifications').click()");
+        await until("document.body.textContent.includes('Notifications cleared.') && document.body.textContent.includes('No notifications yet.')", 'clear notifications');
+        checks.customer_clear_notifications = true;
+    }
     expect(errors.length === 0, 'no_uncaught_javascript_errors');
     await writeFile(path.join(directory, 'browser-summary.json'), JSON.stringify({ checks, errors }, null, 2));
     console.log(JSON.stringify({ checks, errors }, null, 2));
