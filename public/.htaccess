@@ -18,23 +18,11 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # SPA fallback: non-Laravel paths that aren't real files serve index.html
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/api/
-    RewriteCond %{REQUEST_URI} !^/filament
-    RewriteCond %{REQUEST_URI} !^/livewire
-    RewriteCond %{REQUEST_URI} !^/storage/
-    RewriteCond %{REQUEST_URI} !^/sanctum/
-    RewriteCond %{REQUEST_URI} !^/_ignition
-    RewriteCond %{REQUEST_URI} !\.php$
-    RewriteRule ^ index.html [L]
-
     # Send remaining requests to Laravel's front controller
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
 
-# Prefer React's index.html at the document root
-DirectoryIndex index.html index.php
+# Laravel owns public pages and authentication during the staged migration.
+DirectoryIndex index.php

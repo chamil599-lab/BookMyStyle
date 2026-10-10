@@ -59,3 +59,22 @@ See [Blade authentication changes and compatibility](step-4-blade-auth.md).
 | Imported schema changes | None; pending index migrations were not executed |
 
 The earlier starter-kit failures are resolved by restored Blade authentication/settings routes. The homepage test now verifies the intended React redirect during migration. The HTTP test caught and led to fixing an early proxy-configuration lookup that framework tests missed. Google credential validation is mocked in identity tests; live Google consent, SMTP delivery, production browser parity, and the broader security audit remain outstanding. Source and runtime artifacts are recorded privately under `.local/migration-baseline/`.
+
+## Step five verification - 11 October 2026
+
+See [public Blade pages and cutover notes](step-5-public-blade.md).
+
+| Check | Result |
+|---|---|
+| Final full suite | 138 passed, 510 assertions |
+| Real HTTP checks | 24 passed: auth/session/CSRF and all public HTML, sitemap and robots endpoints |
+| Real Chrome checks | 8 passed: stylesheet loading, mobile menu, theme toggle, mobile home/detail overflow, live available slots, actual guest booking submission, no uncaught JavaScript errors |
+| Visual inspection | Private desktop/home/detail and mobile/home/detail/booking fixture screenshots; inspected mobile home/booking and desktop salon |
+| Root asset build | Passed; storefront CSS 24.61 KB / 5.94 KB gzip; existing empty app JS and old Browserslist warnings |
+| Blade compilation | Passed; compiled cache cleared afterward |
+| Formatting/syntax | Changed PHP passed Pint; browser script passed Node syntax check |
+| Imported data | 35 tables; users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migration records 51; counts unchanged |
+| Import integrity | No FK orphans, missing media originals/conversions, or nontransactional tables |
+| Imported schema changes | None; pending migrations remain unexecuted |
+
+The longer full suite exceeded the CLI's 128 MB memory limit during Filament rendering. The successful run used `php -d memory_limit=512M vendor/bin/pest --compact`; production memory configuration was not changed. Synthetic fixture tests suppress delivery and never use imported data. Browser artifacts are private under `.local/migration-baseline/auth-smoke-20261010_193918_112ca2/` (artifact timestamps use host UTC before Laravel boots). Automated checks establish behavior, not pixel-perfect React parity or production Apache/email/Google/dependency-audit readiness. Remaining customer pages and dashboard bookmark cutover remain the next gates.

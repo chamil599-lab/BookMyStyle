@@ -1,7 +1,7 @@
 <?php
 
-it('keeps the public homepage on React during the staged migration', function () {
+it('serves the public homepage through Blade', function () {
     $response = $this->get('/');
 
-    $response->assertRedirect(rtrim((string) env('FRONTEND_URL', 'https://bookmystyle.limach.lk'), '/'));
+    $response->assertOk()->assertSee('BOOK')->assertSee('Find your salon');
 });

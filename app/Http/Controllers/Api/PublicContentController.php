@@ -31,12 +31,14 @@ class PublicContentController extends Controller
 
     public function stats(): JsonResponse
     {
+        $ids = Salon::publiclyVisible()->select('id');
+
         return response()->json([
-            'totalSalons' => Salon::count(),
-            'totalClients' => Booking::distinct('email')->count('email'),
-            'totalBookings' => Booking::count(),
-            'approvedBookings' => Booking::where('status', Booking::STATUS_APPROVED)->count(),
-            'averageRating' => round((float) (SalonRating::avg('rating') ?? 0), 1),
+            'totalSalons' => Salon::publiclyVisible()->count(),
+            'totalClients' => Booking::whereIn('salon_id', clone $ids)->distinct('email')->count('email'),
+            'totalBookings' => Booking::whereIn('salon_id', clone $ids)->count(),
+            'approvedBookings' => Booking::whereIn('salon_id', clone $ids)->where('status', Booking::STATUS_APPROVED)->count(),
+            'averageRating' => round((float) (SalonRating::whereIn('salon_id', clone $ids)->avg('rating') ?? 0), 1),
         ]);
     }
 

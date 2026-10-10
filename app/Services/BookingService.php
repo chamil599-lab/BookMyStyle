@@ -125,6 +125,33 @@ class BookingService
             ->whereIn('status', ['pending', 'approved'])->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
             ->when(DB::transactionLevel() > 0, fn ($query) => $query->lockForUpdate())->get();
         $durations = Service::withTrashed()->whereIn('id', $bookings->pluck('service_id'))->pluck('duration', 'id');
+
+        return $this->capacity($salon, $bookings, $durations, $start, $end);
+    }
+
+    public function availableSlots(Salon $salon, string $date, Service $service): array
+    {
+        Validator::make(['date' => $date], ['date' => 'required|date_format:Y-m-d'])->validate();
+        abort_unless((int) $service->created_by === (int) $salon->created_by, 404);
+        $bookings = Booking::where('salon_id', $salon->id)->whereDate('date', $date)
+            ->whereIn('status', ['pending', 'approved'])->get(['time', 'service_id']);
+        $durations = Service::withTrashed()->whereIn('id', $bookings->pluck('service_id'))->pluck('duration', 'id');
+        $open = $this->minutes($salon->open_time?->format('H:i') ?? '09:00');
+        $close = $this->minutes($salon->close_time?->format('H:i') ?? '18:00');
+        $duration = $this->duration($service->duration);
+        $slots = [];
+        for ($start = $open; $start + $duration <= $close; $start += 30) {
+            $time = sprintf('%02d:%02d', intdiv($start, 60), $start % 60);
+            if (Carbon::parse($date.' '.$time)->gt(now()) && $this->capacity($salon, $bookings, $durations, $start, $start + $duration) > 0) {
+                $slots[] = $time;
+            }
+        }
+
+        return $slots;
+    }
+
+    private function capacity(Salon $salon, $bookings, $durations, int $start, int $end): int
+    {
         $events = [];
         foreach ($bookings as $booking) {
             $existingStart = $this->minutes($booking->time);
@@ -149,7 +176,7 @@ class BookingService
     private function validate(array $data): array
     {
         // Stored times can include seconds; write one canonical minute precision value.
-        if (isset($data['time']) && preg_match('/^\d{2}:\d{2}:00$/', $data['time'])) {
+        if (is_string($data['time'] ?? null) && preg_match('/^\d{2}:\d{2}:00$/', $data['time'])) {
             $data['time'] = substr($data['time'], 0, 5);
         }
         if (($data['date'] ?? null) instanceof \DateTimeInterface) {
@@ -168,6 +195,9 @@ class BookingService
         $service = Service::findOrFail($data['service_id']);
         if ((int) $service->created_by !== (int) $salon->created_by) {
             throw ValidationException::withMessages(['service_id' => 'The selected service does not belong to this salon owner.']);
+        }
+        if ($public && $service->status !== 'published') {
+            throw ValidationException::withMessages(['service_id' => 'This service is not available for public booking.']);
         }
         if (! in_array($data['status'] ?? 'pending', ['pending', 'approved'], true)) {
             return; // Historical completed/rejected records do not occupy capacity.

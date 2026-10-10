@@ -4,14 +4,13 @@
     RewriteEngine On
     RewriteBase /
 
-    # Let Laravel handle API requests when Laravel's public/index.php
-    # is in the same cPanel document root as the React build.
-    RewriteCond %{REQUEST_URI} ^/api(/|$)
-    RewriteCond %{DOCUMENT_ROOT}/index.php -f
+    # Preserve bearer headers when this build shares Laravel's document root.
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    RewriteCond %{REQUEST_URI} ^/api(/|$)
+    # Laravel owns public/auth routes during the Blade migration.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{DOCUMENT_ROOT}/index.php -f
     RewriteRule ^ index.php [L]
 
@@ -19,3 +18,5 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.html [L]
 </IfModule>
+
+DirectoryIndex index.php index.html

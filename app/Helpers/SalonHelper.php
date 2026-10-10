@@ -17,8 +17,8 @@ class SalonHelper
         $defaultImage = 'https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80';
 
         // Use preview conversion, fallback to original, then default
-        $coverUrl = !empty($coverPreview) ? $coverPreview : (!empty($coverOriginal) ? $coverOriginal : $defaultImage);
-        $coverThumbUrl = !empty($coverThumb) ? $coverThumb : (!empty($coverOriginal) ? $coverOriginal : $defaultImage);
+        $coverUrl = ! empty($coverPreview) ? $coverPreview : (! empty($coverOriginal) ? $coverOriginal : $defaultImage);
+        $coverThumbUrl = ! empty($coverThumb) ? $coverThumb : (! empty($coverOriginal) ? $coverOriginal : $defaultImage);
 
         $data = [
             'id' => $salon->id,
@@ -35,7 +35,8 @@ class SalonHelper
             'facebook_page' => $salon->facebook_page,
             'instagram_page' => $salon->instagram_page,
             'tiktok_page' => $salon->tiktok_page,
-            'rating' => $salon->average_rating,
+            'rating' => $salon->public_rating ?? $salon->average_rating,
+            'review_count' => $salon->ratings_count ?? $salon->ratings()->count(),
 
             // Cover URLs with fallback to default image
             'cover_url' => $coverUrl,
@@ -44,6 +45,7 @@ class SalonHelper
             // Gallery - use original as fallback for each conversion
             'gallery' => $salon->getMedia('gallery')->map(function ($media) {
                 $original = $media->getUrl();
+
                 return [
                     'id' => $media->id,
                     'original' => $original,
@@ -54,11 +56,21 @@ class SalonHelper
         ];
 
         if ($includeServices) {
-            $services = Service::where('created_by', $salon->created_by)
-                ->orWhere('updated_by', $salon->created_by)
+            $services = Service::published()->where('created_by', $salon->created_by)
                 ->with('department')
                 ->get();
-            $data['services'] = $services;
+            $data['services'] = $services->map(fn ($service) => self::publicService($service, $salon));
+        }
+
+        return $data;
+    }
+
+    public static function publicService(Service $service, Salon $salon): array
+    {
+        $data = $service->only(['id', 'title', 'description', 'duration', 'department_id', 'category_id']);
+        $data['department'] = $service->department?->only(['id', 'name']);
+        if ($salon->show_price) {
+            $data['price'] = $service->price;
         }
 
         return $data;

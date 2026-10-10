@@ -54,6 +54,21 @@ Role::findOrCreate('customer', 'web');
 $password = bin2hex(random_bytes(16));
 $user = User::factory()->create(['email' => 'smoke@example.test', 'password' => $password, 'is_approved' => true]);
 $user->assignRole('customer');
+Role::findOrCreate('owner', 'web');
+$owner = User::factory()->create(['is_approved' => true]);
+$owner->assignRole('owner');
+$salon = \App\Models\Salon::create(['name' => 'Amber Studio', 'owner_name' => 'Fixture Owner', 'location' => 'Kandy',
+    'description' => 'Your new style starts here.', 'created_by' => $owner->id, 'updated_by' => $owner->id,
+    'show_price' => true, 'number_of_staff' => 1, 'open_time' => '09:00', 'close_time' => '17:00']);
+$department = \App\Models\Department::create(['name' => 'Hair', 'slug' => 'hair', 'is_active' => true]);
+$category = \App\Models\Category::create(['name' => 'Cuts', 'department_id' => $department->id]);
+$service = \App\Models\Service::create(['title' => 'Signature cut', 'slug' => 'signature-cut', 'description' => 'A fresh cut.',
+    'created_by' => $owner->id, 'updated_by' => $owner->id, 'department_id' => $department->id, 'category_id' => $category->id,
+    'price' => 2500, 'duration' => 60, 'status' => 'published']);
+$package = \App\Models\SubscriptionPackage::create(['name' => 'Fixture', 'slug' => 'fixture', 'price' => 100, 'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5]);
+\App\Models\UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id, 'amount_paid' => 100, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth()]);
+\App\Models\ServicePage::create(['title' => 'Signature beauty', 'status' => 'published', 'description' => 'Care for your style.', 'price' => 2500, 'duration' => 60]);
+\App\Models\DealsPage::create(['title' => 'A little extra', 'status' => 1, 'original_price' => 2500, 'discounted_price' => 2000, 'salon' => $salon->name]);
 $log = $directory.'/server.log';
 $environment = array_merge(getenv(), ['BMS_AUTH_SMOKE_DIRECTORY' => $directory, 'BMS_AUTH_SMOKE_PORT' => (string) $port]);
 $process = proc_open([PHP_BINARY, '-S', '127.0.0.1:'.$port, '-t', $root.'/public', __FILE__],
@@ -111,6 +126,21 @@ try {
     $expect($response->getStatusCode() === 302 && str_ends_with($response->getHeaderLine('Location'), '/login'), 'logout_blocks_dashboard');
     foreach (['/register', '/forgot-password', '/reset-password/synthetic-token'] as $path) {
         $expect($client->get($path)->getStatusCode() === 200, $path);
+    }
+    foreach (['/', '/salons', '/trending', '/popular', '/services', '/deals', '/about', '/terms-and-condition', '/privacy-policy', '/salon/'.$salon->id, '/sitemap.xml', '/robots.txt'] as $path) {
+        $response = $client->get($path);
+        $expect($response->getStatusCode() === 200, 'public:'.$path);
+        file_put_contents($directory.'/public-'.($path === '/' ? 'home' : str_replace(['/', '.'], '-', trim($path, '/'))).'.html', (string) $response->getBody());
+    }
+    $chrome = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+    if (is_file($chrome)) {
+        $browser = proc_open(['node', __DIR__.'/verify-storefront-browser.mjs', $url, $directory, $chrome, today()->addDay()->format('Y-m-d')],
+            [0 => ['pipe', 'r'], 1 => ['file', $directory.'/browser.log', 'w'], 2 => ['file', $directory.'/browser.log', 'a']], $browserPipes, $root);
+        if (! is_resource($browser)) {
+            throw new RuntimeException('Unable to start browser checks.');
+        }
+        fclose($browserPipes[0]);
+        $expect(proc_close($browser) === 0, 'browser_checks');
     }
     $summary = ['scope' => 'Synthetic SQLite database; real local HTTP; mail suppressed', 'checks' => $checks];
     file_put_contents($directory.'/summary.json', json_encode($summary, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));

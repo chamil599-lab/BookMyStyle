@@ -1,5 +1,7 @@
 # BookMyStyle — cPanel Deployment Guide
 
+The layout below describes the original React deployment. For the staged Blade migration, follow [step-five deployment notes](docs/migration/step-5-public-blade.md): Laravel now owns public/auth routes, root Vite assets are required, and the old React root rewrite and static SEO files must not overwrite the new arrangement. Remaining customer pages and dashboard bookmark mapping still need cutover validation before release.
+
 This project ships **two things** that live behind one domain (`bookmystyle.limach.lk`):
 
 | Part | Source folder | What gets uploaded |

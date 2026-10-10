@@ -48,18 +48,18 @@ class Salon extends Model implements HasMedia
     }
 
     public function registerMediaConversions(?Media $media = null): void
-{
-    $this->addMediaConversion('thumb')
-        ->width(300)
-        ->height(300)
-        ->sharpen(10)
-        ->nonQueued();
+    {
+        $this->addMediaConversion('thumb')
+            ->width(300)
+            ->height(300)
+            ->sharpen(10)
+            ->nonQueued();
 
-    $this->addMediaConversion('preview')
-        ->width(800)
-        ->height(600)
-        ->nonQueued();
-}
+        $this->addMediaConversion('preview')
+            ->width(800)
+            ->height(600)
+            ->nonQueued();
+    }
 
     // Helper methods to get media URLs with fallback to default image
     public function getCoverUrlAttribute(): string
@@ -68,7 +68,7 @@ class Salon extends Model implements HasMedia
         $preview = $this->getFirstMediaUrl('cover', 'preview');
         $original = $this->getFirstMediaUrl('cover');
 
-        return !empty($preview) ? $preview : (!empty($original) ? $original : $defaultImage);
+        return ! empty($preview) ? $preview : (! empty($original) ? $original : $defaultImage);
     }
 
     public function getCoverThumbUrlAttribute(): string
@@ -77,7 +77,7 @@ class Salon extends Model implements HasMedia
         $thumb = $this->getFirstMediaUrl('cover', 'thumb');
         $original = $this->getFirstMediaUrl('cover');
 
-        return !empty($thumb) ? $thumb : (!empty($original) ? $original : $defaultImage);
+        return ! empty($thumb) ? $thumb : (! empty($original) ? $original : $defaultImage);
     }
 
     public function getGalleryUrlsAttribute(): array
@@ -95,6 +95,12 @@ class Salon extends Model implements HasMedia
     public function owner()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function scopePubliclyVisible($query)
+    {
+        return $query->whereHas('owner', fn ($owner) => $owner->where('is_approved', true)
+            ->whereHas('roles', fn ($roles) => $roles->where('name', 'owner')->where('guard_name', 'web')));
     }
 
     public function user()
