@@ -33,6 +33,7 @@ new #[Layout('layouts.guest')] class extends Component
      */
     public function resetPassword(): void
     {
+        app(\App\Services\AuthActionLimiter::class)->check('password-reset', $this->email, 5);
         $this->validate([
             'token' => ['required'],
             'email' => ['required', 'string', 'email'],

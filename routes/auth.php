@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::middleware('guest')->group(function () {
+    Route::post('auth/google', \App\Http\Controllers\Auth\GoogleSessionController::class)->middleware('throttle:auth-public')->name('auth.google');
     Volt::route('register', 'pages.auth.register')
         ->name('register');
 
@@ -19,6 +20,11 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::post('logout', function (\App\Livewire\Actions\Logout $logout) {
+        $logout();
+
+        return redirect('/');
+    })->name('logout');
     Volt::route('verify-email', 'pages.auth.verify-email')
         ->name('verification.notice');
 

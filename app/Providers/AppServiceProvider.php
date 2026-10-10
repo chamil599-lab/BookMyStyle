@@ -28,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
         Booking::observe(BookingObserver::class);
         Gate::policy(Booking::class, BookingPolicy::class);
         Gate::define('view-salon-bookings', [BookingPolicy::class, 'viewSalonBookings']);
+        \Livewire\Livewire::addPersistentMiddleware([
+            \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
+            \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+        ]);
 
         RateLimiter::for('auth-login', fn (Request $request) => [
             Limit::perMinute(30)->by('login-ip:'.$request->ip()),

@@ -20,11 +20,12 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: false);
     }
 }; ?>
 
 <div>
+    <h1 class="text-xl font-semibold mb-4">Sign in to BookMyStyle</h1>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -68,4 +69,6 @@ new #[Layout('layouts.guest')] class extends Component
             </x-primary-button>
         </div>
     </form>
+    <p class="mt-4 text-sm">New here? <a class="underline" href="{{ route('register') }}">Create an account</a></p>
+    <x-google-sign-in />
 </div>

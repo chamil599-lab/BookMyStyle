@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVerifyEmail, FilamentUser
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
@@ -40,6 +40,23 @@ class User extends Authenticatable implements FilamentUser
         static::updating(function (User $user): void {
             if ($user->isDirty('email')) {
                 $user->email_verified_at = null;
+            }
+            if ($user->isDirty('password')) {
+                $user->remember_token = Str::random(60);
+            }
+        });
+        static::updated(function (User $user): void {
+            if (! $user->wasChanged('password')) {
+                return;
+            }
+            $user->tokens()->delete();
+            if (config('session.driver') === 'database') {
+                $sessions = \Illuminate\Support\Facades\DB::connection(config('session.connection'))
+                    ->table(config('session.table', 'sessions'))->where('user_id', $user->id);
+                if (request()->hasSession() && (int) \Illuminate\Support\Facades\Auth::guard('web')->id() === (int) $user->id) {
+                    $sessions->where('id', '!=', request()->session()->getId());
+                }
+                $sessions->delete();
             }
         });
     }

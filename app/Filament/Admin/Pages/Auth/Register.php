@@ -12,14 +12,9 @@ class Register extends BaseRegister
 {
     protected function handleRegistration(array $data): Model
     {
-        $user = $this->getUserModel()::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-            'is_approved' => false,
-        ]);
-
-        $user->assignRole(RolesEnum::OWNER->value);
+        $user = app(\App\Services\AccountService::class)->register($data + [
+            'password_confirmation' => $data['password'], 'role' => RolesEnum::OWNER->value,
+        ], dispatchEvent: false);
 
         // ✅ Send registration confirmation email
         Mail::to($user->email)->send(new OwnerRegistered($user));

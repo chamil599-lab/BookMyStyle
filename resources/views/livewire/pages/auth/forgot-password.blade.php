@@ -13,6 +13,7 @@ new #[Layout('layouts.guest')] class extends Component
      */
     public function sendPasswordResetLink(): void
     {
+        app(\App\Services\AuthActionLimiter::class)->check('password-reset-link', $this->email, 3);
         $this->validate([
             'email' => ['required', 'string', 'email'],
         ]);
@@ -24,15 +25,8 @@ new #[Layout('layouts.guest')] class extends Component
             $this->only('email')
         );
 
-        if ($status != Password::RESET_LINK_SENT) {
-            $this->addError('email', __($status));
-
-            return;
-        }
-
         $this->reset('email');
-
-        session()->flash('status', __($status));
+        session()->flash('status', 'If an account exists for that email, a password reset link has been sent.');
     }
 }; ?>
 

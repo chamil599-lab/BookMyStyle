@@ -14,6 +14,7 @@ new #[Layout('layouts.guest')] class extends Component
      */
     public function confirmPassword(): void
     {
+        app(\App\Services\AuthActionLimiter::class)->check('password-confirm', Auth::user()->email, 5, 'password');
         $this->validate([
             'password' => ['required', 'string'],
         ]);
@@ -29,7 +30,7 @@ new #[Layout('layouts.guest')] class extends Component
 
         session(['auth.password_confirmed_at' => time()]);
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: false);
     }
 }; ?>
 

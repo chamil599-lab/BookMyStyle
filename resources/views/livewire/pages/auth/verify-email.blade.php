@@ -14,12 +14,13 @@ new #[Layout('layouts.guest')] class extends Component
     public function sendVerification(): void
     {
         if (Auth::user()->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: false);
 
             return;
         }
 
-        Auth::user()->sendEmailVerificationNotification();
+        app(\App\Services\AuthActionLimiter::class)->check('email-verification', auth()->user()->email, 3);
+        auth()->user()->sendEmailVerificationNotification();
 
         Session::flash('status', 'verification-link-sent');
     }
@@ -31,11 +32,12 @@ new #[Layout('layouts.guest')] class extends Component
     {
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect('/', navigate: false);
     }
 }; ?>
 
 <div>
+    <x-input-error :messages="$errors->get('email')" class="mb-4" />
     <div class="mb-4 text-sm text-gray-600">
         {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
     </div>

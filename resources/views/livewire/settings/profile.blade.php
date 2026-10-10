@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
 
-new class extends Component {
+new #[\Livewire\Attributes\Layout('layouts.app')] class extends Component {
     public string $name = '';
     public string $email = '';
 
@@ -63,7 +63,8 @@ new class extends Component {
             return;
         }
 
-        $user->sendEmailVerificationNotification();
+        app(\App\Services\AuthActionLimiter::class)->check('email-verification', auth()->user()->email, 3);
+        auth()->user()->sendEmailVerificationNotification();
 
         Session::flash('status', 'verification-link-sent');
     }
@@ -111,6 +112,8 @@ new class extends Component {
             </div>
         </form>
 
-        <livewire:settings.delete-user-form />
+        @unless (auth()->user()->hasRole(['admin', 'owner']))
+            <livewire:settings.delete-user-form />
+        @endunless
     </x-settings.layout>
 </section>

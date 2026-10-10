@@ -29,10 +29,6 @@ $redirectToFrontend = static function (Request $request, string $path = '') use 
 };
 
 Route::get('/', fn (Request $request) => $redirectToFrontend($request))->name('home');
-Route::get('/login', fn (Request $request) => $redirectToFrontend($request, 'login'))->name('login');
-Route::get('/register', fn (Request $request) => $redirectToFrontend($request, 'register'))->name('register');
-Route::get('/forgot-password', fn (Request $request) => $redirectToFrontend($request, 'forgot-password'))->name('password.request');
-Route::get('/reset-password', fn (Request $request) => $redirectToFrontend($request, 'reset-password'));
 Route::get('/deals', fn (Request $request) => $redirectToFrontend($request, 'deals'))->name('deals');
 Route::get('/about', fn (Request $request) => $redirectToFrontend($request, 'about'));
 Route::get('/services', fn (Request $request) => $redirectToFrontend($request, 'services'));
@@ -42,20 +38,37 @@ Route::get('/trending', fn (Request $request) => $redirectToFrontend($request, '
 Route::get('/popular', fn (Request $request) => $redirectToFrontend($request, 'popular'));
 Route::get('/terms-and-condition', fn (Request $request) => $redirectToFrontend($request, 'terms-and-condition'));
 Route::get('/privacy-policy', fn (Request $request) => $redirectToFrontend($request, 'privacy-policy'));
-Route::get('/dashboard/{any?}', fn (Request $request, ?string $any = null) => $redirectToFrontend($request, $any ? "dashboard/{$any}" : 'dashboard'))
-    ->where('any', '.*');
+Route::get('/dashboard', function () {
+    $user = auth()->user();
+    if ($user->hasRole('admin')) {
+        return redirect()->route('filament.admin.pages.dashboard');
+    }
+    if ($user->hasRole('owner') && $user->is_approved) {
+        return redirect()->route('filament.admin.pages.owner-dashboard');
+    }
 
-Route::get('/password/reset', function () {
-    $token = request('token');
-    $email = request('email');
-    
-    // Frontend URL based on environment
-    $frontendUrl = config('app.env') === 'local' 
-        ? 'http://localhost:5173' 
-        : 'https://bookmystyle.limach.lk';
-    
-    return redirect("{$frontendUrl}/reset-password?token={$token}&email={$email}");
-})->name('password.reset');
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/dashboard/{any}', fn (Request $request, string $any) => $redirectToFrontend($request, 'dashboard/'.$any))->where('any', '.*');
+Route::view('/profile', 'profile')->middleware('auth')->name('profile');
+Route::middleware('auth')->group(function () {
+    \Livewire\Volt\Volt::route('/settings/profile', 'settings.profile')->name('profile.edit');
+    \Livewire\Volt\Volt::route('/settings/password', 'settings.password')->name('password.edit');
+    \Livewire\Volt\Volt::route('/settings/appearance', 'settings.appearance')->name('appearance.edit');
+});
+
+// Keep previously issued query-string links usable during migration.
+Route::get('/password/reset', function (Request $request) {
+    $data = $request->validate(['token' => 'required|string|max:255', 'email' => 'nullable|email|max:255']);
+
+    return redirect()->route('password.reset', $data);
+});
+Route::get('/reset-password', function (Request $request) {
+    $data = $request->validate(['token' => 'required|string|max:255', 'email' => 'nullable|email|max:255']);
+
+    return redirect()->route('password.reset', $data);
+});
 
 // routes/web.php
 Route::middleware(['auth'])->group(function () {
@@ -72,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('subscription.required');
 });
 
-Route::middleware(['auth', 'subscription'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:owner', 'approved', 'subscription'])->group(function () {
     // Salon owner routes
     Route::prefix('owner')->group(function () {
         Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('owner.dashboard');
@@ -82,3 +95,5 @@ Route::middleware(['auth', 'subscription'])->group(function () {
         Route::resource('bookings', BookingController::class);
     });
 });
+
+require __DIR__.'/auth.php';

@@ -42,3 +42,20 @@ Shared booking/subscription services are connected to existing API, Livewire, Bl
 | Imported schema changes | None; 51 migration rows remain |
 
 Concurrency fixtures and migrations ran only in uniquely named synthetic test databases. Private logs and worker results remain under `.local/migration-baseline/`. Browser parity and deployment/security gates listed above remain outstanding.
+
+## Step four verification - 11 October 2026
+
+See [Blade authentication changes and compatibility](step-4-blade-auth.md).
+
+| Check | Result |
+|---|---|
+| Full automated suite | 110 passed, 376 assertions; isolated SQLite and fake delivery |
+| Real HTTP smoke test | 12 checks passed, including Livewire login, cookie flags, CSRF rejection, profile/dashboard access and logout |
+| Root Laravel/Filament asset build | Passed; existing empty app JS and outdated Browserslist warnings |
+| Blade compilation | Passed; compiled cache cleared afterward |
+| Changed PHP formatting | Passed Pint |
+| Imported database inspection | Unchanged: 35 tables; users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migration records 51 |
+| Import integrity | No foreign-key orphans, missing media originals/conversions, or nontransactional tables |
+| Imported schema changes | None; pending index migrations were not executed |
+
+The earlier starter-kit failures are resolved by restored Blade authentication/settings routes. The homepage test now verifies the intended React redirect during migration. The HTTP test caught and led to fixing an early proxy-configuration lookup that framework tests missed. Google credential validation is mocked in identity tests; live Google consent, SMTP delivery, production browser parity, and the broader security audit remain outstanding. Source and runtime artifacts are recorded privately under `.local/migration-baseline/`.

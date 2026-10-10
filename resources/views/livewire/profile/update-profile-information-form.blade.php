@@ -56,7 +56,8 @@ new class extends Component
             return;
         }
 
-        $user->sendEmailVerificationNotification();
+        app(\App\Services\AuthActionLimiter::class)->check('email-verification', auth()->user()->email, 3);
+        auth()->user()->sendEmailVerificationNotification();
 
         Session::flash('status', 'verification-link-sent');
     }

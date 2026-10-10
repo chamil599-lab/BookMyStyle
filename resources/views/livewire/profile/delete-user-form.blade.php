@@ -13,13 +13,14 @@ new class extends Component
      */
     public function deleteUser(Logout $logout): void
     {
+        abort_if(Auth::user()->hasRole(['admin', 'owner']), 403);
         $this->validate([
             'password' => ['required', 'string', 'current_password'],
         ]);
 
         tap(Auth::user(), $logout(...))->delete();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect('/', navigate: false);
     }
 }; ?>
 

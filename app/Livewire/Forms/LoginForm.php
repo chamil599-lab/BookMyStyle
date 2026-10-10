@@ -28,6 +28,8 @@ class LoginForm extends Form
      */
     public function authenticate(): void
     {
+        $this->email = strtolower(trim($this->email));
+        app(\App\Services\AuthActionLimiter::class)->check('login-ip', maximum: 30, errorField: 'form.email');
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {

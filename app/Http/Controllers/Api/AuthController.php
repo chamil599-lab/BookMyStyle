@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -30,37 +29,10 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'nullable|in:customer,owner',
-            'phone' => 'nullable|string|max:20',
-            'location' => 'nullable|string|max:255',
-        ]);
-
-        $role = $validated['role'] ?? 'customer';
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'phone' => $validated['phone'] ?? null,
-            'location' => $validated['location'] ?? null,
-            'is_approved' => $role === 'owner' ? false : true,
-        ]);
-
-        $user->assignRole($role);
-
-        // Create token
+        $user = app(\App\Services\AccountService::class)->register($request->all());
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Registration successful',
-            'user' => $this->userPayload($user),
-            'token' => $token,
-        ], 201);
+        return response()->json(['success' => true, 'message' => 'Registration successful', 'user' => $this->userPayload($user), 'token' => $token], 201);
     }
 
     /**
@@ -73,13 +45,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
-
-        if (! $user || ! Hash::check($validated['password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
+        $user = app(\App\Services\AccountService::class)->credentials($validated['email'], $validated['password']);
 
         if ($user->hasRole('owner') && ! $user->is_approved) {
             return response()->json([
@@ -104,90 +70,14 @@ class AuthController extends Controller
      */
     public function googleAuth(Request $request)
     {
-        $validated = $request->validate([
-            'credential' => 'required|string',
-            'role' => 'nullable|in:customer,owner',
-        ]);
-
-        $clientId = config('services.google.client_id');
-        if (! $clientId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Google sign-in is not configured on the server.',
-            ], 500);
+        $validated = $request->validate(['credential' => 'required|string|max:10000', 'role' => 'nullable|in:customer,owner']);
+        $user = app(\App\Services\AccountService::class)->google($validated['credential'], $validated['role'] ?? 'customer');
+        if ($user->hasRole('owner') && ! $user->is_approved) {
+            return response()->json(['success' => false, 'message' => 'Your salon owner account is pending admin approval.'], 403);
         }
-
-        try {
-            $client = new \Google\Client(['client_id' => $clientId]);
-            $payload = $client->verifyIdToken($validated['credential']);
-        } catch (\Throwable $e) {
-            $payload = null;
-        }
-
-        if (! $payload || empty($payload['sub']) || empty($payload['email']) || empty($payload['email_verified'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid or expired Google token.',
-            ], 401);
-        }
-
-        $requestedRole = $validated['role'] ?? 'customer';
-
-        $user = User::where('google_id', $payload['sub'])
-            ->orWhere('email', $payload['email'])
-            ->first();
-
-        $isNewUser = false;
-
-        if (! $user) {
-            $user = User::create([
-                'name' => $payload['name'] ?? $payload['email'],
-                'email' => $payload['email'],
-                'email_verified_at' => now(),
-                'google_id' => $payload['sub'],
-                'avatar' => $payload['picture'] ?? null,
-                'password' => null,
-                'is_approved' => $requestedRole === 'owner' ? false : true,
-            ]);
-            $user->assignRole($requestedRole);
-            $isNewUser = true;
-        } else {
-            $updates = [];
-            if (! $user->google_id) {
-                $updates['google_id'] = $payload['sub'];
-            }
-            if (empty($user->avatar) && ! empty($payload['picture'])) {
-                $updates['avatar'] = $payload['picture'];
-            }
-            if (! $user->email_verified_at && strcasecmp($user->email, $payload['email']) === 0) {
-                $updates['email_verified_at'] = now();
-            }
-            if (! empty($updates)) {
-                $user->update($updates);
-            }
-
-            if ($user->getRoleNames()->isEmpty()) {
-                $user->assignRole($requestedRole);
-            }
-        }
-
-        $role = $user->getRoleNames()->first();
-
-        if ($role === 'owner' && ! $user->is_approved) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Your salon owner account is pending admin approval.',
-            ], 403);
-        }
-
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        return response()->json([
-            'success' => true,
-            'message' => $isNewUser ? 'Account created with Google' : 'Login successful',
-            'user' => $this->userPayload($user),
-            'token' => $token,
-        ], $isNewUser ? 201 : 200);
+        return response()->json(['success' => true, 'message' => 'Login successful', 'user' => $this->userPayload($user), 'token' => $token], $user->wasRecentlyCreated ? 201 : 200);
     }
 
     /**
@@ -255,23 +145,10 @@ class AuthController extends Controller
      */
     public function forgotPassword(Request $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-        ]);
+        $validated = $request->validate(['email' => 'required|email|max:255']);
+        Password::sendResetLink($validated);
 
-        $status = Password::sendResetLink($validated);
-
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Password reset link sent to your email',
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Unable to send reset link',
-        ], 400);
+        return response()->json(['success' => true, 'message' => 'If an account exists for that email, a password reset link has been sent.']);
     }
 
     /**

@@ -22,6 +22,7 @@ class EnsureUserIsApproved
             }
 
             if (! $request->routeIs('filament.admin.pages.pending-approval')
+                && ! $request->routeIs('filament.admin.auth.email-verification.*')
                 && ! $request->routeIs('filament.admin.auth.logout')) {
                 return redirect()->route('filament.admin.pages.pending-approval');
             }

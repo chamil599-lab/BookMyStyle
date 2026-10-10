@@ -1,15 +1,12 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
 new #[Layout('layouts.guest')] class extends Component
 {
+    public string $role = 'customer';
     public string $name = '';
     public string $email = '';
     public string $password = '';
@@ -20,24 +17,27 @@ new #[Layout('layouts.guest')] class extends Component
      */
     public function register(): void
     {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
-
-        $validated['password'] = Hash::make($validated['password']);
-
-        event(new Registered($user = User::create($validated)));
-
+        app(\App\Services\AuthActionLimiter::class)->check('registration');
+        $user = app(\App\Services\AccountService::class)->register($this->only('name', 'email', 'password', 'password_confirmation', 'role'));
         Auth::login($user);
+        \Illuminate\Support\Facades\Session::regenerate();
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        $this->redirect(route('dashboard', absolute: false), navigate: false);
     }
 }; ?>
 
 <div>
     <form wire:submit="register">
+        <h1 class="text-xl font-semibold mb-4">Create your BookMyStyle account</h1>
+        <div class="mb-4">
+            <x-input-label for="role" value="Account type" />
+            <select wire:model="role" id="role" class="block w-full border rounded p-2">
+                <option value="customer">Customer</option>
+                <option value="owner">Salon owner</option>
+            </select>
+            <p class="text-sm mt-1">Salon owner accounts need admin approval.</p>
+            <x-input-error :messages="$errors->get('role')" />
+        </div>
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -85,4 +85,5 @@ new #[Layout('layouts.guest')] class extends Component
             </x-primary-button>
         </div>
     </form>
+    <x-google-sign-in :registration="true" />
 </div>
