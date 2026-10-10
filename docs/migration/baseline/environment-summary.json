@@ -1,5 +1,5 @@
 {
-    "captured_at": "2026-10-10T23:13:05+05:30",
+    "captured_at": "2026-10-10T23:29:03+05:30",
     "scope": "Configured local workspace connection; not a production backup",
     "php": "8.4.26",
     "laravel": "12.32.5",
@@ -12,8 +12,10 @@
     "route_count": 233,
     "scheduled_event_count": 0,
     "backup_status": "created",
-    "table_count": 0,
-    "backup_validation": "Dump exit status, size, and SHA-256 checked; isolated restore drill still required",
-    "backup_bytes": 1644,
-    "backup_sha256": "09aa8e97b186ded643c172bccf9ca44da1b1044c69da7e58e2c9d3c34fb7d246"
+    "table_count": 35,
+    "backup_validation": "SHA-256, isolated MySQL import, all table schemas, row counts and record fingerprints verified",
+    "backup_bytes": 254790,
+    "backup_sha256": "c30a0d8014db77cad1f50a7fd8d12d660603f7bbd09021f0b492cacd6e58e4d9",
+    "restore_status": "verified",
+    "restore_verified_at": "2026-10-10T23:29:16+05:30"
 }

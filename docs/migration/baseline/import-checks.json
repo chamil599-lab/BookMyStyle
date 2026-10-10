@@ -1,0 +1,17 @@
+{
+    "scope": "Local imported data; aggregate read-only checks",
+    "tables": 35,
+    "counts": {
+        "users": 10,
+        "salons": 10,
+        "services": 6,
+        "bookings": 10,
+        "user_subscriptions": 5,
+        "media": 6,
+        "migrations": 51
+    },
+    "orphaned_foreign_keys": [],
+    "missing_upload_originals": 0,
+    "missing_generated_conversions": 0,
+    "non_transactional_tables": []
+}

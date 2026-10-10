@@ -2569,7 +2569,64 @@
         "action": "App\\Http\\Controllers\\BookingController@updateStatus",
         "middleware": [
             "api",
+            "auth:sanctum",
+            "role:admin|owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salonId}/bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\BookingController@getSalonBookings",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin|owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/bookings/my-bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\BookingController@getUserBookings",
+        "middleware": [
+            "api",
             "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salon}/can-rate",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\SalonRatingController@canRate",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/salons/{salon}/ratings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\SalonRatingController@store",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "throttle:reviews"
         ]
     },
     {
@@ -2769,30 +2826,8 @@
         "action": "App\\Http\\Controllers\\Api\\PublicContentController@storeImageCycle",
         "middleware": [
             "api",
-            "auth:sanctum"
-        ]
-    },
-    {
-        "methods": [
-            "GET",
-            "HEAD"
-        ],
-        "uri": "api/salons/{salonId}/bookings",
-        "name": null,
-        "action": "App\\Http\\Controllers\\BookingController@getSalonBookings",
-        "middleware": [
-            "api"
-        ]
-    },
-    {
-        "methods": [
-            "POST"
-        ],
-        "uri": "api/bookings/my-bookings",
-        "name": null,
-        "action": "App\\Http\\Controllers\\BookingController@getUserBookings",
-        "middleware": [
-            "api"
+            "auth:sanctum",
+            "role:admin"
         ]
     },
     {
@@ -2887,7 +2922,8 @@
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\BookingApiController@store",
         "middleware": [
-            "api"
+            "api",
+            "throttle:public-writes"
         ]
     },
     {
@@ -2907,32 +2943,9 @@
             "GET",
             "HEAD"
         ],
-        "uri": "api/salons/{salon}/can-rate",
-        "name": null,
-        "action": "App\\Http\\Controllers\\Api\\SalonRatingController@canRate",
-        "middleware": [
-            "api"
-        ]
-    },
-    {
-        "methods": [
-            "GET",
-            "HEAD"
-        ],
         "uri": "api/salons/{salon}/ratings",
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\SalonRatingController@index",
-        "middleware": [
-            "api"
-        ]
-    },
-    {
-        "methods": [
-            "POST"
-        ],
-        "uri": "api/salons/{salon}/ratings",
-        "name": null,
-        "action": "App\\Http\\Controllers\\Api\\SalonRatingController@store",
         "middleware": [
             "api"
         ]
@@ -2969,7 +2982,8 @@
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\PublicContentController@recordVisit",
         "middleware": [
-            "api"
+            "api",
+            "throttle:public-writes"
         ]
     },
     {
@@ -3028,7 +3042,8 @@
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\AuthController@register",
         "middleware": [
-            "api"
+            "api",
+            "throttle:auth-public"
         ]
     },
     {
@@ -3039,7 +3054,8 @@
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\AuthController@login",
         "middleware": [
-            "api"
+            "api",
+            "throttle:auth-login"
         ]
     },
     {
@@ -3050,7 +3066,8 @@
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\AuthController@googleAuth",
         "middleware": [
-            "api"
+            "api",
+            "throttle:auth-public"
         ]
     },
     {
@@ -3061,7 +3078,8 @@
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\AuthController@forgotPassword",
         "middleware": [
-            "api"
+            "api",
+            "throttle:auth-public"
         ]
     },
     {
@@ -3072,7 +3090,8 @@
         "name": null,
         "action": "App\\Http\\Controllers\\Api\\AuthController@resetPassword",
         "middleware": [
-            "api"
+            "api",
+            "throttle:auth-public"
         ]
     },
     {

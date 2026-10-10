@@ -15,7 +15,7 @@ $stamp = (new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo')))->forma
 $private = $root.'/.local/migration-baseline/'.$stamp;
 $public = $root.'/docs/migration/baseline';
 foreach ([$private, $public] as $directory) {
-    if (!is_dir($directory) && !mkdir($directory, 0700, true)) {
+    if (! is_dir($directory) && ! mkdir($directory, 0700, true)) {
         throw new RuntimeException('Unable to create baseline directory.');
     }
 }
@@ -49,7 +49,7 @@ $privateConfig = null;
 $exitCode = 0;
 foreach (['.env', 'client/.env', 'client/.env.local', 'client/.env.production'] as $relative) {
     if (is_file($root.'/'.$relative)) {
-        if (!copy($root.'/'.$relative, $private.'/'.str_replace('/', '-', $relative))) {
+        if (! copy($root.'/'.$relative, $private.'/'.str_replace('/', '-', $relative))) {
             throw new RuntimeException('Unable to preserve local configuration.');
         }
     }
@@ -86,16 +86,18 @@ try {
         }
         $manifest['backup_validation'] = 'Integrity and row counts verified on independent backup connection';
     } elseif ($driver === 'mysql' || $driver === 'mariadb') {
-        if (!empty($connection->getConfig('url'))) {
+        if (! empty($connection->getConfig('url'))) {
             throw new RuntimeException('URL-configured database requires a separately reviewed dump configuration.');
         }
-        $quote = static fn ($value) => '"'.str_replace(["\\", '"', "\n", "\r"], ["\\\\", '\\"', '\\n', '\\r'], (string) $value).'"';
+        $quote = static fn ($value) => '"'.str_replace(['\\', '"', "\n", "\r"], ['\\\\', '\\"', '\\n', '\\r'], (string) $value).'"';
         $privateConfig = $private.'/dump-client.cnf';
         $config = "[client]\n";
         foreach (['host', 'port', 'username', 'password', 'unix_socket'] as $key) {
             $value = $connection->getConfig($key);
             if ($value !== null && $value !== '') {
-                $option = match ($key) { 'username' => 'user', 'unix_socket' => 'socket', default => $key };
+                $option = match ($key) {
+                    'username' => 'user', 'unix_socket' => 'socket', default => $key
+                };
                 $config .= $option.'='.$quote($value)."\n";
             }
         }
@@ -103,15 +105,15 @@ try {
         @chmod($privateConfig, 0600);
         $backup = $private.'/database.sql';
         $command = [$argv[1] ?? 'mysqldump', '--defaults-extra-file='.$privateConfig,
-            '--single-transaction', '--skip-lock-tables', '--no-tablespaces', '--routines', '--events', '--triggers',
+            '--single-transaction', '--skip-lock-tables', '--no-tablespaces', '--set-gtid-purged=OFF', '--routines', '--events', '--triggers',
             '--result-file='.$backup, (string) $connection->getDatabaseName()];
         $process = proc_open($command, [0 => ['pipe', 'r'], 1 => ['file', $private.'/dump.stdout', 'w'],
             2 => ['file', $private.'/dump.stderr', 'w']], $pipes, $root);
-        if (!is_resource($process)) {
+        if (! is_resource($process)) {
             throw new RuntimeException('Unable to launch database dump utility.');
         }
         fclose($pipes[0]);
-        if (proc_close($process) !== 0 || !is_file($backup) || filesize($backup) === 0) {
+        if (proc_close($process) !== 0 || ! is_file($backup) || filesize($backup) === 0) {
             throw new RuntimeException('Database dump failed; inspect private dump.stderr locally.');
         }
         $manifest['backup_validation'] = 'Dump exit status, size, and SHA-256 checked; isolated restore drill still required';
