@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../utils/api";
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const StarIcon = ({ filled }) => (
   <svg
@@ -14,7 +16,8 @@ const StarIcon = ({ filled }) => (
 const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
 
 const RatingForm = ({ salonId, onSubmitted }) => {
-  const [email, setEmail] = useState("");
+  const { user } = useAuth();
+  const email = user?.email || "";
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [review, setReview] = useState("");
@@ -25,15 +28,15 @@ const RatingForm = ({ salonId, onSubmitted }) => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
-  const checkEligibility = async (emailToCheck) => {
-    if (!emailToCheck || !emailToCheck.includes('@')) {
+  const checkEligibility = async () => {
+    if (!user) {
       setCanRate(null);
       setEligibilityMessage("");
       return;
     }
     setCheckingEligibility(true);
     try {
-      const response = await api.get(`/salons/${salonId}/can-rate?email=${emailToCheck}`);
+      const response = await api.get(`/salons/${salonId}/can-rate`);
       setCanRate(response.data.can_rate);
       setEligibilityMessage(response.data.message);
       if (!response.data.can_rate) setError(response.data.message);
@@ -45,6 +48,12 @@ const RatingForm = ({ salonId, onSubmitted }) => {
       setCheckingEligibility(false);
     }
   };
+
+  useEffect(() => {
+    setCanRate(null);
+    setError(null);
+    checkEligibility();
+  }, [salonId, user?.id, user?.email]);
 
   const submit = async (e) => {
     e?.preventDefault();
@@ -59,9 +68,9 @@ const RatingForm = ({ salonId, onSubmitted }) => {
 
     setLoading(true);
     try {
-      await api.post(`/salons/${salonId}/ratings`, { email, rating, review: review || null });
+      await api.post(`/salons/${salonId}/ratings`, { rating, review: review || null });
       setMessage("Your review has been submitted successfully!");
-      setEmail(""); setRating(0); setReview(""); setCanRate(null); setEligibilityMessage("");
+      setRating(0); setReview(""); setCanRate(false); setEligibilityMessage("You have already rated this salon.");
       if (onSubmitted) onSubmitted();
     } catch (err) {
       if (err.response?.status === 403) setError("You must complete a booking at this salon before rating.");
@@ -76,12 +85,16 @@ const RatingForm = ({ salonId, onSubmitted }) => {
   };
 
   const reset = () => {
-    setEmail(""); setRating(0); setReview("");
+    setRating(0); setReview("");
     setError(null); setMessage(null);
-    setCanRate(null); setEligibilityMessage("");
+    checkEligibility();
   };
 
   const activeRating = hoverRating || rating;
+
+  if (!user) {
+    return <p className="text-[var(--ink)]">Sign in to review a salon you have booked. <Link to="/login" className="underline">Sign in</Link></p>;
+  }
 
   return (
     <form onSubmit={submit} className="space-y-8">
@@ -129,9 +142,7 @@ const RatingForm = ({ salonId, onSubmitted }) => {
           type="email"
           placeholder="your@email.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onBlur={() => checkEligibility(email)}
-          required
+          readOnly
           className="w-full border-2 border-[var(--cream)] bg-[var(--sand)] px-5 py-4 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--terra)] transition"
         />
 

@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookingForm
 {
@@ -15,7 +16,7 @@ class BookingForm
         return $schema
             ->components([
                 Select::make('salon_id')
-                    ->relationship('salon', 'name')
+                    ->relationship('salon', 'name', modifyQueryUsing: fn (Builder $query) => $query->when(! auth()->user()->hasRole('admin'), fn (Builder $owner) => $owner->where('created_by', auth()->id())))
                     ->required(),
                 TextInput::make('name')
                     ->required(),
@@ -28,7 +29,8 @@ class BookingForm
                     ->required(),
                 Select::make('service_id')
                     ->label('Service')
-                    ->relationship('service', 'title'),
+                    ->relationship('service', 'title', modifyQueryUsing: fn (Builder $query) => $query->when(! auth()->user()->hasRole('admin'), fn (Builder $owner) => $owner->where('created_by', auth()->id())))
+                    ->required(),
                 DatePicker::make('date')
                     ->required(),
                 TimePicker::make('time')

@@ -3,9 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Salon;
-use App\Models\Service;
-use App\Models\User;
 
 class Booking extends Model
 {
@@ -41,7 +38,9 @@ class Booking extends Model
     }
 
     const STATUS_PENDING = 'pending';
+
     const STATUS_APPROVED = 'approved';
+
     const STATUS_REJECTED = 'rejected';
 
     public static function statusOptions()
@@ -76,9 +75,10 @@ class Booking extends Model
     {
         return $query->where(function ($query) use ($user) {
             $query->where('user_id', $user->id)
-                ->orWhere(function ($query) use ($user) {
-                    $query->whereNotNull('email')
-                        ->where('email', $user->email);
+                ->when($user->email_verified_at !== null, function ($query) use ($user) {
+                    $query->orWhere(function ($guest) use ($user) {
+                        $guest->whereNull('user_id')->where('email', $user->email);
+                    });
                 });
         });
     }
@@ -89,8 +89,8 @@ class Booking extends Model
     public function scopeUpcoming($query)
     {
         return $query->where('date', '>=', now()->toDateString())
-                    ->orderBy('date', 'asc')
-                    ->orderBy('time', 'asc');
+            ->orderBy('date', 'asc')
+            ->orderBy('time', 'asc');
     }
 
     /**
@@ -99,7 +99,7 @@ class Booking extends Model
     public function scopePast($query)
     {
         return $query->where('date', '<', now()->toDateString())
-                    ->orderBy('date', 'desc')
-                    ->orderBy('time', 'desc');
+            ->orderBy('date', 'desc')
+            ->orderBy('time', 'desc');
     }
 }

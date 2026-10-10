@@ -5,9 +5,9 @@ use App\Http\Controllers\Api\AdminManagementController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingApiController;
 use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OwnerDashboardController;
 use App\Http\Controllers\Api\OwnerManagementController;
-use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OwnerSubscriptionController;
 use App\Http\Controllers\Api\PublicContentController;
 use App\Http\Controllers\Api\PublicSalonController;
@@ -34,19 +34,19 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::delete('/users/{id}', [AdminManagementController::class, 'rejectUser']);
     Route::get('/subscriptions', [AdminManagementController::class, 'subscriptions']);
     Route::patch('/subscriptions/{id}/status', [AdminManagementController::class, 'updateSubscriptionStatus']);
-    Route::get('/packages',            [AdminManagementController::class, 'packages']);
-    Route::post('/packages',           [AdminManagementController::class, 'storePackage']);
-    Route::put('/packages/{id}',       [AdminManagementController::class, 'updatePackage']);
-    Route::delete('/packages/{id}',    [AdminManagementController::class, 'destroyPackage']);
+    Route::get('/packages', [AdminManagementController::class, 'packages']);
+    Route::post('/packages', [AdminManagementController::class, 'storePackage']);
+    Route::put('/packages/{id}', [AdminManagementController::class, 'updatePackage']);
+    Route::delete('/packages/{id}', [AdminManagementController::class, 'destroyPackage']);
 
-    Route::get('/categories',          [AdminManagementController::class, 'categories']);
-    Route::post('/categories',         [AdminManagementController::class, 'storeCategory']);
-    Route::put('/categories/{id}',     [AdminManagementController::class, 'updateCategory']);
-    Route::delete('/categories/{id}',  [AdminManagementController::class, 'destroyCategory']);
+    Route::get('/categories', [AdminManagementController::class, 'categories']);
+    Route::post('/categories', [AdminManagementController::class, 'storeCategory']);
+    Route::put('/categories/{id}', [AdminManagementController::class, 'updateCategory']);
+    Route::delete('/categories/{id}', [AdminManagementController::class, 'destroyCategory']);
 
-    Route::get('/departments',         [AdminManagementController::class, 'departments']);
-    Route::post('/departments',        [AdminManagementController::class, 'storeDepartment']);
-    Route::put('/departments/{id}',    [AdminManagementController::class, 'updateDepartment']);
+    Route::get('/departments', [AdminManagementController::class, 'departments']);
+    Route::post('/departments', [AdminManagementController::class, 'storeDepartment']);
+    Route::put('/departments/{id}', [AdminManagementController::class, 'updateDepartment']);
     Route::delete('/departments/{id}', [AdminManagementController::class, 'destroyDepartment']);
 });
 
@@ -67,38 +67,44 @@ Route::middleware(['auth:sanctum', 'role:owner', 'approved', 'subscription.activ
         Route::get('/profit-by-month', [OwnerDashboardController::class, 'profitByMonth']);
     });
     // Management — Salons
-    Route::get('/salons',            [OwnerManagementController::class, 'salons']);
-    Route::post('/salons',           [OwnerManagementController::class, 'storeSalon']);
-    Route::get('/salons/{id}',       [OwnerManagementController::class, 'salon']);
-    Route::put('/salons/{id}',       [OwnerManagementController::class, 'updateSalon']);
-    Route::delete('/salons/{id}',    [OwnerManagementController::class, 'destroySalon']);
+    Route::get('/salons', [OwnerManagementController::class, 'salons']);
+    Route::post('/salons', [OwnerManagementController::class, 'storeSalon']);
+    Route::get('/salons/{id}', [OwnerManagementController::class, 'salon']);
+    Route::put('/salons/{id}', [OwnerManagementController::class, 'updateSalon']);
+    Route::delete('/salons/{id}', [OwnerManagementController::class, 'destroySalon']);
     // Management — Bookings
-    Route::get('/bookings',              [OwnerManagementController::class, 'bookings']);
-    Route::post('/bookings',             [OwnerManagementController::class, 'storeBooking']);
-    Route::put('/bookings/{id}',         [OwnerManagementController::class, 'updateBooking']);
-    Route::delete('/bookings/{id}',      [OwnerManagementController::class, 'destroyBooking']);
-    Route::patch('/bookings/{id}/status',[OwnerManagementController::class, 'updateBookingStatus']);
+    Route::get('/bookings', [OwnerManagementController::class, 'bookings']);
+    Route::post('/bookings', [OwnerManagementController::class, 'storeBooking']);
+    Route::put('/bookings/{id}', [OwnerManagementController::class, 'updateBooking']);
+    Route::delete('/bookings/{id}', [OwnerManagementController::class, 'destroyBooking']);
+    Route::patch('/bookings/{id}/status', [OwnerManagementController::class, 'updateBookingStatus']);
     // Management — Services
-    Route::get('/services',          [OwnerManagementController::class, 'services']);
-    Route::post('/services',         [OwnerManagementController::class, 'storeService']);
-    Route::put('/services/{id}',     [OwnerManagementController::class, 'updateService']);
-    Route::delete('/services/{id}',  [OwnerManagementController::class, 'destroyService']);
-    Route::get('/departments',       [OwnerManagementController::class, 'departments']);
-    Route::get('/categories',        [OwnerManagementController::class, 'categories']);
-    Route::get('/limits',            [OwnerManagementController::class, 'limits']);
+    Route::get('/services', [OwnerManagementController::class, 'services']);
+    Route::post('/services', [OwnerManagementController::class, 'storeService']);
+    Route::put('/services/{id}', [OwnerManagementController::class, 'updateService']);
+    Route::delete('/services/{id}', [OwnerManagementController::class, 'destroyService']);
+    Route::get('/departments', [OwnerManagementController::class, 'departments']);
+    Route::get('/categories', [OwnerManagementController::class, 'categories']);
+    Route::get('/limits', [OwnerManagementController::class, 'limits']);
 
     // Subscription management
-    Route::get('/subscription/packages',            [OwnerSubscriptionController::class, 'packages']);
+    Route::get('/subscription/packages', [OwnerSubscriptionController::class, 'packages']);
     Route::post('/subscription/subscribe/{package}', [OwnerSubscriptionController::class, 'subscribe']);
-    Route::get('/subscription/history',              [OwnerSubscriptionController::class, 'history']);
+    Route::get('/subscription/history', [OwnerSubscriptionController::class, 'history']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::patch('/bookings/{id}/status', [BookingController::class, 'updateStatus']);
+    Route::patch('/bookings/{id}/status', [BookingController::class, 'updateStatus'])
+        ->middleware(['role:admin|owner', 'approved', 'subscription.active']);
+    Route::get('/salons/{salonId}/bookings', [BookingController::class, 'getSalonBookings'])
+        ->middleware(['role:admin|owner', 'approved', 'subscription.active']);
+    Route::post('/bookings/my-bookings', [BookingController::class, 'getUserBookings']);
+    Route::get('/salons/{salon}/can-rate', [SalonRatingController::class, 'canRate']);
+    Route::post('/salons/{salon}/ratings', [SalonRatingController::class, 'store'])->middleware('throttle:reviews');
 
-        Route::get('/notifications', [NotificationController::class, 'index']);
-        Route::get('/notifications/stream', [NotificationController::class, 'stream']);
-        Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/stream', [NotificationController::class, 'stream']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
     Route::delete('/notifications', [NotificationController::class, 'destroyAll']);
@@ -116,11 +122,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/favorites/{salonId}/check', [CustomerController::class, 'checkFavorite']);
     });
 
-    Route::post('/image-cycles', [PublicContentController::class, 'storeImageCycle']);
+    Route::post('/image-cycles', [PublicContentController::class, 'storeImageCycle'])->middleware('role:admin');
 });
-
-Route::get('/salons/{salonId}/bookings', [BookingController::class, 'getSalonBookings']);
-Route::post('/bookings/my-bookings', [BookingController::class, 'getUserBookings']);
 
 Route::get('/salons', [PublicSalonController::class, 'index']);
 Route::get('/salons/simple', [PublicSalonController::class, 'simpleList']);
@@ -130,27 +133,25 @@ Route::get('/salons/{salon}/working-hours', [PublicSalonController::class, 'work
 Route::get('/salons/{salon}/booked-times', [PublicSalonController::class, 'bookedTimes']);
 Route::get('/bookings/{salon}/{date}', [PublicSalonController::class, 'bookedTimesLegacy']);
 
-Route::post('/bookings', [BookingApiController::class, 'store']);
+Route::post('/bookings', [BookingApiController::class, 'store'])->middleware('throttle:public-writes');
 Route::get('/bookings/count', [BookingApiController::class, 'count']);
 
-Route::get('/salons/{salon}/can-rate', [SalonRatingController::class, 'canRate']);
 Route::get('/salons/{salon}/ratings', [SalonRatingController::class, 'index']);
-Route::post('/salons/{salon}/ratings', [SalonRatingController::class, 'store']);
 
 Route::get('/departments', [PublicContentController::class, 'departments']);
 Route::get('/stats', [PublicContentController::class, 'stats']);
-Route::post('/site-visits', [PublicContentController::class, 'recordVisit']);
+Route::post('/site-visits', [PublicContentController::class, 'recordVisit'])->middleware('throttle:public-writes');
 Route::get('/service-pages', [PublicContentController::class, 'servicePages']);
 Route::get('/dealspages', [PublicContentController::class, 'dealsPages']);
 Route::get('/image-cycles', [PublicContentController::class, 'imageCycles']);
 Route::get('/team-members', [PublicContentController::class, 'teamMembers']);
 
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/google', [AuthController::class, 'googleAuth']);
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth-public');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth-login');
+    Route::post('/google', [AuthController::class, 'googleAuth'])->middleware('throttle:auth-public');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:auth-public');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:auth-public');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);

@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasFactory, Notifiable, HasRoles, HasApiTokens;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
         'name',
@@ -34,6 +34,15 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
+
+    protected static function booted(): void
+    {
+        static::updating(function (User $user): void {
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+        });
+    }
 
     protected function casts(): array
     {
@@ -101,9 +110,9 @@ class User extends Authenticatable implements FilamentUser
     public function activeSubscription()
     {
         return $this->hasOne(UserSubscription::class)
-                    ->where('status', 'active')
-                    ->where('ends_at', '>', now())
-                    ->latest();
+            ->where('status', 'active')
+            ->where('ends_at', '>', now())
+            ->latest();
     }
 
     public function hasActiveSubscription(): bool
@@ -117,7 +126,7 @@ class User extends Authenticatable implements FilamentUser
             ->where(function ($query) {
                 $query->where(function ($q) {
                     $q->where('status', 'active')
-                      ->where('ends_at', '>', now());
+                        ->where('ends_at', '>', now());
                 })->orWhere('status', 'pending');
             })
             ->exists();
@@ -125,34 +134,45 @@ class User extends Authenticatable implements FilamentUser
 
     public function canCreateMoreSalons(): bool
     {
-        if (!$this->hasActiveSubscription()) return false;
-        
+        if (! $this->hasActiveSubscription()) {
+            return false;
+        }
+
         $package = $this->activeSubscription->package;
+
         return $this->salons()->count() < $package->max_salons;
     }
 
     public function canAddMoreStaff($salon): bool
     {
-        if (!$this->hasActiveSubscription()) return false;
-        
+        if (! $this->hasActiveSubscription()) {
+            return false;
+        }
+
         $package = $this->activeSubscription->package;
+
         return $salon->staff()->count() < $package->max_staff;
     }
 
     public function canAddMoreServices($salon): bool
     {
-        if (!$this->hasActiveSubscription()) return false;
-        
+        if (! $this->hasActiveSubscription()) {
+            return false;
+        }
+
         $package = $this->activeSubscription->package;
+
         return $salon->services()->count() < $package->max_services;
     }
 
     public function canCreateMoreBookings(): bool
     {
-        if (!$this->hasActiveSubscription()) return false;
+        if (! $this->hasActiveSubscription()) {
+            return false;
+        }
 
         $package = $this->activeSubscription->package;
-        if (!$package->max_bookings_per_month) {
+        if (! $package->max_bookings_per_month) {
             return true; // No limit
         }
 
@@ -162,8 +182,8 @@ class User extends Authenticatable implements FilamentUser
             'salon_id',
             $this->salons()->pluck('id')
         )
-        ->where('created_at', '>=', $currentMonth)
-        ->count();
+            ->where('created_at', '>=', $currentMonth)
+            ->count();
 
         return $currentMonthBookings < $package->max_bookings_per_month;
     }
@@ -171,11 +191,12 @@ class User extends Authenticatable implements FilamentUser
     public function getMonthlyBookingsCount(): int
     {
         $currentMonth = now()->startOfMonth();
+
         return \App\Models\Booking::whereIn(
             'salon_id',
             $this->salons()->pluck('id')
         )
-        ->where('created_at', '>=', $currentMonth)
-        ->count();
+            ->where('created_at', '>=', $currentMonth)
+            ->count();
     }
 }

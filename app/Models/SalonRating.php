@@ -16,6 +16,8 @@ class SalonRating extends Model
         'review',
     ];
 
+    protected $hidden = ['email'];
+
     public function salon()
     {
         return $this->belongsTo(Salon::class);

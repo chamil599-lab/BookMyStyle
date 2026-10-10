@@ -16,7 +16,6 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
@@ -41,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('20rem')
             ->brandLogo(null)
-            ->brandName(fn (): string => auth()->check() ? auth()->user()->name . '\'s Dashboard' : 'Dashboard')
+            ->brandName(fn (): string => auth()->check() ? auth()->user()->name.'\'s Dashboard' : 'Dashboard')
             ->favicon(asset('logo2.png'))
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
@@ -190,10 +189,5 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
                 // ✅ Removed 'approved' - EnsureUserIsApproved handles this in regular middleware
             ]);
-    }
-
-    public function boot()
-    {
-        Model::unguard();
     }
 }

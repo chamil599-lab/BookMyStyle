@@ -10,7 +10,6 @@ use App\Filament\Admin\Resources\Bookings\Schemas\BookingForm;
 use App\Filament\Admin\Resources\Bookings\Schemas\BookingInfolist;
 use App\Filament\Admin\Resources\Bookings\Tables\BookingsTable;
 use App\Models\Booking;
-use App\RolesEnum;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
@@ -18,13 +17,14 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class BookingResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Booking Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Booking Management';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
@@ -34,7 +34,8 @@ class BookingResource extends Resource
     {
         /** @var \App\Models\User|null $user */
         $user = Filament::auth()->user();
-        return $user?->hasRole([RolesEnum::ADMIN->value, RolesEnum::OWNER->value]) ?? false;
+
+        return $user !== null && Gate::forUser($user)->allows('viewAny', Booking::class);
     }
 
     public static function getNavigationBadge(): ?string
@@ -47,22 +48,22 @@ class BookingResource extends Resource
         return 'gray';
     }
 
-     // Filter which bookings are visible
+    // Filter which bookings are visible
     public static function getEloquentQuery(): Builder
-{
-    $query = parent::getEloquentQuery();
+    {
+        $query = parent::getEloquentQuery();
 
-    // Admin sees all bookings
-    if (auth()->user()->hasRole('admin')) {
-        return $query;
+        // Admin sees all bookings
+        if (auth()->user()->hasRole('admin')) {
+            return $query;
+        }
+
+        // Owner sees only bookings for salons they created
+        return $query->whereIn(
+            'salon_id',
+            \App\Models\Salon::where('created_by', auth()->id())->pluck('id')
+        );
     }
-
-    // Owner sees only bookings for salons they created
-    return $query->whereIn(
-        'salon_id',
-        \App\Models\Salon::where('created_by', auth()->id())->pluck('id')
-    );
-}
 
     public static function form(Schema $schema): Schema
     {

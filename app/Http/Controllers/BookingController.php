@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
 use App\Mail\BookingStatusChanged;
+use App\Models\Booking;
+use App\Models\Salon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
@@ -20,11 +22,13 @@ class BookingController extends Controller
 
         $booking = Booking::find($id);
 
-        if (!$booking) {
+        if (! $booking) {
             return response()->json(['error' => 'Booking not found'], 404);
         }
 
-        // Update status
+        Gate::authorize('updateStatus', $booking);
+
+        // BookingObserver sends the status email once when this save changes status.
         $booking->status = $validated['status'];
         $booking->save();
 
@@ -35,26 +39,13 @@ class BookingController extends Controller
                 $booking->user->notify(new \App\Notifications\BookingStatusChangedNotification($booking));
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Failed to send BookingStatusChangedNotification: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning('Failed to send BookingStatusChangedNotification: '.$e->getMessage());
         }
 
-        // Send email notification
-        try {
-            Mail::to($booking->email)->send(new BookingStatusChanged($booking));
-            
-            return response()->json([
-                'message' => "Booking {$validated['status']} and email sent successfully",
-                'booking' => $booking
-            ], 200);
-            
-        } catch (\Exception $e) {
-            // Status updated but email failed
-            return response()->json([
-                'message' => "Booking {$validated['status']} but email failed to send",
-                'booking' => $booking,
-                'error' => $e->getMessage()
-            ], 200); // Still 200 because booking was updated
-        }
+        return response()->json([
+            'message' => "Booking {$validated['status']} successfully",
+            'booking' => $booking,
+        ]);
     }
 
     /**
@@ -64,9 +55,11 @@ class BookingController extends Controller
     {
         try {
             Mail::to($booking->email)->send(new BookingStatusChanged($booking));
+
             return true;
         } catch (\Exception $e) {
-            \Log::error('Booking confirmation email failed: ' . $e->getMessage());
+            \Log::error('Booking confirmation email failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -76,6 +69,7 @@ class BookingController extends Controller
      */
     public function getSalonBookings($salonId)
     {
+        Gate::authorize('view-salon-bookings', Salon::findOrFail($salonId));
         $bookings = Booking::where('salon_id', $salonId)
             ->orderBy('date', 'desc')
             ->orderBy('time', 'desc')
@@ -85,15 +79,11 @@ class BookingController extends Controller
     }
 
     /**
-     * Get user's bookings by email
+     * Get only bookings belonging to the authenticated account.
      */
     public function getUserBookings(Request $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-        ]);
-
-        $bookings = Booking::where('email', $validated['email'])
+        $bookings = Booking::forCustomer($request->user())
             ->with('salon:id,name,location') // Include salon details
             ->orderBy('date', 'desc')
             ->orderBy('time', 'desc')

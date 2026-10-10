@@ -13,13 +13,13 @@ use Filament\Actions\ViewAction as ActionsViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\HasBulkActions;
-use Filament\Tables\Table;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class BookingsTable
 {
@@ -61,20 +61,20 @@ class BookingsTable
                     ->label('Send WhatsApp')
                     ->html()
                     ->formatStateUsing(function ($record) {
-                        if (!$record->phone) {
+                        if (! $record->phone) {
                             return '<span class="text-gray-400">No Phone</span>';
                         }
 
                         $phone = preg_replace('/[^0-9]/', '', $record->phone);
 
-                        $message = match($record->status) {
+                        $message = match ($record->status) {
                             'approved' => view('whatsapp.booking-approved', ['booking' => $record])->render(),
                             'rejected' => view('whatsapp.booking-rejected', ['booking' => $record])->render(),
                             default => view('whatsapp.booking-pending', ['booking' => $record])->render(),
                         };
 
                         $message = trim(preg_replace('/\n\s+/', "\n", $message));
-                        $url = "https://wa.me/{$phone}?text=" . urlencode($message);
+                        $url = "https://wa.me/{$phone}?text=".urlencode($message);
 
                         return '<a href="'.$url.'" target="_blank"
                                     class="inline-block px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700">
@@ -83,83 +83,83 @@ class BookingsTable
                                     </svg>
                                     WhatsApp
                                 </a>';
-                    })
+                    }),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-    // Column 1: Status + Salon (stacked)
-    SelectFilter::make('status')
-        ->options([
-            'pending' => 'Pending',
-            'approved' => 'Approved',
-            'rejected' => 'Rejected',
-        ])
-        ->placeholder('All Statuses')
-        ->columnSpan(1),
-    
-    SelectFilter::make('salon_id')
-        ->label('Salon')
-        ->relationship('salon', 'name', fn(Builder $query) => $query->where('created_by', Auth::id()))
-        ->searchable()
-        ->preload()
-        ->columnSpan(1),
-    
-    // Column 2: Date Range
-    Filter::make('date_range')
-        ->form([
-            \Filament\Forms\Components\DatePicker::make('date_from')
-                ->label('From Date'),
-            \Filament\Forms\Components\DatePicker::make('date_until')
-                ->label('To Date'),
-        ])
-        ->columns(1)
-        ->query(function (Builder $query, array $data): Builder {
-            return $query
-                ->when(
-                    $data['date_from'],
-                    fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
-                )
-                ->when(
-                    $data['date_until'],
-                    fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
-                );
-        })
-        ->indicateUsing(function (array $data): array {
-            $indicators = [];
-    
-            if ($data['date_from'] ?? null) {
-                $indicators[] = 'From ' . \Carbon\Carbon::parse($data['date_from'])->toFormattedDateString();
-            }
-    
-            if ($data['date_until'] ?? null) {
-                $indicators[] = 'Until ' . \Carbon\Carbon::parse($data['date_until'])->toFormattedDateString();
-            }
-    
-            return $indicators;
-        })
-        ->columnSpan(1),
-    
-    // Column 3: Toggle Buttons
-    Filter::make('today')
-        ->label("Today's Bookings")
-        ->query(fn (Builder $query): Builder => $query->whereDate('date', today()))
-        ->toggle()
-        ->columnSpan(1),
-        
-    Filter::make('upcoming')
-        ->label('Upcoming Bookings')
-        ->query(fn (Builder $query): Builder => $query->whereDate('date', '>=', today()))
-        ->toggle()
-        ->columnSpan(1),
-])
-->filtersLayout(FiltersLayout::AboveContent)
-->filtersFormColumns(3) // ✅ 3 columns layout
+                // Column 1: Status + Salon (stacked)
+                SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'approved' => 'Approved',
+                        'rejected' => 'Rejected',
+                    ])
+                    ->placeholder('All Statuses')
+                    ->columnSpan(1),
+
+                SelectFilter::make('salon_id')
+                    ->label('Salon')
+                    ->relationship('salon', 'name', fn (Builder $query) => $query->where('created_by', Auth::id()))
+                    ->searchable()
+                    ->preload()
+                    ->columnSpan(1),
+
+                // Column 2: Date Range
+                Filter::make('date_range')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date_from')
+                            ->label('From Date'),
+                        \Filament\Forms\Components\DatePicker::make('date_until')
+                            ->label('To Date'),
+                    ])
+                    ->columns(1)
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['date_from'] ?? null) {
+                            $indicators[] = 'From '.\Carbon\Carbon::parse($data['date_from'])->toFormattedDateString();
+                        }
+
+                        if ($data['date_until'] ?? null) {
+                            $indicators[] = 'Until '.\Carbon\Carbon::parse($data['date_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
+                    })
+                    ->columnSpan(1),
+
+                // Column 3: Toggle Buttons
+                Filter::make('today')
+                    ->label("Today's Bookings")
+                    ->query(fn (Builder $query): Builder => $query->whereDate('date', today()))
+                    ->toggle()
+                    ->columnSpan(1),
+
+                Filter::make('upcoming')
+                    ->label('Upcoming Bookings')
+                    ->query(fn (Builder $query): Builder => $query->whereDate('date', '>=', today()))
+                    ->toggle()
+                    ->columnSpan(1),
+            ])
+            ->filtersLayout(FiltersLayout::AboveContent)
+            ->filtersFormColumns(3) // ✅ 3 columns layout
             ->filtersLayout(FiltersLayout::AboveContent) // ✅ Filters above content
             ->recordActions([
                 ActionsActionGroup::make([
                     ActionsViewAction::make(),
                     ActionsEditAction::make(),
-                    
+
                     ActionsAction::make('approve')
                         ->label('Approve')
                         ->color('success')
@@ -167,6 +167,7 @@ class BookingsTable
                         ->visible(fn ($record) => $record->status !== 'approved')
                         ->requiresConfirmation()
                         ->action(function ($record) {
+                            Gate::authorize('updateStatus', $record);
                             $record->update(['status' => 'approved']);
 
                             Notification::make()
@@ -175,7 +176,7 @@ class BookingsTable
                                 ->success()
                                 ->send();
                         }),
-                        
+
                     ActionsAction::make('reject')
                         ->label('Reject')
                         ->color('danger')
@@ -183,6 +184,7 @@ class BookingsTable
                         ->visible(fn ($record) => $record->status !== 'rejected')
                         ->requiresConfirmation()
                         ->action(function ($record) {
+                            Gate::authorize('updateStatus', $record);
                             $record->update(['status' => 'rejected']);
 
                             Notification::make()
@@ -191,12 +193,13 @@ class BookingsTable
                                 ->danger()
                                 ->send();
                         }),
-                        
+
                     ActionsDeleteAction::make()
                         ->requiresConfirmation()
                         ->action(function ($record) {
+                            Gate::authorize('delete', $record);
                             $record->delete();
-                            
+
                             Notification::make()
                                 ->title('Booking Deleted')
                                 ->body("Booking for {$record->name} has been deleted.")
@@ -204,11 +207,11 @@ class BookingsTable
                                 ->send();
                         }),
                 ])
-                ->icon('heroicon-m-ellipsis-vertical')
-                ->button()
-                ->color('gray')
-                ->tooltip('Actions')
-                ->label('Actions'),
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->button()
+                    ->color('gray')
+                    ->tooltip('Actions')
+                    ->label('Actions'),
             ])
             ->bulkActions([
                 ActionsBulkActionGroup::make([
@@ -218,31 +221,34 @@ class BookingsTable
                         ->color('success')
                         ->requiresConfirmation()
                         ->action(function ($records) {
+                            $records->each(fn ($record) => Gate::authorize('updateStatus', $record));
                             $records->each->update(['status' => 'approved']);
-                            
+
                             $count = $records->count();
                             Notification::make()
                                 ->title("{$count} bookings approved")
                                 ->success()
                                 ->send();
                         }),
-                        
+
                     ActionsBulkAction::make('bulk_reject')
                         ->label('Reject Selected')
                         ->icon('heroicon-o-x-mark')
                         ->color('danger')
                         ->requiresConfirmation()
                         ->action(function ($records) {
+                            $records->each(fn ($record) => Gate::authorize('updateStatus', $record));
                             $records->each->update(['status' => 'rejected']);
-                            
+
                             $count = $records->count();
                             Notification::make()
                                 ->title("{$count} bookings rejected")
                                 ->danger()
                                 ->send();
                         }),
-                        
+
                     ActionsDeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete')
                         ->requiresConfirmation(),
                 ]),
             ]);

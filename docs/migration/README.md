@@ -15,6 +15,7 @@ Read these documents before changing behavior:
 - [Integrations and migration risks](integrations-and-risks.md)
 - [Backup and rollback runbook](rollback.md)
 - [Verification results and outstanding gates](verification.md)
+- [Step two security changes](step-2-security.md)
 
 Machine-readable evidence is in `baseline/`: the booted Laravel route collection, scheduler events, and a sanitized environment summary. The database schema is emitted only when the configured database is reachable. Database records, credentials, build/test logs, uploads, and backup archives belong exclusively under ignored `.local/migration-baseline/`.
 
@@ -29,4 +30,4 @@ Machine-readable evidence is in `baseline/`: the booted Laravel route collection
 
 The configured local MySQL server initially reported SQLSTATE HY000 / 1049 (unknown database). At the user's request, the empty database `book-my-style` was created for their import. No migrations or seeds were run into it. The workspace SQLite file is a separate legacy artifact, not a substitute for the configured MySQL data. Do not begin schema changes or production cutover until the real data has been imported, backed up, and restore-tested.
 
-Step one deliberately makes no application behavior, authentication, schema, or routing changes. The next stage is security repair after the database gate is resolved.
+Step one's tagged checkpoint deliberately makes no application behavior, authentication, schema, or routing changes. Step two proceeds with source-level security fixes and isolated tests while the user prepares the database import. Populated-data backup and restore verification remain mandatory before schema changes and cutover.

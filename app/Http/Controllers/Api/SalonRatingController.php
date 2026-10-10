@@ -8,18 +8,17 @@ use App\Http\Requests\Api\StoreSalonRatingRequest;
 use App\Models\Booking;
 use App\Models\Salon;
 use App\Models\SalonRating;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 
 class SalonRatingController extends Controller
 {
     public function canRate(CanRateRequest $request, Salon $salon): JsonResponse
     {
-        $validated = $request->validated();
-
-        $email = $validated['email'];
+        $email = $request->user()->email;
 
         $hasApprovedBooking = Booking::where('salon_id', $salon->id)
-            ->where('email', $email)
+            ->forCustomer($request->user())
             ->where('status', Booking::STATUS_APPROVED)
             ->exists();
 
@@ -56,9 +55,10 @@ class SalonRatingController extends Controller
     public function store(StoreSalonRatingRequest $request, Salon $salon): JsonResponse
     {
         $validated = $request->validated();
+        $email = $request->user()->email;
 
         $hasApprovedBooking = Booking::where('salon_id', $salon->id)
-            ->where('email', $validated['email'])
+            ->forCustomer($request->user())
             ->where('status', Booking::STATUS_APPROVED)
             ->exists();
 
@@ -70,7 +70,7 @@ class SalonRatingController extends Controller
         }
 
         $existingRating = SalonRating::where('salon_id', $salon->id)
-            ->where('email', $validated['email'])
+            ->where('email', $email)
             ->first();
 
         if ($existingRating) {
@@ -80,12 +80,16 @@ class SalonRatingController extends Controller
             ], 409);
         }
 
-        $rating = SalonRating::create([
-            'salon_id' => $salon->id,
-            'email' => $validated['email'],
-            'rating' => $validated['rating'],
-            'review' => $validated['review'] ?? null,
-        ]);
+        try {
+            $rating = SalonRating::create([
+                'salon_id' => $salon->id,
+                'email' => $email,
+                'rating' => $validated['rating'],
+                'review' => $validated['review'] ?? null,
+            ]);
+        } catch (UniqueConstraintViolationException $exception) {
+            return response()->json(['error' => 'You have already rated this salon.'], 409);
+        }
 
         return response()->json([
             'message' => 'Rating submitted successfully',
