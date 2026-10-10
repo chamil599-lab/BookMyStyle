@@ -35,7 +35,11 @@
         </div>
 
         {{-- Booking Calendar --}}
-        @livewire(\App\Filament\Admin\Widgets\BookingCalendarWidget::class)
+        @if(\App\Filament\Admin\Widgets\BookingCalendarWidget::canView())
+            @livewire(\App\Filament\Admin\Widgets\BookingCalendarWidget::class)
+        @else
+            <p>Your plan does not include the booking calendar. <a class="underline" href="{{ route('subscription.required') }}">View subscription options</a></p>
+        @endif
 
     </div>
 </x-filament-panels::page>

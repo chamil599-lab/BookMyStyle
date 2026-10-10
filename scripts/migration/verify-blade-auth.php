@@ -55,8 +55,13 @@ $password = bin2hex(random_bytes(16));
 $user = User::factory()->create(['email' => 'smoke@example.test', 'password' => $password, 'is_approved' => true]);
 $user->assignRole('customer');
 Role::findOrCreate('owner', 'web');
-$owner = User::factory()->create(['is_approved' => true]);
+$ownerPassword = bin2hex(random_bytes(16));
+$owner = User::factory()->create(['email' => 'owner-smoke@example.test', 'password' => $ownerPassword, 'is_approved' => true]);
 $owner->assignRole('owner');
+Role::findOrCreate('admin', 'web');
+$adminPassword = bin2hex(random_bytes(16));
+$admin = User::factory()->create(['email' => 'admin-smoke@example.test', 'password' => $adminPassword]);
+$admin->assignRole('admin');
 $salon = \App\Models\Salon::create(['name' => 'Amber Studio', 'owner_name' => 'Fixture Owner', 'location' => 'Kandy',
     'description' => 'Your new style starts here.', 'created_by' => $owner->id, 'updated_by' => $owner->id,
     'show_price' => true, 'number_of_staff' => 1, 'open_time' => '09:00', 'close_time' => '17:00']);
@@ -80,7 +85,8 @@ $user->notifications()->create(['id' => (string) \Illuminate\Support\Str::uuid()
     'data' => ['title' => 'Booking approved', 'message' => 'Your appointment at Amber Studio was approved.']]);
 $fixtureFile = $directory.'/customer-fixture.json';
 file_put_contents($fixtureFile, json_encode(['email' => $user->email, 'password' => $password,
-    'bookingId' => $customerBooking->id], JSON_THROW_ON_ERROR));
+    'bookingId' => $customerBooking->id, 'owner' => ['email' => $owner->email, 'password' => $ownerPassword],
+    'admin' => ['email' => $admin->email, 'password' => $adminPassword]], JSON_THROW_ON_ERROR));
 $log = $directory.'/server.log';
 $environment = array_merge(getenv(), ['BMS_AUTH_SMOKE_DIRECTORY' => $directory, 'BMS_AUTH_SMOKE_PORT' => (string) $port]);
 $process = proc_open([PHP_BINARY, '-S', '127.0.0.1:'.$port, '-t', $root.'/public', __FILE__],
@@ -150,6 +156,37 @@ try {
     $expect($response->getStatusCode() === 302, 'csrf_logout');
     $response = $client->get('/dashboard');
     $expect($response->getStatusCode() === 302 && str_ends_with($response->getHeaderLine('Location'), '/login'), 'logout_blocks_dashboard');
+    $fixtureLogin = function (User $account, string $credential) use ($client, $expect) {
+        $html = (string) $client->get('/login')->getBody();
+        preg_match('/name="csrf-token" content="([^"]+)"/', $html, $csrf);
+        preg_match('/wire:snapshot="([^"]+)"/', $html, $snapshot);
+        $response = $client->post('/livewire/update', ['json' => ['_token' => $csrf[1], 'components' => [[
+            'snapshot' => html_entity_decode($snapshot[1], ENT_QUOTES), 'updates' => ['form.email' => $account->email, 'form.password' => $credential],
+            'calls' => [['path' => '', 'method' => 'login', 'params' => []]],
+        ]]], 'headers' => ['X-Livewire' => 'true', 'Accept' => 'application/json']]);
+        $expect($response->getStatusCode() === 200, 'management_session_login:'.$account->getRoleNames()->first());
+    };
+    foreach ([[$owner, $ownerPassword, 'owner'], [$admin, $adminPassword, 'admin']] as [$account, $credential, $role]) {
+        $fixtureLogin($account, $credential);
+        foreach (['salons', 'services', 'bookings', 'user-subscriptions'] as $resource) {
+            $response = $client->get('/filament/'.$resource);
+            $expect($response->getStatusCode() === 200, 'filament:'.$role.':'.$resource);
+            $expect(str_contains($response->getHeaderLine('Cache-Control'), 'no-store'), 'filament_private:'.$role.':'.$resource);
+            file_put_contents($directory.'/filament-'.$role.'-'.$resource.'.html', (string) $response->getBody());
+        }
+        foreach (['salons', 'services'] as $resource) {
+            $expect($client->get('/filament/'.$resource.'/create')->getStatusCode() === 200, 'filament_create:'.$role.':'.$resource);
+        }
+        if ($role === 'owner') {
+            $expect($client->get('/filament/users/create')->getStatusCode() === 403, 'owner_cannot_create_users');
+        } else {
+            $expect($client->get('/filament/users')->getStatusCode() === 200, 'admin_users');
+        }
+        $expect($client->get('/'.$role)->getStatusCode() === 302, 'legacy_redirect:'.$role);
+        $html = (string) $client->get('/profile')->getBody();
+        preg_match('/name="csrf-token" content="([^"]+)"/', $html, $csrf);
+        $client->post('/logout', ['form_params' => ['_token' => $csrf[1]]]);
+    }
     foreach (['/register', '/forgot-password', '/reset-password/synthetic-token'] as $path) {
         $expect($client->get($path)->getStatusCode() === 200, $path);
     }

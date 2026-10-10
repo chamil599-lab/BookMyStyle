@@ -5,15 +5,34 @@ namespace App\Filament\Admin\Widgets;
 use App\Models\Booking;
 use App\Models\Salon;
 use Carbon\Carbon;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Schema;
 use Guava\Calendar\Filament\CalendarWidget;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Illuminate\Support\Collection;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 
 class BookingCalendarWidget extends CalendarWidget
 {
+    public static function canView(): bool
+    {
+        $user = \Filament\Facades\Filament::auth()->user();
+
+        return \App\Support\ManagementAccess::admin($user)
+            || (\App\Support\ManagementAccess::owner($user, true) && $user->activeSubscription?->package?->calendar);
+    }
+
+    protected function getEloquentQuery(string $model): \Illuminate\Database\Eloquent\Builder
+    {
+        abort_unless(static::canView() && $model === Booking::class, 403);
+        $query = Booking::query();
+        if (! auth()->user()->hasRole('admin')) {
+            $query->whereIn('salon_id', Salon::where('created_by', auth()->id())->select('id'));
+        }
+
+        return $query;
+    }
+
     protected string $calendarView = 'dayGridMonth';
 
     protected bool $eventClickEnabled = true;
@@ -37,7 +56,9 @@ class BookingCalendarWidget extends CalendarWidget
     {
         $user = auth()->user();
 
-        $query = Booking::query()->with(['salon', 'service']);
+        $query = $this->getEloquentQuery(Booking::class)->with(['salon', 'service' => fn ($query) => $query->withTrashed()]);
+        abort_unless($info->end->greaterThan($info->start) && $info->start->diffInDays($info->end) <= 93, 422);
+        $query->whereDate('date', '>=', $info->start->toDateString())->whereDate('date', '<', $info->end->toDateString());
 
         // Non-admin users only see their salons
         if (! $user->hasRole('admin')) {
@@ -67,10 +88,10 @@ class BookingCalendarWidget extends CalendarWidget
                 (int) $second
             );
 
-            $end = $start->copy()->addHour();
+            $end = $start->copy()->addMinutes(max(30, (int) ceil(((int) ($booking->service?->duration ?? 30)) / 30) * 30));
 
             return CalendarEvent::make($booking)
-                ->title($booking->name . ' - ' . ($booking->service?->title ?? 'N/A'))
+                ->title($booking->name.' - '.($booking->service?->title ?? 'N/A'))
                 ->start($start)
                 ->end($end)
                 ->backgroundColor($this->getStatusColor($booking->status));
@@ -84,18 +105,20 @@ class BookingCalendarWidget extends CalendarWidget
     {
         return match ($status) {
             'approved' => '#22c55e',
-            'pending'  => '#f59e0b',
+            'pending' => '#f59e0b',
             'rejected' => '#ef4444',
-            default    => '#6b7280',
+            default => '#6b7280',
         };
     }
 
     /**
      * Popup details
      */
-    public function getEventInfolist(): ?Infolist
+    public function getInfolistSchemaForModel(Schema $schema, ?string $model = null): Schema
     {
-        return Infolist::make()->schema([
+        abort_unless(static::canView() && $model === Booking::class, 403);
+
+        return $schema->components([
             TextEntry::make('name')->label('Customer Name'),
             TextEntry::make('email')->label('Email'),
             TextEntry::make('phone')->label('Phone'),
@@ -108,9 +131,9 @@ class BookingCalendarWidget extends CalendarWidget
                 ->badge()
                 ->color(fn (string $state): string => match ($state) {
                     'approved' => 'success',
-                    'pending'  => 'warning',
+                    'pending' => 'warning',
                     'rejected' => 'danger',
-                    default    => 'gray',
+                    default => 'gray',
                 }),
         ]);
     }

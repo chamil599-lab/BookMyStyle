@@ -2,13 +2,11 @@
 
 namespace App\Filament\Admin\Resources\Salons\Schemas;
 
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -46,6 +44,13 @@ class SalonForm
                                             ->label('Owner Name')
                                             ->required()
                                             ->maxLength(255),
+
+                                        \Filament\Forms\Components\Select::make('owner_id')
+                                            ->label('Owner account')
+                                            ->options(fn () => \App\Models\User::role('owner')->where('is_approved', true)->pluck('name', 'id'))
+                                            ->visible(fn ($operation) => $operation === 'create' && \App\Support\ManagementAccess::admin(auth()->user()))
+                                            ->required(fn ($operation) => $operation === 'create' && \App\Support\ManagementAccess::admin(auth()->user()))
+                                            ->searchable(),
 
                                         TextInput::make('location')
                                             ->label('Location')
@@ -108,7 +113,6 @@ class SalonForm
                                             ->deletable(true)
                                             ->downloadable(true)
                                             ->openable(true)
-                                            ->preserveFilenames()
                                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
                                             ->maxSize(1024)
                                             ->helperText('Recommended size: 1920x1080px. Max: 1MB. Formats: JPG, PNG, WebP')
@@ -119,6 +123,7 @@ class SalonForm
                                                 if (! $record) {
                                                     return;
                                                 }
+                                                \Illuminate\Support\Facades\Gate::authorize('update', $record->fresh());
                                                 $record->getMedia($component->getCollection())
                                                     ->first(fn ($media) => $media->uuid === $file)
                                                     ?->delete();
@@ -136,7 +141,6 @@ class SalonForm
                                             ->deletable(true)
                                             ->downloadable(true)
                                             ->openable(true)
-                                            ->preserveFilenames()
                                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
                                             ->maxSize(1024)
                                             ->helperText('Maximum 10 images. Max file size: 1MB each. Drag to reorder.')
@@ -147,6 +151,7 @@ class SalonForm
                                                 if (! $record) {
                                                     return;
                                                 }
+                                                \Illuminate\Support\Facades\Gate::authorize('update', $record->fresh());
                                                 $record->getMedia($component->getCollection())
                                                     ->first(fn ($media) => $media->uuid === $file)
                                                     ?->delete();
@@ -179,11 +184,6 @@ class SalonForm
                     ])
                     ->columnSpan(1),
 
-                Hidden::make('created_by')
-                    ->default(fn() => Filament::auth()->id()),
-
-                Hidden::make('updated_by')
-                    ->default(fn() => Filament::auth()->id()),
             ]);
     }
 }

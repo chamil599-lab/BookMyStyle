@@ -27,6 +27,16 @@ class AppServiceProvider extends ServiceProvider
 
         Booking::observe(BookingObserver::class);
         Gate::policy(Booking::class, BookingPolicy::class);
+        foreach ([\App\Models\Salon::class, \App\Models\Service::class] as $model) {
+            Gate::policy($model, \App\Policies\OwnedCataloguePolicy::class);
+        }
+        Gate::policy(\App\Models\UserSubscription::class, \App\Policies\UserSubscriptionPolicy::class);
+        Gate::policy(\App\Models\User::class, \App\Policies\UserManagementPolicy::class);
+        foreach ([\App\Models\SubscriptionPackage::class, \App\Models\Category::class,
+            \App\Models\Department::class, \App\Models\FeaturedSalon::class, \App\Models\ImageCycle::class,
+            \App\Models\ServicePage::class, \App\Models\DealsPage::class, \App\Models\TeamMember::class] as $model) {
+            Gate::policy($model, \App\Policies\AdminOnlyPolicy::class);
+        }
         Gate::define('view-salon-bookings', [BookingPolicy::class, 'viewSalonBookings']);
         \Livewire\Livewire::addPersistentMiddleware([
             \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,

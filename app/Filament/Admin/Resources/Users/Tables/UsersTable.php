@@ -13,11 +13,11 @@ use Filament\Actions\DeleteBulkAction as ActionsDeleteBulkAction;
 use Filament\Actions\EditAction as ActionsEditAction;
 use Filament\Actions\ViewAction as ActionsViewAction;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
 
 class UsersTable
@@ -60,12 +60,12 @@ class UsersTable
             ->recordActions([
                 ActionsViewAction::make(),
                 ActionsEditAction::make()
-                    ->visible(fn ($record) => !$record->hasRole(RolesEnum::ADMIN->value)),
+                    ->visible(fn ($record) => ! $record->hasRole(RolesEnum::ADMIN->value)),
                 ActionsActionGroup::make([
                     ActionsAction::make('approve')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn ($record) => !$record->is_approved && !$record->hasRole(RolesEnum::ADMIN->value))
+                        ->visible(fn ($record) => ! $record->is_approved && ! $record->hasRole(RolesEnum::ADMIN->value))
                         ->form([
                             Select::make('role')
                                 ->label('Assign Role')
@@ -77,23 +77,26 @@ class UsersTable
                                 ->default('owner'),
                         ])
                         ->action(function ($record, array $data) {
+                            \Illuminate\Support\Facades\Gate::forUser(auth()->user()->fresh())->authorize('update', $record);
+                            abort_if($record->hasRole('admin') || $record->is_approved, 403);
+                            \Illuminate\Support\Facades\Validator::make($data, ['role' => 'required|in:owner,customer'])->validate();
                             $role = $data['role'] ?? 'owner';
                             $record->syncRoles([$role]);
                             $record->approve();
-                            
+
                             // ✅ Add logging BEFORE sending
                             \Log::info('About to send approval email', [
                                 'user_id' => $record->id,
                                 'email' => $record->email,
-                                'name' => $record->name
+                                'name' => $record->name,
                             ]);
-                            
+
                             // Send approval email
                             Mail::to($record->email)->send(new UserApproved($record));
-                            
+
                             // ✅ Add logging AFTER sending
                             \Log::info('Approval email sent successfully');
-                            
+
                             Notification::make()
                                 ->title('User approved successfully')
                                 ->body("Role assigned: {$role}. Approval email sent.")
@@ -105,13 +108,14 @@ class UsersTable
                     ActionsAction::make('reject')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
-                        ->visible(fn ($record) => !$record->is_approved && !$record->hasRole(RolesEnum::ADMIN->value))
+                        ->visible(fn ($record) => ! $record->is_approved && ! $record->hasRole(RolesEnum::ADMIN->value))
                         ->action(function ($record) {
+                            \Illuminate\Support\Facades\Gate::forUser(auth()->user()->fresh())->authorize('delete', $record);
                             // ✅ Send rejection email before deleting
                             Mail::to($record->email)->send(new UserRejected($record));
-                            
+
                             $record->delete();
-                            
+
                             Notification::make()
                                 ->title('User rejected and deleted')
                                 ->body('Rejection email sent.')
@@ -122,14 +126,14 @@ class UsersTable
                         ->modalHeading('Reject User')
                         ->modalDescription('Are you sure? This will permanently delete the user.'),
                     ActionsDeleteAction::make()
-                        ->visible(fn ($record) => $record->is_approved && !$record->hasRole(RolesEnum::ADMIN->value)),
+                        ->visible(fn ($record) => $record->is_approved && ! $record->hasRole(RolesEnum::ADMIN->value)),
                 ])
-                ->icon('heroicon-m-ellipsis-vertical')
-                ->visible(fn ($record) => !$record->hasRole(RolesEnum::ADMIN->value)),
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->visible(fn ($record) => ! $record->hasRole(RolesEnum::ADMIN->value)),
             ])
             ->bulkActions([
                 ActionsBulkActionGroup::make([
-                    ActionsDeleteBulkAction::make(),
+                    ActionsDeleteBulkAction::make()->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }

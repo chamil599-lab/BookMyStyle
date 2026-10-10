@@ -11,7 +11,6 @@ use App\Filament\Admin\Resources\Services\Schemas\ServiceInfolist;
 use App\Filament\Admin\Resources\Services\Tables\ServicesTable;
 use App\Models\Service;
 use BackedEnum;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -24,7 +23,7 @@ class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Salon Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Salon Management';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScissors;
 
@@ -35,10 +34,15 @@ class ServiceResource extends Resource
         return (string) static::getEloquentQuery()->count();
     }
 
-
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->forOwner();
+        $query = parent::getEloquentQuery();
+        $user = \Filament\Facades\Filament::auth()->user();
+        if (\App\Support\ManagementAccess::admin($user)) {
+            return $query;
+        }
+
+        return $query->where('created_by', $user?->id ?? 0);
     }
 
     public static function form(Schema $schema): Schema
@@ -72,10 +76,11 @@ class ServiceResource extends Resource
             'edit' => EditService::route('/{record}/edit'),
         ];
     }
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
-                EditService::class
+            EditService::class,
         ]);
     }
 }

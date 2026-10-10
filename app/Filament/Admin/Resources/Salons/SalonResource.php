@@ -12,16 +12,16 @@ use App\Models\Salon;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
 class SalonResource extends Resource
 {
     protected static ?string $model = Salon::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Salon Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Salon Management';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
@@ -41,8 +41,8 @@ class SalonResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        if (auth()->user()->hasRole('owner')) {
-            return $query->where('created_by', auth()->id());
+        if (! \App\Support\ManagementAccess::admin(\Filament\Facades\Filament::auth()->user())) {
+            return $query->where('created_by', \Filament\Facades\Filament::auth()->id() ?? 0);
         }
 
         return $query;
@@ -59,6 +59,7 @@ class SalonResource extends Resource
     public static function mutateFormDataBeforeSave(array $data): array
     {
         $data['updated_by'] = auth()->id();
+
         return $data;
     }
 

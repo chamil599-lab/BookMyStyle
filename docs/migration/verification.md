@@ -99,3 +99,21 @@ See [native customer dashboard and account journeys](step-6-customer-blade.md).
 Final real HTTP/browser artifacts are private under `.local/migration-baseline/auth-smoke-20261010_200139_f191ec/`. Fixtures and their temporary credentials are synthetic, ignored and never exposed as public assets. Real mail is suppressed. Browser tests account for the cancellation notification generated during the journey rather than assuming a single notification remains. Header tests assert no-store/private directives and permit additional restrictions applied by the session layer.
 
 Customer React redirects are removed. Profile/password use the established native forms; notifications refresh on page visits/actions rather than the old SSE stream. Full Filament resource parity, admin/owner bookmarks, production integrations, deployment and broader security audit remain outstanding. No production deployment was performed.
+
+## Step seven verification - 11 October 2026
+
+See [secure Filament management foundation](step-7-filament-management.md).
+
+| Check | Result |
+|---|---|
+| Final full suite | 175 passed, 749 assertions; CLI memory 512 MB |
+| Management regressions | 20 tests: direct administrative create/edit denial, cross-owner resources, actual Filament create/save forms, creator/editor protection, administrator creation without personal plan, salon/service/staff quotas, expiry recovery, administrator deletion protection, legacy bookmarks, calendar model/record forgery, feature/date range limits and revoked approval |
+| Real HTTP checks | 67 passed plus successful browser runner; owner/admin session handoff, catalogue/booking/subscription lists, create screens, owner user-creation denial, role bookmark redirects and Filament private cache headers added to prior customer/public/auth checks |
+| Real Chrome checks | 25 passed; both roles enter their Filament dashboard through native login, see services, and render mobile lists without page overflow; existing customer/public journeys still pass, with no uncaught JavaScript errors |
+| Visual inspection | Settled desktop owner dashboard and mobile administrator services screenshots inspected; responsive sidebar state is allowed to settle before capture |
+| Root assets | Build passed; existing Browserslist and empty app JS warnings remain |
+| Blade and source | All templates compile; compiled cache cleared; changed PHP passed Pint, Node syntax and git whitespace checks passed |
+| Imported data | Counts unchanged: 35 tables, users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51 |
+| Import integrity/schema | No FK orphans or missing media originals/conversions; no nontransactional tables, imported migrations, seeds or record edits |
+
+Final HTTP/browser artifacts are private under `.local/migration-baseline/auth-smoke-20261010_201745_5c2949/`. All fixture accounts and temporary credentials are synthetic; mail is suppressed. Native profile and password forms remain the account settings destination. Legacy API/write/nested routes and React source are retained during staged retirement. Analytics financial definitions, remaining package/user/subscription actions, production integrations, live MySQL catalogue concurrency/load testing and full deployment gates remain open. This checkpoint does not claim complete dashboard parity or a complete security audit.

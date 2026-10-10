@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\SalonController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StaffController;
@@ -92,12 +91,24 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:owner', 'approved', 'subscription'])->group(function () {
     // Salon owner routes
     Route::prefix('owner')->group(function () {
-        Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('owner.dashboard');
-        Route::resource('salons', SalonController::class);
+        Route::resource('salons', SalonController::class)->only(['store', 'update', 'destroy']);
         Route::resource('salons.staff', StaffController::class);
         Route::resource('salons.services', ServiceController::class);
-        Route::resource('bookings', BookingController::class);
+        Route::resource('bookings', BookingController::class)->only(['store', 'update', 'destroy']);
     });
 });
+
+// Retained dashboard bookmarks now enter native pages. Keep legacy write routes during staged migration.
+Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->group(function () {
+    foreach (['dashboard' => 'owner.dashboard', 'salons' => 'salons.index', 'bookings' => 'bookings.index'] as $path => $name) {
+        Route::get('/owner/'.$path, \App\Http\Controllers\LegacyDashboardController::class)->defaults('path', $path)->name($name);
+    }
+});
+Route::get('/admin/{path?}', \App\Http\Controllers\LegacyDashboardController::class)
+    ->where('path', '(bookings|salons|users|subscriptions|profile|packages|categories|departments)(/create|/[0-9]+(/edit)?)?')
+    ->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:admin'])->name('legacy.admin');
+Route::get('/owner/{path?}', \App\Http\Controllers\LegacyDashboardController::class)
+    ->where('path', '(dashboard|salons|bookings|services|subscription|profile)(/create|/[0-9]+(/edit)?)?')
+    ->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->name('legacy.owner');
 
 require __DIR__.'/auth.php';

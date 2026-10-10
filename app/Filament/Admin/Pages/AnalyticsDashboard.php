@@ -22,13 +22,16 @@ class AnalyticsDashboard extends Page
 
     protected static ?string $navigationLabel = 'Analytics';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Billing';
+    protected static string|\UnitEnum|null $navigationGroup = 'Billing';
 
     protected static ?int $navigationSort = 10;
 
     public string $period = '30d';
+
     public ?int $salonId = null;
+
     public int $profitYear;
+
     public int $profitMonth;
 
     public static function canAccess(): bool
@@ -36,13 +39,13 @@ class AnalyticsDashboard extends Page
         /** @var \App\Models\User|null $user */
         $user = Filament::auth()->user();
 
-        if ($user?->hasRole(RolesEnum::ADMIN->value)) {
+        if (\App\Support\ManagementAccess::admin($user)) {
             return true;
         }
 
         $subscription = $user?->activeSubscription;
 
-        return $subscription && $subscription->package && $subscription->package->analytics;
+        return \App\Support\ManagementAccess::owner($user, true) && $subscription?->package?->analytics;
     }
 
     public function mount(): void
@@ -55,6 +58,7 @@ class AnalyticsDashboard extends Page
                 ->send();
 
             $this->redirect(url()->previous());
+
             return;
         }
 
@@ -72,12 +76,14 @@ class AnalyticsDashboard extends Page
 
     public function getOwnerSalonIds(): Collection
     {
+        abort_unless(static::canAccess(), 403);
         $user = Filament::auth()->user();
 
         if ($user?->hasRole(RolesEnum::ADMIN->value)) {
             if ($this->salonId) {
                 return collect([$this->salonId]);
             }
+
             return Salon::pluck('id');
         }
 
@@ -259,6 +265,7 @@ class AnalyticsDashboard extends Page
             ->groupBy('service_id')
             ->map(function ($group) {
                 $service = $group->first()->service;
+
                 return [
                     'name' => $service?->title ?? 'Unknown',
                     'bookings' => $group->count(),
@@ -288,6 +295,7 @@ class AnalyticsDashboard extends Page
             ->groupBy('salon_id')
             ->map(function ($group) {
                 $salon = $group->first()->salon;
+
                 return [
                     'name' => $salon?->name ?? 'Unknown',
                     'revenue' => $group->sum(fn ($b) => $b->service?->price ?? 0),
@@ -311,6 +319,7 @@ class AnalyticsDashboard extends Page
         for ($y = now()->year; $y >= $startYear; $y--) {
             $years[] = $y;
         }
+
         return $years;
     }
 

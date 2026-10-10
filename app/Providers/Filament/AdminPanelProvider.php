@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('filament')
+            ->homeUrl(fn () => route('dashboard'))
             ->colors([
                 'primary' => Color::Green,
                 'danger' => Color::Red,
@@ -59,11 +60,11 @@ class AdminPanelProvider extends PanelProvider
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
+                \App\Http\Middleware\PrivateAccountResponse::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                EnsureUserIsApproved::class,
             ])
             ->plugin(FilamentShieldPlugin::make())
             ->renderHook('panels::head.end', fn (): HtmlString => new HtmlString(<<<'HTML'
@@ -187,7 +188,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->authMiddleware([
                 Authenticate::class,
-                // ✅ Removed 'approved' - EnsureUserIsApproved handles this in regular middleware
-            ]);
+                EnsureUserIsApproved::class,
+            ], isPersistent: true);
     }
 }

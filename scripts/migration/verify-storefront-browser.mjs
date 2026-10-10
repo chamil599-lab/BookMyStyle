@@ -50,7 +50,10 @@ try {
         await until(`location.pathname === ${JSON.stringify(route)} && document.querySelector('main, form') && typeof Alpine !== 'undefined'`, route);
         await sleep(300);
     };
-    const viewport = (width, height) => call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 });
+    const viewport = async (width, height) => {
+        await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 });
+        await sleep(500); // Allow Alpine's responsive sidebar state and CSS transitions to settle.
+    };
     const screenshot = async name => {
         const result = await call('Page.captureScreenshot', { format: 'png' });
         await writeFile(path.join(directory, `${name}.png`), Buffer.from(result.data, 'base64'));
@@ -134,6 +137,24 @@ try {
         await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Clear all notifications').click()");
         await until("document.body.textContent.includes('Notifications cleared.') && document.body.textContent.includes('No notifications yet.')", 'clear notifications');
         checks.customer_clear_notifications = true;
+        for (const [role, route] of [['owner', '/filament/owner-dashboard'], ['admin', '/filament/dashboard']]) {
+            await evaluate(`fetch('/logout', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ _token: document.querySelector('meta[name=csrf-token]').content }) })`);
+            await navigate('/login');
+            await evaluate(`for (const [field, value] of Object.entries(${JSON.stringify({ 'form.email': fixture[role].email, 'form.password': fixture[role].password })})) {
+                const input = [...document.querySelectorAll('input')].find(el => el.getAttribute('wire:model') === field);
+                input.value = value; input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            document.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));`);
+            await until(`location.pathname === ${JSON.stringify(route)} && document.querySelector('main')`, `${role} Filament session handoff`);
+            await sleep(700);
+            checks[`${role}_filament_session_handoff`] = true;
+            await viewport(1440, 1000); await screenshot(`desktop-filament-${role}`);
+            await navigate('/filament/services');
+            expect(await evaluate("document.body.textContent.includes('Signature cut')"), `${role}_filament_services_visible`);
+            await viewport(390, 844);
+            expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), `${role}_filament_mobile_no_overflow`);
+            await screenshot(`mobile-filament-${role}-services`);
+        }
     }
     expect(errors.length === 0, 'no_uncaught_javascript_errors');
     await writeFile(path.join(directory, 'browser-summary.json'), JSON.stringify({ checks, errors }, null, 2));
