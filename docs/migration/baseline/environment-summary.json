@@ -1,0 +1,19 @@
+{
+    "captured_at": "2026-10-10T23:13:05+05:30",
+    "scope": "Configured local workspace connection; not a production backup",
+    "php": "8.4.26",
+    "laravel": "12.32.5",
+    "database_driver": "mysql",
+    "environment": "local",
+    "app_timezone": "Asia/Colombo",
+    "queue_driver": "database",
+    "session_driver": "database",
+    "mail_driver": "smtp",
+    "route_count": 233,
+    "scheduled_event_count": 0,
+    "backup_status": "created",
+    "table_count": 0,
+    "backup_validation": "Dump exit status, size, and SHA-256 checked; isolated restore drill still required",
+    "backup_bytes": 1644,
+    "backup_sha256": "09aa8e97b186ded643c172bccf9ca44da1b1044c69da7e58e2c9d3c34fb7d246"
+}

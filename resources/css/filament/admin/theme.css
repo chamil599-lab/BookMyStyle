@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+@import '/vendor/filament/filament/resources/css/theme.css';
+@import '/vendor/guava/calendar/resources/css/theme.css';
+
+@source '../../../../app/Filament/Admin/**/*';
+@source '../../../../resources/views/filament/admin/**/*';
+@source '../../../../vendor/filament';
+@source '../../../../vendor/guava/calendar/resources';
+
+:root {
+    /* Primary color (blue) */
+    --filament-primary: 59 130 246;
+    --filament-primary-50: #eff6ff;
+    --filament-primary-100: #dbeafe;
+    --filament-primary-200: #bfdbfe;
+    --filament-primary-300: #93c5fd;
+    --filament-primary-400: #60a5fa;
+    --filament-primary-500: #3b82f6;
+    --filament-primary-600: #2563eb;
+    --filament-primary-700: #1d4ed8;
+    --filament-accent-500: #0ea5e9;
+    --filament-radius-md: 0.5rem;
+    --filament-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+

@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+    Options -MultiViews -Indexes
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Let Laravel handle API requests when Laravel's public/index.php
+    # is in the same cPanel document root as the React build.
+    RewriteCond %{REQUEST_URI} ^/api(/|$)
+    RewriteCond %{DOCUMENT_ROOT}/index.php -f
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    RewriteCond %{REQUEST_URI} ^/api(/|$)
+    RewriteCond %{DOCUMENT_ROOT}/index.php -f
+    RewriteRule ^ index.php [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+</IfModule>

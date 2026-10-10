@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+
+@source '../../resources/views/**/*.blade.php';
+@source '../../app/**/*.php';
+
+/* ========================================
+   Filament Admin Sidebar Customization
+   ======================================== */
+

@@ -1,0 +1,848 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sand: #f7f0e6;
+  --cream: #efe6d3;
+  --terra: #c4622d;
+  --terra2: #e07b47;
+  --sienna: #8b3a1e;
+  --blush: #e8b4a0;
+  --olive: #6b7742;
+  --ink: #1e1710;
+  --muted: rgba(30, 23, 16, 0.45);
+  --white: #fffcf8;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--sand);
+  color: var(--ink);
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Unbounded', sans-serif;
+}
+
+/* Dashboard shell resets — applied via wrapper class */
+.ds-shell {
+  font-family: 'Inter', sans-serif;
+  background: #f8f9fa;
+  color: #191c1d;
+  min-height: 100dvh;
+}
+.ds-shell h1,
+.ds-shell h2,
+.ds-shell h3,
+.ds-shell .headline {
+  font-family: 'Manrope', sans-serif;
+}
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds-scrollbar::-webkit-scrollbar { width: 4px; }
+.ds-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.ds-scrollbar::-webkit-scrollbar-thumb { background: #bec8c8; border-radius: 10px; }
+
+.font-baskerville {
+  font-family: 'Libre Baskerville', serif;
+}
+
+.seren-cursor-dot {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--terra);
+  transform: translate(-50%, -50%);
+}
+
+.seren-cursor-ring {
+  position: fixed;
+  z-index: 9998;
+  pointer-events: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--terra);
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+}
+
+.seren-hero-ken {
+  animation: heroKen 20s ease-in-out alternate infinite;
+}
+
+@keyframes heroKen {
+  from {
+    transform: scale(1.06) translateX(0);
+  }
+  to {
+    transform: scale(1.12) translateX(-2%);
+  }
+}
+
+.seren-marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: serenMarquee 25s linear infinite;
+}
+
+@keyframes serenMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 1s ease-out;
+}
+
+@keyframes color-cycle {
+  0%, 100% {
+    background: linear-gradient(to right, #facc15, #f59e0b);
+  }
+  33% {
+    background: linear-gradient(to right, #fde047, #facc15);
+  }
+  66% {
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+  }
+}
+
+.animate-color-cycle {
+  animation: color-cycle 9s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) translateX(-50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* ========================================
+   SCROLL-TRIGGERED ANIMATIONS
+   ======================================== */
+
+/* Fade In Up */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Fade In Left */
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-60px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Fade In Right */
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Bounce In */
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Slide In Stagger (3D tilt) */
+@keyframes slideInStagger {
+  from { opacity: 0; transform: translateY(30px) rotateX(10deg); }
+  to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+
+/* Floating */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Pulse Glow */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 95, 191, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(139, 95, 191, 0.6); }
+}
+
+/* Text Shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Base: elements start invisible until observed */
+.scroll-animate {
+  opacity: 0;
+  transition: none;
+}
+
+.scroll-animate.animated {
+  animation-fill-mode: both !important;
+  animation-timing-function: ease-out;
+}
+
+/* Named animation classes — use longhand so inline animationDelay is preserved */
+.scroll-animate.animated.anim-fade-in-up {
+  animation-name: fadeInUp;
+  animation-duration: 0.8s;
+}
+
+.scroll-animate.animated.anim-fade-in-left {
+  animation-name: fadeInLeft;
+  animation-duration: 0.8s;
+}
+
+.scroll-animate.animated.anim-fade-in-right {
+  animation-name: fadeInRight;
+  animation-duration: 0.8s;
+}
+
+.scroll-animate.animated.anim-scale-in {
+  animation-name: scaleIn;
+  animation-duration: 0.6s;
+}
+
+.scroll-animate.animated.anim-bounce-in {
+  animation-name: bounceIn;
+  animation-duration: 0.8s;
+}
+
+.scroll-animate.animated.anim-slide-in-stagger {
+  animation-name: slideInStagger;
+  animation-duration: 0.7s;
+}
+
+/* Floating badge */
+.anim-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse glow on hover */
+.anim-pulse-glow:hover {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+/* Shimmer text on hover */
+.anim-shimmer:hover {
+  background: linear-gradient(90deg, #f59e0b, #facc15, #f59e0b);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Hero entrance animations (play on load) */
+.hero-animate-1 {
+  opacity: 0;
+  animation: fadeInUp 1s ease-out 0.2s forwards;
+}
+
+.hero-animate-2 {
+  opacity: 0;
+  animation: fadeInUp 1s ease-out 0.4s forwards;
+}
+
+.hero-animate-3 {
+  opacity: 0;
+  animation: fadeInUp 1s ease-out 0.6s forwards;
+}
+
+.hero-animate-4 {
+  opacity: 0;
+  animation: fadeInUp 1s ease-out 0.8s forwards;
+}
+
+.hero-animate-5 {
+  opacity: 0;
+  animation: fadeInUp 1s ease-out 1.0s forwards;
+}
+
+.hero-mesh-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 12%, rgba(22, 163, 74, 0.16), transparent 42%),
+    radial-gradient(circle at 88% 26%, rgba(34, 197, 94, 0.14), transparent 38%),
+    radial-gradient(circle at 62% 78%, rgba(22, 163, 74, 0.08), transparent 40%),
+    linear-gradient(160deg, #ffffff 0%, rgba(240, 253, 244, 0.9) 45%, rgba(248, 250, 252, 0.92) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-title {
+  animation: heroTitleGlow 5s ease-in-out infinite;
+}
+
+.hero-floating-1 {
+  animation: floatDriftOne 11s ease-in-out infinite;
+}
+
+.hero-floating-2 {
+  animation: floatDriftTwo 13s ease-in-out infinite;
+}
+
+.hero-floating-3 {
+  animation: floatDriftThree 9s ease-in-out infinite;
+}
+
+.cta-icon {
+  animation: ctaIconDrift 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.group:hover .cta-icon {
+  animation-play-state: paused;
+}
+
+@keyframes heroTitleGlow {
+  0%, 100% { box-shadow: 0 12px 26px rgba(250, 204, 21, 0.24); }
+  50% { box-shadow: 0 18px 34px rgba(245, 158, 11, 0.3); }
+}
+
+@keyframes floatDriftOne {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes floatDriftTwo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes floatDriftThree {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(-20px) rotate(45deg); }
+}
+
+@keyframes ctaIconDrift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
+}
+
+/* ========================================
+   DARK MODE (dashboards only — scoped to .ds-shell)
+   ======================================== */
+
+html.dark .ds-shell {
+  background: #0f141b;
+  color: #e6edf3;
+}
+
+html.dark .ds-shell header {
+  background: linear-gradient(180deg, #0a1f22 0%, #0c2528 100%) !important;
+  border-bottom: 1px solid #1c3a3d !important;
+  box-shadow: 0 1px 0 rgba(141, 211, 211, 0.06) inset, 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Header brand title (text-[#004242]) — keep a bright on-brand teal */
+html.dark .ds-shell header h1[class*="text-[#004242]"],
+html.dark .ds-shell header [class*="text-[#004242]"]:not(a):not(button) {
+  color: #c9eeee !important;
+}
+
+/* Header role chip (bg-[#004242] text-white) — bump to brighter teal so it
+   reads as an accent against the dark header */
+html.dark .ds-shell header span[class*="bg-[#004242]"] {
+  background-color: #0e7b7c !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 18px rgba(14, 123, 124, 0.32) !important;
+}
+
+/* All header icon buttons (collapse, notifications/bell, mobile logout, etc.)
+   — give them a consistent translucent teal tile so they're visible on the
+   dark header instead of looking like floating icons. */
+html.dark .ds-shell header button {
+  background-color: rgba(141, 211, 211, 0.10) !important;
+  color: #c9eeee !important;
+  box-shadow: none !important;
+}
+html.dark .ds-shell header button:hover {
+  background-color: rgba(141, 211, 211, 0.18) !important;
+}
+html.dark .ds-shell header button .material-symbols-outlined {
+  color: #c9eeee !important;
+}
+
+/* Search input on header (bg-white inside the inline filter) */
+html.dark .ds-shell header input {
+  background-color: rgba(141, 211, 211, 0.08) !important;
+  border-color: rgba(141, 211, 211, 0.18) !important;
+  color: #e6edf3 !important;
+}
+
+/* Profile chip avatar (bg-[#004242] circle with initials) */
+html.dark .ds-shell header a[class*="bg-[#004242]"],
+html.dark .ds-shell header div[class*="bg-[#004242]"] {
+  background-color: #0e7b7c !important;
+  color: #ffffff !important;
+}
+
+html.dark .ds-shell main {
+  background: #0f141b !important;
+}
+
+html.dark .ds-shell .bg-white {
+  background-color: #1a2029 !important;
+}
+
+html.dark .ds-shell [class*="bg-[#f8f9fa]"],
+html.dark .ds-shell [class*="bg-[#eef7f6]"],
+html.dark .ds-shell [class*="bg-[#f7fbfb]"],
+html.dark .ds-shell [class*="bg-[#f3f4f5]"],
+html.dark .ds-shell [class*="bg-[#edeeef]"],
+html.dark .ds-shell [class*="bg-[#e7e8e9]"],
+html.dark .ds-shell [class*="bg-[#dff4f2]"] {
+  background-color: #1a2029 !important;
+}
+
+html.dark .ds-shell [class*="text-[#191c1d]"],
+html.dark .ds-shell [class*="text-[#3f4948]"],
+html.dark .ds-shell [class*="text-[#004242]"]:not(a):not(button) {
+  color: #e6edf3 !important;
+}
+
+html.dark .ds-shell [class*="text-[#6f7979]"],
+html.dark .ds-shell [class*="text-[#566060]"],
+html.dark .ds-shell [class*="text-[#476363]"] {
+  color: #8a97a6 !important;
+}
+
+html.dark .ds-shell [class*="border-[#bec8c8]"],
+html.dark .ds-shell [class*="border-[#004242]/10"],
+html.dark .ds-shell [class*="border-[#004242]/20"],
+html.dark .ds-shell [class*="border-[#e1e3e4]"] {
+  border-color: #2a323d !important;
+}
+
+html.dark .ds-shell input:not([type="checkbox"]):not([type="radio"]),
+html.dark .ds-shell select,
+html.dark .ds-shell textarea {
+  background-color: #1a2029 !important;
+  color: #e6edf3 !important;
+  border-color: #2a323d !important;
+}
+
+html.dark .ds-shell input::placeholder,
+html.dark .ds-shell textarea::placeholder {
+  color: #6b7785 !important;
+}
+
+html.dark .ds-scrollbar::-webkit-scrollbar-thumb {
+  background: #3a4553;
+}
+
+/* Dashboard pages often wrap content in gradient backgrounds; soften in dark */
+html.dark .ds-shell [class*="bg-[linear-gradient(180deg,#eef7f6"],
+html.dark .ds-shell [class*="bg-[linear-gradient(180deg,#f7fbfb"] {
+  background: #0f141b !important;
+}
+
+/* Light card gradients used on dashboard overviews (135deg light-to-light) */
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#f7fbfb"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#f8fbfb"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#ffffff"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#f8f9fa"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#edf5f5"],
+html.dark .ds-shell [class*="bg-[linear-gradient(180deg,#ffffff"],
+html.dark .ds-shell [class*="bg-[linear-gradient(180deg,#f4fbfa"] {
+  background: #1a2029 !important;
+}
+
+/* Dark-teal body text used inside white cards — invert for dark theme */
+html.dark .ds-shell [class*="text-[#033737]"],
+html.dark .ds-shell [class*="text-[#285252]"] {
+  color: #e6edf3 !important;
+}
+html.dark .ds-shell [class*="text-[#547170]"] {
+  color: #8a97a6 !important;
+}
+
+/* Light borders used on dashboard cards/tiles */
+html.dark .ds-shell [class*="border-[#d7e4e3]"],
+html.dark .ds-shell [class*="border-[#d5e2e1]"],
+html.dark .ds-shell [class*="border-[#c9d8d7]"],
+html.dark .ds-shell [class*="border-[#dfe7e6]"],
+html.dark .ds-shell [class*="border-[#e3ecec]"],
+html.dark .ds-shell [class*="border-[#d3dfdf]"],
+html.dark .ds-shell [class*="border-[#d0dddd]"],
+html.dark .ds-shell [class*="border-[#cfe0df]"] {
+  border-color: #2a323d !important;
+}
+
+/* Neutral surface backgrounds on dashboard cards (inner tiles, hover states,
+   disabled inputs). Keep readable against the dark shell. */
+html.dark .ds-shell [class*="bg-[#f5f8f8]"],
+html.dark .ds-shell [class*="bg-[#f6f9f9]"],
+html.dark .ds-shell [class*="bg-[#f7f9f9]"],
+html.dark .ds-shell [class*="bg-[#f5f7f7]"] {
+  background-color: #141a22 !important;
+}
+html.dark .ds-shell [class*="hover:bg-[#f5f8f8]"]:hover,
+html.dark .ds-shell [class*="hover:bg-[#f6f9f9]"]:hover,
+html.dark .ds-shell [class*="hover:bg-[#dff4f2]"]:hover {
+  background-color: #232b36 !important;
+}
+
+/* Inline alert banners (error / success) */
+html.dark .ds-shell [class*="bg-[#fff1ef]"] {
+  background-color: rgba(186, 26, 26, 0.18) !important;
+  color: #ff9a96 !important;
+}
+html.dark .ds-shell [class*="bg-[#fff1ef]"] [class*="text-[#ba1a1a]"] { color: #ff9a96 !important; }
+html.dark .ds-shell [class*="border-[#f0b2ac]"] { border-color: rgba(186, 26, 26, 0.45) !important; }
+
+html.dark .ds-shell [class*="bg-[#edf7ef]"] {
+  background-color: rgba(46, 125, 50, 0.18) !important;
+  color: #7bd389 !important;
+}
+html.dark .ds-shell [class*="bg-[#edf7ef]"] [class*="text-[#2e7d32]"] { color: #7bd389 !important; }
+html.dark .ds-shell [class*="border-[#b8d9c0]"] { border-color: rgba(46, 125, 50, 0.45) !important; }
+
+/* Status pill backgrounds (pending/approved/completed/cancelled/rejected) —
+   preserve the hue but darken the fill so light-colored text remains readable. */
+html.dark .ds-shell [class*="bg-[#fff3e0]"] { background-color: rgba(230, 81, 0, 0.18) !important; }
+html.dark .ds-shell [class*="bg-[#fff3e0]"][class*="text-[#e65100]"] { color: #ffb27a !important; }
+
+html.dark .ds-shell [class*="bg-[#e8f5e9]"] { background-color: rgba(46, 125, 50, 0.18) !important; }
+html.dark .ds-shell [class*="bg-[#e8f5e9]"][class*="text-[#2e7d32]"] { color: #7bd389 !important; }
+
+html.dark .ds-shell [class*="bg-[#e0f2f1]"] { background-color: rgba(0, 105, 92, 0.22) !important; }
+html.dark .ds-shell [class*="bg-[#e0f2f1]"][class*="text-[#00695c]"] { color: #66d9d0 !important; }
+
+html.dark .ds-shell [class*="bg-[#ffdad6]"] { background-color: rgba(186, 26, 26, 0.2) !important; }
+html.dark .ds-shell [class*="bg-[#ffdad6]"][class*="text-[#ba1a1a]"] { color: #ff9a96 !important; }
+
+html.dark .ds-shell [class*="bg-[#e1e3e4]"][class*="text-[#3f4948]"],
+html.dark .ds-shell [class*="bg-[#e1e3e4]"][class*="text-[#6f7979]"] {
+  background-color: #2a323d !important;
+  color: #c9d1d9 !important;
+}
+
+/* Pale-teal "Calendar" feature chip used on Admin Packages */
+html.dark .ds-shell [class*="bg-[#e8f4f4]"] {
+  background-color: rgba(141, 211, 211, 0.14) !important;
+}
+html.dark .ds-shell [class*="bg-[#e8f4f4]"][class*="text-[#004242]"] {
+  color: #8dd3d3 !important;
+}
+
+/* Toggle-off track color */
+html.dark .ds-shell [class*="bg-[#bec8c8]"] {
+  background-color: #3a4553 !important;
+}
+
+/* "Trial" pill on Admin Subscriptions — warm orange accent */
+html.dark .ds-shell [class*="bg-[#f4a261]/20"] {
+  background-color: rgba(244, 162, 97, 0.22) !important;
+}
+html.dark .ds-shell [class*="bg-[#f4a261]/20"][class*="text-[#8a4b15]"],
+html.dark .ds-shell [class*="text-[#8a4b15]"] {
+  color: #feb48d !important;
+}
+html.dark .ds-shell [class*="border-[#f4a261]/30"],
+html.dark .ds-shell [class*="border-[#f4a261]/40"] {
+  border-color: rgba(244, 162, 97, 0.4) !important;
+}
+
+/* Pale-cyan package icon tile background */
+html.dark .ds-shell [class*="bg-[#a8efef]/30"] {
+  background-color: rgba(141, 211, 211, 0.18) !important;
+}
+
+/* Extra teal opacity variants used on dashboards (/4, /5, /6, /18, /20) */
+html.dark .ds-shell [class*="bg-[#004242]/4"],
+html.dark .ds-shell [class*="bg-[#004242]/5"],
+html.dark .ds-shell [class*="bg-[#004242]/6"] {
+  background-color: rgba(141, 211, 211, 0.06) !important;
+}
+html.dark .ds-shell [class*="bg-[#004242]/18"],
+html.dark .ds-shell [class*="bg-[#004242]/20"] {
+  background-color: rgba(141, 211, 211, 0.16) !important;
+}
+html.dark .ds-shell [class*="border-[#004242]/5"],
+html.dark .ds-shell [class*="border-[#004242]/10"],
+html.dark .ds-shell [class*="border-[#004242]/18"],
+html.dark .ds-shell [class*="border-[#004242]/25"] {
+  border-color: rgba(141, 211, 211, 0.18) !important;
+}
+
+/* Red-tint opacity chips (ba1a1a) — match the ffdad6 treatment */
+html.dark .ds-shell [class*="bg-[#ba1a1a]/10"],
+html.dark .ds-shell [class*="bg-[#ba1a1a]/20"] {
+  background-color: rgba(186, 26, 26, 0.22) !important;
+}
+html.dark .ds-shell [class*="bg-[#ba1a1a]/10"][class*="text-[#ba1a1a]"],
+html.dark .ds-shell [class*="bg-[#ba1a1a]/20"][class*="text-[#ba1a1a]"] {
+  color: #ff9a96 !important;
+}
+
+/* Translucent-white overlays used on LIGHT-gradient tab/filter containers
+   (not on dark image covers). When their parent turns dark, these become
+   dark translucent tiles instead. High-opacity whites (/90 /92 /95) are
+   reserved for pills on dark brand covers and must stay light in both themes. */
+html.dark .ds-shell [class*="bg-white/45"],
+html.dark .ds-shell [class*="bg-white/60"],
+html.dark .ds-shell [class*="bg-white/65"],
+html.dark .ds-shell [class*="bg-white/70"],
+html.dark .ds-shell [class*="bg-white/75"],
+html.dark .ds-shell [class*="bg-white/80"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #e6edf3 !important;
+}
+html.dark .ds-shell [class*="border-white/60"],
+html.dark .ds-shell [class*="border-white/70"],
+html.dark .ds-shell [class*="border-white/80"] {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+/* Text inside high-opacity white pills (/90 /92 /95) — these pills sit on
+   dark brand covers and stay light in both themes, so their dark text must
+   remain dark instead of getting the global dark-mode lightening. */
+html.dark .ds-shell [class*="bg-white/90"] [class*="text-[#004242]"],
+html.dark .ds-shell [class*="bg-white/92"] [class*="text-[#004242]"],
+html.dark .ds-shell [class*="bg-white/95"] [class*="text-[#004242]"],
+html.dark .ds-shell [class*="bg-white/90"][class*="text-[#004242]"],
+html.dark .ds-shell [class*="bg-white/92"][class*="text-[#004242]"],
+html.dark .ds-shell [class*="bg-white/95"][class*="text-[#004242]"] {
+  color: #004242 !important;
+}
+html.dark .ds-shell [class*="bg-white/90"] [class*="text-[#191c1d]"],
+html.dark .ds-shell [class*="bg-white/92"] [class*="text-[#191c1d]"],
+html.dark .ds-shell [class*="bg-white/95"] [class*="text-[#191c1d]"] {
+  color: #191c1d !important;
+}
+html.dark .ds-shell [class*="bg-white/90"] [class*="text-[#6f7979]"],
+html.dark .ds-shell [class*="bg-white/92"] [class*="text-[#6f7979]"],
+html.dark .ds-shell [class*="bg-white/95"] [class*="text-[#6f7979]"] {
+  color: #6f7979 !important;
+}
+html.dark .ds-shell [class*="bg-white/90"] [class*="text-[#3f4948]"],
+html.dark .ds-shell [class*="bg-white/92"] [class*="text-[#3f4948]"],
+html.dark .ds-shell [class*="bg-white/95"] [class*="text-[#3f4948]"] {
+  color: #3f4948 !important;
+}
+
+/* Additional light-to-light gradient card backgrounds */
+html.dark .ds-shell [class*="bg-[linear-gradient(180deg,#fbfdfd"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#f7fbfb"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#edf6f6"] {
+  background: #1a2029 !important;
+}
+
+/* More light border colors used across dashboards */
+html.dark .ds-shell [class*="border-[#d6e7e7]"],
+html.dark .ds-shell [class*="border-[#d9e6e6]"],
+html.dark .ds-shell [class*="border-[#c8d8d8]"],
+html.dark .ds-shell [class*="border-[#bec8c8]"] {
+  border-color: #2a323d !important;
+}
+
+/* Mid-grey body text (inactive tabs, disabled chips) */
+html.dark .ds-shell [class*="text-[#5f6f6f]"],
+html.dark .ds-shell [class*="text-[#5f7f7f]"] {
+  color: #c9d1d9 !important;
+}
+html.dark .ds-shell [class*="text-[#a6b5b5]"] {
+  color: #6b7785 !important;
+}
+
+/* Pale teal "today" highlight on the owner calendar */
+html.dark .ds-shell [class*="bg-[#e8f5f5]"] {
+  background-color: rgba(141, 211, 211, 0.12) !important;
+}
+
+/* Recharts default tooltip — defaults to white via inline style */
+html.dark .ds-shell .recharts-default-tooltip {
+  background-color: #1a2029 !important;
+  border: 1px solid #2a323d !important;
+  color: #e6edf3 !important;
+}
+html.dark .ds-shell .recharts-tooltip-label,
+html.dark .ds-shell .recharts-tooltip-item,
+html.dark .ds-shell .recharts-tooltip-item-name,
+html.dark .ds-shell .recharts-tooltip-item-separator,
+html.dark .ds-shell .recharts-tooltip-item-value,
+html.dark .ds-shell .recharts-tooltip-item-unit {
+  color: #e6edf3 !important;
+}
+html.dark .ds-shell .recharts-cartesian-grid line {
+  stroke: #2a323d !important;
+}
+
+/* Additional status pill palettes used on Admin/Owner bookings tables */
+html.dark .ds-shell [class*="bg-[#ffdbca]"] { background-color: rgba(254, 180, 141, 0.18) !important; }
+html.dark .ds-shell [class*="bg-[#ffdbca]"][class*="text-[#5d2e10]"] { color: #feb48d !important; }
+
+html.dark .ds-shell [class*="bg-[#476363]/10"] { background-color: rgba(141, 211, 211, 0.14) !important; }
+html.dark .ds-shell [class*="bg-[#476363]/10"][class*="text-[#476363]"] { color: #8dd3d3 !important; }
+
+/* Soft tinted chips like bg-[#004242]/8 bg-[#004242]/10 — invert for dark */
+html.dark .ds-shell [class*="bg-[#004242]/8"],
+html.dark .ds-shell [class*="bg-[#004242]/10"] {
+  background-color: rgba(141, 211, 211, 0.12) !important;
+}
+html.dark .ds-shell [class*="bg-[#004242]/8"] [class*="text-[#004242]"],
+html.dark .ds-shell [class*="bg-[#004242]/10"] [class*="text-[#004242]"] {
+  color: #8dd3d3 !important;
+}
+
+/* Role badge — pale teal chip (user/customer) */
+html.dark .ds-shell [class*="bg-[#c7e6e5]"] {
+  background-color: rgba(141, 211, 211, 0.16) !important;
+}
+html.dark .ds-shell [class*="bg-[#c7e6e5]"][class*="text-[#476363]"],
+html.dark .ds-shell [class*="text-[#476363]"] {
+  color: #8dd3d3 !important;
+}
+
+/* "Pending approvals" toggle chip — warm brown tint */
+html.dark .ds-shell [class*="bg-[#5d2e10]/10"] {
+  background-color: rgba(224, 145, 45, 0.18) !important;
+}
+html.dark .ds-shell [class*="bg-[#5d2e10]/10"][class*="text-[#5d2e10]"],
+html.dark .ds-shell [class*="text-[#5d2e10]"] {
+  color: #feb48d !important;
+}
+
+/* Table row dividers + hover (pale grays used as borders) */
+html.dark .ds-shell [class*="border-[#f3f4f5]"],
+html.dark .ds-shell [class*="border-[#f5f8f8]"] {
+  border-color: #2a323d !important;
+}
+html.dark .ds-shell [class*="hover:bg-[#f8f9fa]"]:hover {
+  background-color: #232b36 !important;
+}
+
+/* Sidebar (aside) keeps its branded dark gradient in both modes — ensure all
+   text on that dark surface is white/light and active item reads clearly. */
+html.dark .ds-shell aside .bg-white {
+  background-color: rgba(255, 255, 255, 0.14) !important;
+}
+html.dark .ds-shell aside a,
+html.dark .ds-shell aside button,
+html.dark .ds-shell aside span,
+html.dark .ds-shell aside p {
+  color: #ffffff !important;
+}
+html.dark .ds-shell aside [class*="text-[#004242]"],
+html.dark .ds-shell aside [class*="text-[#eefcfb]"],
+html.dark .ds-shell aside [class*="text-[#c9ece9]"],
+html.dark .ds-shell aside [class*="text-[#d6f1f0]"],
+html.dark .ds-shell aside [class*="text-[#9fd0cf]"] {
+  color: #ffffff !important;
+}
+html.dark .ds-shell aside .material-symbols-outlined {
+  color: #ffffff !important;
+}
+
+/* Active nav pill — white in light theme (set on the JSX), brand-teal gradient
+   in dark theme. Override the global aside-white-darkening for this specific
+   active link. */
+html.dark .ds-shell aside a[class~="bg-white"] {
+  background: linear-gradient(135deg, #004242 0%, #0d6667 100%) !important;
+  background-color: transparent !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 28px rgba(0, 66, 66, 0.55), inset 0 0 0 1px rgba(141, 211, 211, 0.25) !important;
+}
+html.dark .ds-shell aside a[class~="bg-white"] .material-symbols-outlined,
+html.dark .ds-shell aside a[class~="bg-white"] span {
+  color: #ffffff !important;
+}
+
+/* Any element with a dark-brand background should have white text/icons. */
+html.dark .ds-shell [class*="bg-[#004242]"],
+html.dark .ds-shell [class*="bg-[#005b5c]"],
+html.dark .ds-shell [class*="bg-[#1b6869]"],
+html.dark .ds-shell [class*="bg-[#476363]"],
+html.dark .ds-shell [class*="bg-[#5d2e10]"],
+html.dark .ds-shell [class*="bg-[#7a3e12]"],
+html.dark .ds-shell [class*="bg-[#b96516]"],
+html.dark .ds-shell [class*="bg-[#794425]"],
+html.dark .ds-shell [class*="bg-[#ba1a1a]"],
+html.dark .ds-shell [class*="bg-[#032f2f]"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#004242"],
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#7a3e12"],
+html.dark .ds-shell [class*="bg-[linear-gradient(180deg,#032f2f"] {
+  color: #ffffff !important;
+}
+html.dark .ds-shell [class*="bg-[#004242]"] *,
+html.dark .ds-shell [class*="bg-[#005b5c]"] *,
+html.dark .ds-shell [class*="bg-[#1b6869]"] *,
+html.dark .ds-shell [class*="bg-[#476363]"] *,
+html.dark .ds-shell [class*="bg-[#5d2e10]"] *,
+html.dark .ds-shell [class*="bg-[#7a3e12]"] *,
+html.dark .ds-shell [class*="bg-[#b96516]"] *,
+html.dark .ds-shell [class*="bg-[#794425]"] *,
+html.dark .ds-shell [class*="bg-[#ba1a1a]"] *,
+html.dark .ds-shell [class*="bg-[#032f2f]"] *,
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#004242"] *,
+html.dark .ds-shell [class*="bg-[linear-gradient(135deg,#7a3e12"] *,
+html.dark .ds-shell [class*="bg-[linear-gradient(180deg,#032f2f"] * {
+  color: #ffffff !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-animate,
+  .scroll-animate.animated,
+  .hero-animate-1,
+  .hero-animate-2,
+  .hero-animate-3,
+  .hero-animate-4,
+  .hero-animate-5,
+  .hero-floating-1,
+  .hero-floating-2,
+  .hero-floating-3,
+  .hero-title,
+  .cta-icon,
+  .anim-float,
+  .anim-pulse-glow {
+    animation: none !important;
+  }
+}

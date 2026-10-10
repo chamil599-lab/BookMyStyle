@@ -1,0 +1,3776 @@
+[
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/exports/{export}/download",
+        "name": "filament.exports.download",
+        "action": "Filament\\Actions\\Exports\\Http\\Controllers\\DownloadExport",
+        "middleware": [
+            "filament.actions"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/imports/{import}/failed-rows/download",
+        "name": "filament.imports.failed-rows.download",
+        "action": "Filament\\Actions\\Imports\\Http\\Controllers\\DownloadImportFailureCsv",
+        "middleware": [
+            "filament.actions"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/login",
+        "name": "filament.admin.auth.login",
+        "action": "App\\Filament\\Admin\\Pages\\Auth\\Login",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/password-reset/request",
+        "name": "filament.admin.auth.password-reset.request",
+        "action": "Filament\\Auth\\Pages\\PasswordReset\\RequestPasswordReset",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/password-reset/reset",
+        "name": "filament.admin.auth.password-reset.reset",
+        "action": "Filament\\Auth\\Pages\\PasswordReset\\ResetPassword",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "signed"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/register",
+        "name": "filament.admin.auth.register",
+        "action": "App\\Filament\\Admin\\Pages\\Auth\\Register",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "filament/logout",
+        "name": "filament.admin.auth.logout",
+        "action": "Filament\\Auth\\Http\\Controllers\\LogoutController",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/email-verification/prompt",
+        "name": "filament.admin.auth.email-verification.prompt",
+        "action": "Filament\\Auth\\Pages\\EmailVerification\\EmailVerificationPrompt",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/email-verification/verify/{id}/{hash}",
+        "name": "filament.admin.auth.email-verification.verify",
+        "action": "Filament\\Auth\\Http\\Controllers\\EmailVerificationController",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "signed",
+            "throttle:6,1"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament",
+        "name": "filament.admin.home",
+        "action": "Filament\\Http\\Controllers\\RedirectToHomeController",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/analytics-dashboard",
+        "name": "filament.admin.pages.analytics-dashboard",
+        "action": "App\\Filament\\Admin\\Pages\\AnalyticsDashboard",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/dashboard",
+        "name": "filament.admin.pages.dashboard",
+        "action": "App\\Filament\\Admin\\Pages\\Dashboard",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/owner-dashboard",
+        "name": "filament.admin.pages.owner-dashboard",
+        "action": "App\\Filament\\Admin\\Pages\\OwnerDashboard",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/pending-approval",
+        "name": "filament.admin.pages.pending-approval",
+        "action": "App\\Filament\\Admin\\Pages\\PendingApproval",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/bookings",
+        "name": "filament.admin.resources.bookings.index",
+        "action": "App\\Filament\\Admin\\Resources\\Bookings\\Pages\\ListBookings",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/bookings/create",
+        "name": "filament.admin.resources.bookings.create",
+        "action": "App\\Filament\\Admin\\Resources\\Bookings\\Pages\\CreateBooking",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/bookings/{record}",
+        "name": "filament.admin.resources.bookings.view",
+        "action": "App\\Filament\\Admin\\Resources\\Bookings\\Pages\\ViewBooking",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/bookings/{record}/edit",
+        "name": "filament.admin.resources.bookings.edit",
+        "action": "App\\Filament\\Admin\\Resources\\Bookings\\Pages\\EditBooking",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/categories",
+        "name": "filament.admin.resources.categories.index",
+        "action": "App\\Filament\\Admin\\Resources\\Categories\\Pages\\ListCategories",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/categories/create",
+        "name": "filament.admin.resources.categories.create",
+        "action": "App\\Filament\\Admin\\Resources\\Categories\\Pages\\CreateCategory",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/categories/{record}",
+        "name": "filament.admin.resources.categories.view",
+        "action": "App\\Filament\\Admin\\Resources\\Categories\\Pages\\ViewCategory",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/categories/{record}/edit",
+        "name": "filament.admin.resources.categories.edit",
+        "action": "App\\Filament\\Admin\\Resources\\Categories\\Pages\\EditCategory",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/deals-pages",
+        "name": "filament.admin.resources.deals-pages.index",
+        "action": "App\\Filament\\Admin\\Resources\\DealsPages\\Pages\\ListDealsPages",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/deals-pages/create",
+        "name": "filament.admin.resources.deals-pages.create",
+        "action": "App\\Filament\\Admin\\Resources\\DealsPages\\Pages\\CreateDealsPage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/deals-pages/{record}",
+        "name": "filament.admin.resources.deals-pages.view",
+        "action": "App\\Filament\\Admin\\Resources\\DealsPages\\Pages\\ViewDealsPage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/deals-pages/{record}/edit",
+        "name": "filament.admin.resources.deals-pages.edit",
+        "action": "App\\Filament\\Admin\\Resources\\DealsPages\\Pages\\EditDealsPage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/departments",
+        "name": "filament.admin.resources.departments.index",
+        "action": "App\\Filament\\Admin\\Resources\\Departments\\Pages\\ListDepartments",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/departments/create",
+        "name": "filament.admin.resources.departments.create",
+        "action": "App\\Filament\\Admin\\Resources\\Departments\\Pages\\CreateDepartment",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/departments/{record}",
+        "name": "filament.admin.resources.departments.view",
+        "action": "App\\Filament\\Admin\\Resources\\Departments\\Pages\\ViewDepartment",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/departments/{record}/edit",
+        "name": "filament.admin.resources.departments.edit",
+        "action": "App\\Filament\\Admin\\Resources\\Departments\\Pages\\EditDepartment",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/featured-salons",
+        "name": "filament.admin.resources.featured-salons.index",
+        "action": "App\\Filament\\Admin\\Resources\\FeaturedSalons\\Pages\\ListFeaturedSalons",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/featured-salons/create",
+        "name": "filament.admin.resources.featured-salons.create",
+        "action": "App\\Filament\\Admin\\Resources\\FeaturedSalons\\Pages\\CreateFeaturedSalon",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/featured-salons/{record}",
+        "name": "filament.admin.resources.featured-salons.view",
+        "action": "App\\Filament\\Admin\\Resources\\FeaturedSalons\\Pages\\ViewFeaturedSalon",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/featured-salons/{record}/edit",
+        "name": "filament.admin.resources.featured-salons.edit",
+        "action": "App\\Filament\\Admin\\Resources\\FeaturedSalons\\Pages\\EditFeaturedSalon",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/image-cycles",
+        "name": "filament.admin.resources.image-cycles.index",
+        "action": "App\\Filament\\Admin\\Resources\\ImageCycles\\Pages\\ListImageCycles",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/image-cycles/create",
+        "name": "filament.admin.resources.image-cycles.create",
+        "action": "App\\Filament\\Admin\\Resources\\ImageCycles\\Pages\\CreateImageCycle",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/image-cycles/{record}",
+        "name": "filament.admin.resources.image-cycles.view",
+        "action": "App\\Filament\\Admin\\Resources\\ImageCycles\\Pages\\ViewImageCycle",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/image-cycles/{record}/edit",
+        "name": "filament.admin.resources.image-cycles.edit",
+        "action": "App\\Filament\\Admin\\Resources\\ImageCycles\\Pages\\EditImageCycle",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/salons",
+        "name": "filament.admin.resources.salons.index",
+        "action": "App\\Filament\\Admin\\Resources\\Salons\\Pages\\ListSalons",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/salons/create",
+        "name": "filament.admin.resources.salons.create",
+        "action": "App\\Filament\\Admin\\Resources\\Salons\\Pages\\CreateSalon",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/salons/{record}",
+        "name": "filament.admin.resources.salons.view",
+        "action": "App\\Filament\\Admin\\Resources\\Salons\\Pages\\ViewSalon",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/salons/{record}/edit",
+        "name": "filament.admin.resources.salons.edit",
+        "action": "App\\Filament\\Admin\\Resources\\Salons\\Pages\\EditSalon",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/service-pages",
+        "name": "filament.admin.resources.service-pages.index",
+        "action": "App\\Filament\\Admin\\Resources\\ServicePages\\Pages\\ListServicePages",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/service-pages/create",
+        "name": "filament.admin.resources.service-pages.create",
+        "action": "App\\Filament\\Admin\\Resources\\ServicePages\\Pages\\CreateServicePage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/service-pages/{record}",
+        "name": "filament.admin.resources.service-pages.view",
+        "action": "App\\Filament\\Admin\\Resources\\ServicePages\\Pages\\ViewServicePage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/service-pages/{record}/edit",
+        "name": "filament.admin.resources.service-pages.edit",
+        "action": "App\\Filament\\Admin\\Resources\\ServicePages\\Pages\\EditServicePage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/services",
+        "name": "filament.admin.resources.services.index",
+        "action": "App\\Filament\\Admin\\Resources\\Services\\Pages\\ListServices",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/services/create",
+        "name": "filament.admin.resources.services.create",
+        "action": "App\\Filament\\Admin\\Resources\\Services\\Pages\\CreateService",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/services/{record}",
+        "name": "filament.admin.resources.services.view",
+        "action": "App\\Filament\\Admin\\Resources\\Services\\Pages\\ViewService",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/services/{record}/edit",
+        "name": "filament.admin.resources.services.edit",
+        "action": "App\\Filament\\Admin\\Resources\\Services\\Pages\\EditService",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/subscription-packages",
+        "name": "filament.admin.resources.subscription-packages.index",
+        "action": "App\\Filament\\Admin\\Resources\\SubscriptionPackages\\Pages\\ListSubscriptionPackages",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/subscription-packages/create",
+        "name": "filament.admin.resources.subscription-packages.create",
+        "action": "App\\Filament\\Admin\\Resources\\SubscriptionPackages\\Pages\\CreateSubscriptionPackage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/subscription-packages/{record}",
+        "name": "filament.admin.resources.subscription-packages.view",
+        "action": "App\\Filament\\Admin\\Resources\\SubscriptionPackages\\Pages\\ViewSubscriptionPackage",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/team-members",
+        "name": "filament.admin.resources.team-members.index",
+        "action": "App\\Filament\\Admin\\Resources\\TeamMembers\\Pages\\ListTeamMembers",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/team-members/create",
+        "name": "filament.admin.resources.team-members.create",
+        "action": "App\\Filament\\Admin\\Resources\\TeamMembers\\Pages\\CreateTeamMember",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/team-members/{record}",
+        "name": "filament.admin.resources.team-members.view",
+        "action": "App\\Filament\\Admin\\Resources\\TeamMembers\\Pages\\ViewTeamMember",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/team-members/{record}/edit",
+        "name": "filament.admin.resources.team-members.edit",
+        "action": "App\\Filament\\Admin\\Resources\\TeamMembers\\Pages\\EditTeamMember",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/user-subscriptions",
+        "name": "filament.admin.resources.user-subscriptions.index",
+        "action": "App\\Filament\\Admin\\Resources\\UserSubscriptions\\Pages\\ListUserSubscriptions",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/user-subscriptions/create",
+        "name": "filament.admin.resources.user-subscriptions.create",
+        "action": "App\\Filament\\Admin\\Resources\\UserSubscriptions\\Pages\\CreateUserSubscription",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/user-subscriptions/{record}",
+        "name": "filament.admin.resources.user-subscriptions.view",
+        "action": "App\\Filament\\Admin\\Resources\\UserSubscriptions\\Pages\\ViewUserSubscription",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/user-subscriptions/{record}/edit",
+        "name": "filament.admin.resources.user-subscriptions.edit",
+        "action": "App\\Filament\\Admin\\Resources\\UserSubscriptions\\Pages\\EditUserSubscription",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/users",
+        "name": "filament.admin.resources.users.index",
+        "action": "App\\Filament\\Admin\\Resources\\Users\\Pages\\ListUsers",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/users/create",
+        "name": "filament.admin.resources.users.create",
+        "action": "App\\Filament\\Admin\\Resources\\Users\\Pages\\CreateUser",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/users/{record}",
+        "name": "filament.admin.resources.users.view",
+        "action": "App\\Filament\\Admin\\Resources\\Users\\Pages\\ViewUser",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/users/{record}/edit",
+        "name": "filament.admin.resources.users.edit",
+        "action": "App\\Filament\\Admin\\Resources\\Users\\Pages\\EditUser",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/shield/roles",
+        "name": "filament.admin.resources.shield.roles.index",
+        "action": "BezhanSalleh\\FilamentShield\\Resources\\Roles\\Pages\\ListRoles",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/shield/roles/create",
+        "name": "filament.admin.resources.shield.roles.create",
+        "action": "BezhanSalleh\\FilamentShield\\Resources\\Roles\\Pages\\CreateRole",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/shield/roles/{record}",
+        "name": "filament.admin.resources.shield.roles.view",
+        "action": "BezhanSalleh\\FilamentShield\\Resources\\Roles\\Pages\\ViewRole",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "filament/shield/roles/{record}/edit",
+        "name": "filament.admin.resources.shield.roles.edit",
+        "action": "BezhanSalleh\\FilamentShield\\Resources\\Roles\\Pages\\EditRole",
+        "middleware": [
+            "panel:admin",
+            "Illuminate\\Cookie\\Middleware\\EncryptCookies",
+            "Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse",
+            "Illuminate\\Session\\Middleware\\StartSession",
+            "Filament\\Http\\Middleware\\AuthenticateSession",
+            "Illuminate\\View\\Middleware\\ShareErrorsFromSession",
+            "Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken",
+            "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+            "Filament\\Http\\Middleware\\DisableBladeIconComponents",
+            "Filament\\Http\\Middleware\\DispatchServingFilamentEvent",
+            "App\\Http\\Middleware\\EnsureUserIsApproved",
+            "Filament\\Http\\Middleware\\Authenticate",
+            "verified:filament.admin.auth.email-verification.prompt"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "sanctum/csrf-cookie",
+        "name": "sanctum.csrf-cookie",
+        "action": "Laravel\\Sanctum\\Http\\Controllers\\CsrfCookieController@show",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "flux/flux.js",
+        "name": null,
+        "action": "Flux\\AssetManager@fluxJs",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "flux/flux.min.js",
+        "name": null,
+        "action": "Flux\\AssetManager@fluxMinJs",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "flux/editor.css",
+        "name": null,
+        "action": "Flux\\AssetManager@editorCss",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "flux/editor.js",
+        "name": null,
+        "action": "Flux\\AssetManager@editorJs",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "flux/editor.min.js",
+        "name": null,
+        "action": "Flux\\AssetManager@editorMinJs",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "livewire/update",
+        "name": "livewire.update",
+        "action": "Livewire\\Mechanisms\\HandleRequests\\HandleRequests@handleUpdate",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "livewire/livewire.js",
+        "name": null,
+        "action": "Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@returnJavaScriptAsFile",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "livewire/livewire.min.js.map",
+        "name": null,
+        "action": "Livewire\\Mechanisms\\FrontendAssets\\FrontendAssets@maps",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "livewire/upload-file",
+        "name": "livewire.upload-file",
+        "action": "Livewire\\Features\\SupportFileUploads\\FileUploadController@handle",
+        "middleware": [
+            "web",
+            "throttle:60,1"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "livewire/preview-file/{filename}",
+        "name": "livewire.preview-file",
+        "action": "Livewire\\Features\\SupportFileUploads\\FilePreviewController@handle",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/dashboard/stats",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminDashboardController@stats",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/dashboard/revenue-chart",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminDashboardController@revenueChart",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/dashboard/visits-chart",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminDashboardController@visitsChart",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/dashboard/subscription-chart",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminDashboardController@subscriptionChart",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/dashboard/top-packages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminDashboardController@topPackages",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@bookings",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "PATCH"
+        ],
+        "uri": "api/admin/bookings/{id}/status",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@updateBookingStatus",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/salons",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@salons",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/users",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@users",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "PATCH"
+        ],
+        "uri": "api/admin/users/{id}/approve",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@approveUser",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/admin/users/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@rejectUser",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/subscriptions",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@subscriptions",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "PATCH"
+        ],
+        "uri": "api/admin/subscriptions/{id}/status",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@updateSubscriptionStatus",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/packages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@packages",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/admin/packages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@storePackage",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "PUT"
+        ],
+        "uri": "api/admin/packages/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@updatePackage",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/admin/packages/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@destroyPackage",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/categories",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@categories",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/admin/categories",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@storeCategory",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "PUT"
+        ],
+        "uri": "api/admin/categories/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@updateCategory",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/admin/categories/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@destroyCategory",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/admin/departments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@departments",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/admin/departments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@storeDepartment",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "PUT"
+        ],
+        "uri": "api/admin/departments/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@updateDepartment",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/admin/departments/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AdminManagementController@destroyDepartment",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:admin"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/stats",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@stats",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/revenue-chart",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@revenueChart",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/top-services",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@topServices",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/bookings-by-status",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@bookingsByStatus",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/salons",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@salons",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/calendar",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@calendar",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/analytics",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@analytics",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/daily-revenue",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@dailyRevenue",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/monthly-revenue",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@monthlyRevenue",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/profit-breakdown",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@profitBreakdown",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/dashboard/profit-by-month",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerDashboardController@profitByMonth",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/salons",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@salons",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/owner/salons",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@storeSalon",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/salons/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@salon",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "PUT"
+        ],
+        "uri": "api/owner/salons/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@updateSalon",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/owner/salons/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@destroySalon",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@bookings",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/owner/bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@storeBooking",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "PUT"
+        ],
+        "uri": "api/owner/bookings/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@updateBooking",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/owner/bookings/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@destroyBooking",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "PATCH"
+        ],
+        "uri": "api/owner/bookings/{id}/status",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@updateBookingStatus",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/services",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@services",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/owner/services",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@storeService",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "PUT"
+        ],
+        "uri": "api/owner/services/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@updateService",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/owner/services/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@destroyService",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/departments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@departments",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/categories",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@categories",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/limits",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerManagementController@limits",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/subscription/packages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerSubscriptionController@packages",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/owner/subscription/subscribe/{package}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerSubscriptionController@subscribe",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/owner/subscription/history",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\OwnerSubscriptionController@history",
+        "middleware": [
+            "api",
+            "auth:sanctum",
+            "role:owner",
+            "approved",
+            "subscription.active"
+        ]
+    },
+    {
+        "methods": [
+            "PATCH"
+        ],
+        "uri": "api/bookings/{id}/status",
+        "name": null,
+        "action": "App\\Http\\Controllers\\BookingController@updateStatus",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/notifications",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@index",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/notifications/stream",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@stream",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "PATCH"
+        ],
+        "uri": "api/notifications/{id}/read",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@markAsRead",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/notifications/read-all",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@markAllAsRead",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/notifications/{id}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@destroy",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "api/notifications",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\NotificationController@destroyAll",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/customer/stats",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@stats",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/customer/bookings/upcoming",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@upcomingBookings",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/customer/bookings/history",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@bookingHistory",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "PATCH"
+        ],
+        "uri": "api/customer/bookings/{id}/cancel",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@cancelBooking",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/customer/profile",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@profile",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "PUT"
+        ],
+        "uri": "api/customer/profile",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@updateProfile",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/customer/favorites",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@getFavorites",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/customer/favorites/{salonId}/toggle",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@toggleFavorite",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/customer/favorites/{salonId}/check",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\CustomerController@checkFavorite",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/image-cycles",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@storeImageCycle",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salonId}/bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\BookingController@getSalonBookings",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/bookings/my-bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\BookingController@getUserBookings",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicSalonController@index",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/simple",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicSalonController@simpleList",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salon}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicSalonController@show",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salon}/services",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicSalonController@services",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salon}/working-hours",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicSalonController@workingHours",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salon}/booked-times",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicSalonController@bookedTimes",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/bookings/{salon}/{date}",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicSalonController@bookedTimesLegacy",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/bookings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\BookingApiController@store",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/bookings/count",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\BookingApiController@count",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salon}/can-rate",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\SalonRatingController@canRate",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/salons/{salon}/ratings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\SalonRatingController@index",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/salons/{salon}/ratings",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\SalonRatingController@store",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/departments",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@departments",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/stats",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@stats",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/site-visits",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@recordVisit",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/service-pages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@servicePages",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/dealspages",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@dealsPages",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/image-cycles",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@imageCycles",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/team-members",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\PublicContentController@teamMembers",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/auth/register",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@register",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/auth/login",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@login",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/auth/google",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@googleAuth",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/auth/forgot-password",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@forgotPassword",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/auth/reset-password",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@resetPassword",
+        "middleware": [
+            "api"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/auth/logout",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@logout",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "api/auth/me",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@me",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "api/auth/change-password",
+        "name": null,
+        "action": "App\\Http\\Controllers\\Api\\AuthController@changePassword",
+        "middleware": [
+            "api",
+            "auth:sanctum"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "up",
+        "name": null,
+        "action": "Closure",
+        "middleware": []
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "/",
+        "name": "home",
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "login",
+        "name": "login",
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "register",
+        "name": "register",
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "forgot-password",
+        "name": "password.request",
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "reset-password",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "deals",
+        "name": "deals",
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "about",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "services",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "salons",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "salon/{id}",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "trending",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "popular",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "terms-and-condition",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "privacy-policy",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "dashboard/{any?}",
+        "name": null,
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "password/reset",
+        "name": "password.reset",
+        "action": "Closure",
+        "middleware": [
+            "web"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "subscription/packages",
+        "name": "subscription.packages",
+        "action": "App\\Http\\Controllers\\SubscriptionController@packages",
+        "middleware": [
+            "web",
+            "auth"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "subscription/checkout/{package}",
+        "name": "subscription.checkout",
+        "action": "App\\Http\\Controllers\\SubscriptionController@checkout",
+        "middleware": [
+            "web",
+            "auth"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "subscription/subscribe/{package}",
+        "name": "subscription.subscribe",
+        "action": "App\\Http\\Controllers\\SubscriptionController@subscribe",
+        "middleware": [
+            "web",
+            "auth"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "subscription/required",
+        "name": "subscription.required",
+        "action": "App\\Http\\Controllers\\SubscriptionRequiredController@index",
+        "middleware": [
+            "web",
+            "auth"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/dashboard",
+        "name": "owner.dashboard",
+        "action": "App\\Http\\Controllers\\OwnerController@dashboard",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons",
+        "name": "salons.index",
+        "action": "App\\Http\\Controllers\\SalonController@index",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/create",
+        "name": "salons.create",
+        "action": "App\\Http\\Controllers\\SalonController@create",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "owner/salons",
+        "name": "salons.store",
+        "action": "App\\Http\\Controllers\\SalonController@store",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}",
+        "name": "salons.show",
+        "action": "App\\Http\\Controllers\\SalonController@show",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/edit",
+        "name": "salons.edit",
+        "action": "App\\Http\\Controllers\\SalonController@edit",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "PUT",
+            "PATCH"
+        ],
+        "uri": "owner/salons/{salon}",
+        "name": "salons.update",
+        "action": "App\\Http\\Controllers\\SalonController@update",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "owner/salons/{salon}",
+        "name": "salons.destroy",
+        "action": "App\\Http\\Controllers\\SalonController@destroy",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/staff",
+        "name": "salons.staff.index",
+        "action": "App\\Http\\Controllers\\StaffController@index",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/staff/create",
+        "name": "salons.staff.create",
+        "action": "App\\Http\\Controllers\\StaffController@create",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "owner/salons/{salon}/staff",
+        "name": "salons.staff.store",
+        "action": "App\\Http\\Controllers\\StaffController@store",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/staff/{staff}",
+        "name": "salons.staff.show",
+        "action": "App\\Http\\Controllers\\StaffController@show",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/staff/{staff}/edit",
+        "name": "salons.staff.edit",
+        "action": "App\\Http\\Controllers\\StaffController@edit",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "PUT",
+            "PATCH"
+        ],
+        "uri": "owner/salons/{salon}/staff/{staff}",
+        "name": "salons.staff.update",
+        "action": "App\\Http\\Controllers\\StaffController@update",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "owner/salons/{salon}/staff/{staff}",
+        "name": "salons.staff.destroy",
+        "action": "App\\Http\\Controllers\\StaffController@destroy",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/services",
+        "name": "salons.services.index",
+        "action": "App\\Http\\Controllers\\ServiceController@index",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/services/create",
+        "name": "salons.services.create",
+        "action": "App\\Http\\Controllers\\ServiceController@create",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "owner/salons/{salon}/services",
+        "name": "salons.services.store",
+        "action": "App\\Http\\Controllers\\ServiceController@store",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/services/{service}",
+        "name": "salons.services.show",
+        "action": "App\\Http\\Controllers\\ServiceController@show",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/salons/{salon}/services/{service}/edit",
+        "name": "salons.services.edit",
+        "action": "App\\Http\\Controllers\\ServiceController@edit",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "PUT",
+            "PATCH"
+        ],
+        "uri": "owner/salons/{salon}/services/{service}",
+        "name": "salons.services.update",
+        "action": "App\\Http\\Controllers\\ServiceController@update",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "owner/salons/{salon}/services/{service}",
+        "name": "salons.services.destroy",
+        "action": "App\\Http\\Controllers\\ServiceController@destroy",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/bookings",
+        "name": "bookings.index",
+        "action": "App\\Http\\Controllers\\BookingController@index",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/bookings/create",
+        "name": "bookings.create",
+        "action": "App\\Http\\Controllers\\BookingController@create",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "POST"
+        ],
+        "uri": "owner/bookings",
+        "name": "bookings.store",
+        "action": "App\\Http\\Controllers\\BookingController@store",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/bookings/{booking}",
+        "name": "bookings.show",
+        "action": "App\\Http\\Controllers\\BookingController@show",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "owner/bookings/{booking}/edit",
+        "name": "bookings.edit",
+        "action": "App\\Http\\Controllers\\BookingController@edit",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "PUT",
+            "PATCH"
+        ],
+        "uri": "owner/bookings/{booking}",
+        "name": "bookings.update",
+        "action": "App\\Http\\Controllers\\BookingController@update",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "DELETE"
+        ],
+        "uri": "owner/bookings/{booking}",
+        "name": "bookings.destroy",
+        "action": "App\\Http\\Controllers\\BookingController@destroy",
+        "middleware": [
+            "web",
+            "auth",
+            "subscription"
+        ]
+    },
+    {
+        "methods": [
+            "GET",
+            "HEAD"
+        ],
+        "uri": "storage/{path}",
+        "name": "storage.local",
+        "action": "Closure",
+        "middleware": []
+    }
+]
