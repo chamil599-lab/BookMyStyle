@@ -3,45 +3,22 @@
 namespace App\Filament\Admin\Resources\Bookings\Pages;
 
 use App\Filament\Admin\Resources\Bookings\BookingResource;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Auth;
 
 class CreateBooking extends CreateRecord
 {
+    use \App\Filament\Concerns\HandlesServiceValidation;
+
     protected static string $resource = BookingResource::class;
+
+    protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
+    {
+        return $this->withFormValidation(fn () => app(\App\Services\BookingService::class)->create($data, auth()->user(), true));
+    }
 
     protected function beforeCreate(): void
     {
         \Illuminate\Support\Facades\Gate::authorize('create', \App\Models\Booking::class);
-        $user = Auth::user();
-
-        if ($user->hasRole('admin')) {
-            return;
-        }
-
-        // Check if user has active subscription
-        if (! $user->hasActiveSubscription()) {
-            Notification::make()
-                ->danger()
-                ->title('No Active Subscription')
-                ->body('You need an active subscription to create bookings.')
-                ->send();
-            throw new \Exception('No active subscription');
-        }
-
-        // Check if user can create more bookings this month
-        if (! $user->canCreateMoreBookings()) {
-            $package = $user->activeSubscription->package;
-            $currentCount = $user->getMonthlyBookingsCount();
-
-            Notification::make()
-                ->danger()
-                ->title('Monthly Booking Limit Reached')
-                ->body("Your {$package->name} plan allows {$package->max_bookings_per_month} bookings per month. Current count: {$currentCount}. Limit resets on ".now()->addMonth()->format('M d, Y'))
-                ->send();
-            throw new \Exception('Monthly booking limit exceeded');
-        }
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

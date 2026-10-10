@@ -51,7 +51,6 @@ class PublicSalonController extends Controller
     public function services(Salon $salon): JsonResponse
     {
         $services = Service::where('created_by', $salon->created_by)
-            ->orWhere('updated_by', $salon->created_by)
             ->get();
 
         if ($services->isEmpty()) {
@@ -99,7 +98,7 @@ class PublicSalonController extends Controller
 
     public function bookedTimesLegacy(Salon $salon, string $date): JsonResponse
     {
-        if (!Carbon::hasFormat($date, 'Y-m-d')) {
+        if (! Carbon::hasFormat($date, 'Y-m-d')) {
             return response()->json(['error' => 'Invalid date format. Use YYYY-MM-DD'], 422);
         }
 

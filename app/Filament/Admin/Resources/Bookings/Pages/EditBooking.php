@@ -9,6 +9,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditBooking extends EditRecord
 {
+    use \App\Filament\Concerns\HandlesServiceValidation;
+
     protected static string $resource = BookingResource::class;
 
     protected function mutateFormDataBeforeSave(array $data): array
@@ -22,6 +24,11 @@ class EditBooking extends EditRecord
         }
 
         return $data;
+    }
+
+    protected function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
+    {
+        return $this->withFormValidation(fn () => app(\App\Services\BookingService::class)->update($record, $data, auth()->user()));
     }
 
     protected function getHeaderActions(): array

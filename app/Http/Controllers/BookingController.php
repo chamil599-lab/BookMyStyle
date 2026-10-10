@@ -28,19 +28,7 @@ class BookingController extends Controller
 
         Gate::authorize('updateStatus', $booking);
 
-        // BookingObserver sends the status email once when this save changes status.
-        $booking->status = $validated['status'];
-        $booking->save();
-
-        // In-app notification to customer
-        try {
-            $booking->loadMissing(['salon', 'service', 'user']);
-            if ($booking->user_id && $booking->user) {
-                $booking->user->notify(new \App\Notifications\BookingStatusChangedNotification($booking));
-            }
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Failed to send BookingStatusChangedNotification: '.$e->getMessage());
-        }
+        $booking = app(\App\Services\BookingService::class)->changeStatus($booking, $validated['status'], $request->user());
 
         return response()->json([
             'message' => "Booking {$validated['status']} successfully",

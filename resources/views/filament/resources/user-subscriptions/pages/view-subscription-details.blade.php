@@ -6,13 +6,24 @@
         $isAdmin = auth()->user()->hasRole('admin');
         $isPending = $record->isPending();
         $isActive = $record->isActive();
+        $isScheduled = $record->status === 'active' && $record->starts_at?->isFuture();
         $isExpired = $record->isExpired();
         $isCanceled = $record->status === 'canceled';
-        $hasPendingRenewal = \App\Models\UserSubscription::where('renewed_from', $record->id)
+        $hasPendingRenewal = \App\Models\UserSubscription::where('user_id', $record->user_id)
             ->where('status', 'pending')->exists();
     @endphp
 
     <div class="space-y-6">
+        @if ($errors->any())
+            <ul role="alert" class="text-danger-600">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        @endif
+        @if ($isScheduled)
+            <p role="status">Your approved renewal starts on {{ $record->starts_at->format('M d, Y H:i') }}. Your current plan remains active until then.</p>
+        @endif
 
         {{-- Status Banner --}}
         <div @class([

@@ -3,14 +3,12 @@
 namespace App\Filament\Admin\Resources\UserSubscriptions\Tables;
 
 use App\RolesEnum;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -95,7 +93,7 @@ class UserSubscriptionsTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make()
-                    ->visible($isAdmin),
+                    ->visible(fn ($record) => $isAdmin && $record->isPending()),
                 Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-m-check-circle')
@@ -107,27 +105,11 @@ class UserSubscriptionsTable
                         TextInput::make('amount_paid')
                             ->label('Verified Amount Paid (LKR)')
                             ->numeric()
+                            ->minValue(0)
                             ->required(),
                     ])
                     ->action(function ($record, array $data) {
-                        $package = $record->package;
-
-                        // If this is a renewal, start after the parent subscription ends
-                        if ($record->renewed_from) {
-                            $parent = $record->renewedFrom;
-                            $startsAt = $parent && $parent->ends_at && $parent->ends_at->isFuture()
-                                ? $parent->ends_at
-                                : now();
-                        } else {
-                            $startsAt = now();
-                        }
-
-                        $record->update([
-                            'status' => 'active',
-                            'amount_paid' => $data['amount_paid'],
-                            'starts_at' => $startsAt,
-                            'ends_at' => $startsAt->copy()->addDays($package->duration_days),
-                        ]);
+                        $record = app(\App\Services\SubscriptionService::class)->approve($record, auth()->user(), $data['amount_paid']);
                         Notification::make()
                             ->title('Subscription Approved')
                             ->body("Activated for {$record->user->name} until {$record->ends_at->format('M d, Y')}.")
@@ -143,10 +125,7 @@ class UserSubscriptionsTable
                     ->modalHeading('Reject Subscription')
                     ->modalDescription('Are you sure you want to reject this subscription request?')
                     ->action(function ($record) {
-                        $record->update([
-                            'status' => 'canceled',
-                            'cancelled_at' => now(),
-                        ]);
+                        app(\App\Services\SubscriptionService::class)->cancel($record, auth()->user(), true);
                         Notification::make()
                             ->title('Subscription Rejected')
                             ->body("Rejected subscription for {$record->user->name}.")

@@ -51,14 +51,15 @@ class UserSubscription extends Model
     public function scopeActive($query)
     {
         return $query->where('status', 'active')
-                    ->where('ends_at', '>', now());
+            ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', now()))
+            ->where('ends_at', '>', now());
     }
 
     public function scopeExpired($query)
     {
-        return $query->where(function($q) {
+        return $query->where(function ($q) {
             $q->where('status', 'expired')
-              ->orWhere('ends_at', '<=', now());
+                ->orWhere('ends_at', '<=', now());
         });
     }
 
@@ -75,17 +76,20 @@ class UserSubscription extends Model
     // Methods
     public function isActive(): bool
     {
-        return $this->status === 'active' && $this->ends_at > now();
+        return $this->status === 'active' && (! $this->starts_at || $this->starts_at <= now()) && $this->ends_at && $this->ends_at > now();
     }
 
     public function isExpired(): bool
     {
-        return $this->status === 'expired' || $this->ends_at <= now();
+        return $this->status === 'expired' || ($this->ends_at && $this->ends_at <= now());
     }
 
     public function daysRemaining(): int
     {
-        if (!$this->ends_at) return 0;
-        return now()->diffInDays($this->ends_at, false);
+        if (! $this->ends_at) {
+            return 0;
+        }
+
+        return max(0, (int) ceil(now()->diffInDays($this->ends_at, false)));
     }
 }

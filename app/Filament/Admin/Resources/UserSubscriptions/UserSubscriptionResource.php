@@ -25,7 +25,7 @@ class UserSubscriptionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellSnooze;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Billing';
+    protected static string|\UnitEnum|null $navigationGroup = 'Billing';
 
     protected static ?string $navigationLabel = 'User Subscriptions';
 
@@ -93,6 +93,7 @@ class UserSubscriptionResource extends Resource
     {
         /** @var \App\Models\User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole([RolesEnum::ADMIN->value, RolesEnum::OWNER->value]) ?? false;
     }
 
@@ -103,6 +104,7 @@ class UserSubscriptionResource extends Resource
     {
         /** @var \App\Models\User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 
@@ -113,7 +115,8 @@ class UserSubscriptionResource extends Resource
     {
         /** @var \App\Models\User|null $user */
         $user = Filament::auth()->user();
-        return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
+
+        return ($user?->hasRole(RolesEnum::ADMIN->value) ?? false) && $record->isPending();
     }
 
     /**

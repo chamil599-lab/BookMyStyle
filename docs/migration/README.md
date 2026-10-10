@@ -17,6 +17,7 @@ Read these documents before changing behavior:
 - [Verification results and outstanding gates](verification.md)
 - [Step two security changes](step-2-security.md)
 - [Imported database verification](import-verification.md)
+- [Step three shared booking and subscription services](step-3-shared-services.md)
 
 Machine-readable evidence is in `baseline/`: the booted Laravel route collection, scheduler events, and a sanitized environment summary. The database schema is emitted only when the configured database is reachable. Database records, credentials, build/test logs, uploads, and backup archives belong exclusively under ignored `.local/migration-baseline/`.
 

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\SalonHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\FavoriteSalon;
 use App\Models\Salon;
 use App\Models\User;
-use App\Helpers\SalonHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,7 +47,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $bookings
+            'data' => $bookings,
         ]);
     }
 
@@ -92,7 +92,7 @@ class CustomerController extends Controller
                 'last_page' => $bookings->lastPage(),
                 'per_page' => $bookings->perPage(),
                 'total' => $bookings->total(),
-            ]
+            ],
         ]);
     }
 
@@ -111,7 +111,7 @@ class CustomerController extends Controller
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at,
                 'created_at' => $user->created_at->format('Y-m-d H:i:s'),
-            ]
+            ],
         ]);
     }
 
@@ -122,7 +122,7 @@ class CustomerController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'email' => 'required|email|unique:users,email,'.Auth::id(),
         ]);
 
         /** @var User $user */
@@ -136,7 +136,7 @@ class CustomerController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-            ]
+            ],
         ]);
     }
 
@@ -168,7 +168,7 @@ class CustomerController extends Controller
                 'completed_bookings' => (int) ($bookingStats->completed_bookings ?? 0),
                 'cancelled_bookings' => (int) ($bookingStats->cancelled_bookings ?? 0),
                 'favorite_salons' => $favoriteCount,
-            ]
+            ],
         ]);
     }
 
@@ -181,35 +181,26 @@ class CustomerController extends Controller
             ->forCustomer(Auth::user())
             ->first();
 
-        if (!$booking) {
+        if (! $booking) {
             return response()->json([
                 'success' => false,
-                'message' => 'Booking not found'
+                'message' => 'Booking not found',
             ], 404);
         }
 
         // Only allow cancellation of pending or approved bookings
-        if (!in_array($booking->status, ['pending', 'approved'])) {
+        if (! in_array($booking->status, ['pending', 'approved'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'This booking cannot be cancelled'
+                'message' => 'This booking cannot be cancelled',
             ], 400);
         }
 
-        $booking->update(['status' => 'rejected']);
-
-        try {
-            $fresh = $booking->fresh(['salon.owner', 'service']);
-            if ($fresh && $fresh->salon?->owner) {
-                $fresh->salon->owner->notify(new \App\Notifications\BookingCancelledNotification($fresh, 'customer', 'owner'));
-            }
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Failed to send BookingCancelledNotification: ' . $e->getMessage());
-        }
+        app(\App\Services\BookingService::class)->cancel($booking, $request->user());
 
         return response()->json([
             'success' => true,
-            'message' => 'Booking cancelled successfully'
+            'message' => 'Booking cancelled successfully',
         ]);
     }
 
@@ -233,7 +224,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $favorites
+            'data' => $favorites,
         ]);
     }
 
@@ -244,10 +235,10 @@ class CustomerController extends Controller
     {
         $salon = Salon::find($salonId);
 
-        if (!$salon) {
+        if (! $salon) {
             return response()->json([
                 'success' => false,
-                'message' => 'Salon not found'
+                'message' => 'Salon not found',
             ], 404);
         }
 
@@ -259,7 +250,7 @@ class CustomerController extends Controller
         if ($exists) {
             return response()->json([
                 'success' => false,
-                'message' => 'Salon is already in your favorites'
+                'message' => 'Salon is already in your favorites',
             ], 400);
         }
 
@@ -270,7 +261,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Salon added to favorites successfully'
+            'message' => 'Salon added to favorites successfully',
         ], 201);
     }
 
@@ -283,10 +274,10 @@ class CustomerController extends Controller
             ->where('salon_id', $salonId)
             ->first();
 
-        if (!$favorite) {
+        if (! $favorite) {
             return response()->json([
                 'success' => false,
-                'message' => 'Salon not found in favorites'
+                'message' => 'Salon not found in favorites',
             ], 404);
         }
 
@@ -294,7 +285,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Salon removed from favorites successfully'
+            'message' => 'Salon removed from favorites successfully',
         ]);
     }
 
@@ -309,7 +300,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'success' => true,
-            'favorited' => (bool) $isFavorite
+            'favorited' => (bool) $isFavorite,
         ]);
     }
 
@@ -320,10 +311,10 @@ class CustomerController extends Controller
     {
         $salon = Salon::find($salonId);
 
-        if (!$salon) {
+        if (! $salon) {
             return response()->json([
                 'success' => false,
-                'message' => 'Salon not found'
+                'message' => 'Salon not found',
             ], 404);
         }
 
@@ -333,10 +324,11 @@ class CustomerController extends Controller
 
         if ($favorite) {
             $favorite->delete();
+
             return response()->json([
                 'success' => true,
                 'favorited' => false,
-                'message' => 'Removed from favorites'
+                'message' => 'Removed from favorites',
             ]);
         }
 
@@ -348,7 +340,7 @@ class CustomerController extends Controller
         return response()->json([
             'success' => true,
             'favorited' => true,
-            'message' => 'Added to favorites'
+            'message' => 'Added to favorites',
         ], 201);
     }
 }

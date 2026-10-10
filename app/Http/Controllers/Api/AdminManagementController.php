@@ -8,9 +8,9 @@ use App\Models\Booking;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\Salon;
+use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Models\UserSubscription;
-use App\Models\SubscriptionPackage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -28,9 +28,9 @@ class AdminManagementController extends Controller
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhereHas('salon', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhereHas('salon', fn ($q) => $q->where('name', 'like', "%{$search}%"));
             });
         }
 
@@ -57,19 +57,7 @@ class AdminManagementController extends Controller
         ]);
 
         $booking = Booking::findOrFail($id);
-        $booking->update(['status' => $validated['status']]);
-
-        try {
-            $fresh = $booking->fresh(['salon.owner', 'service', 'user']);
-            if ($fresh && $fresh->user_id && $fresh->user) {
-                $fresh->user->notify(new \App\Notifications\BookingStatusChangedNotification($fresh));
-            }
-            if ($fresh && $fresh->salon?->owner) {
-                $fresh->salon->owner->notify(new \App\Notifications\BookingStatusChangedNotification($fresh));
-            }
-        } catch (\Throwable $e) {
-            \Log::warning('Failed to send BookingStatusChangedNotification: ' . $e->getMessage());
-        }
+        $booking = app(\App\Services\BookingService::class)->changeStatus($booking, $validated['status'], $request->user());
 
         return response()->json(['message' => 'Status updated', 'booking' => $booking->load('salon:id,name', 'service:id,title')]);
     }
@@ -85,9 +73,9 @@ class AdminManagementController extends Controller
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('location', 'like', "%{$search}%")
-                  ->orWhere('owner_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('owner_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -118,7 +106,7 @@ class AdminManagementController extends Controller
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -135,6 +123,7 @@ class AdminManagementController extends Controller
         // Append primary role to each user
         $users->getCollection()->transform(function ($user) {
             $user->role = $user->getRoleNames()->first();
+
             return $user;
         });
 
@@ -150,24 +139,16 @@ class AdminManagementController extends Controller
         }
 
         $user->update([
-            'is_approved'  => true,
-            'approved_at'  => now(),
-            'approved_by'  => auth()->id(),
+            'is_approved' => true,
+            'approved_at' => now(),
+            'approved_by' => auth()->id(),
         ]);
 
-        if ($user->hasRole('owner') && !$user->hasActiveOrPendingSubscription()) {
+        if ($user->hasRole('owner') && ! $user->hasActiveOrPendingSubscription()) {
             $proPackage = SubscriptionPackage::where('slug', 'pro-salon')
-                            ->where('is_active', true)->first();
+                ->where('is_active', true)->first();
             if ($proPackage) {
-                UserSubscription::create([
-                    'user_id'    => $user->id,
-                    'package_id' => $proPackage->id,
-                    'status'     => 'active',
-                    'amount_paid'=> 0,
-                    'is_trial'   => true,
-                    'starts_at'  => now(),
-                    'ends_at'    => now()->addDays(90),
-                ]);
+                app(\App\Services\SubscriptionService::class)->grantTrial($user, $proPackage, $request->user());
             }
         }
 
@@ -210,39 +191,14 @@ class AdminManagementController extends Controller
 
     public function updateSubscriptionStatus(Request $request, $id)
     {
-        $validated = $request->validate([
-            'status' => 'required|in:active,rejected,canceled',
-        ]);
-
+        $validated = $request->validate(['status' => 'required|in:active,rejected,canceled', 'amount_paid' => 'nullable|numeric|min:0']);
         $sub = UserSubscription::with('package')->findOrFail($id);
+        $service = app(\App\Services\SubscriptionService::class);
+        $sub = $validated['status'] === 'active'
+            ? $service->approve($sub, $request->user(), $validated['amount_paid'] ?? $sub->package->price)
+            : $service->cancel($sub, $request->user(), $validated['status'] === 'rejected');
 
-        if ($validated['status'] === 'active') {
-            if (!in_array($sub->status, ['pending', 'canceled', 'rejected', 'expired'])) {
-                return response()->json(['message' => 'This subscription cannot be activated.'], 422);
-            }
-            $sub->update([
-                'status'       => 'active',
-                'starts_at'    => now(),
-                'ends_at'      => now()->addDays($sub->package->duration_days),
-                'amount_paid'  => $sub->package->price,
-                'cancelled_at' => null,
-            ]);
-        } elseif ($validated['status'] === 'rejected') {
-            if ($sub->status !== 'pending') {
-                return response()->json(['message' => 'Only pending subscriptions can be rejected.'], 422);
-            }
-            $sub->update(['status' => 'rejected']);
-        } elseif ($validated['status'] === 'canceled') {
-            if ($sub->status !== 'active') {
-                return response()->json(['message' => 'Only active subscriptions can be canceled.'], 422);
-            }
-            $sub->update(['status' => 'canceled', 'cancelled_at' => now()]);
-        }
-
-        return response()->json([
-            'message'      => 'Subscription updated',
-            'subscription' => $sub->fresh(['user:id,name,email', 'package:id,name,price']),
-        ]);
+        return response()->json(['message' => 'Subscription updated', 'subscription' => $sub->load(['user:id,name,email', 'package:id,name,price'])]);
     }
 
     public function packages()
@@ -257,19 +213,19 @@ class AdminManagementController extends Controller
     public function storePackage(Request $request)
     {
         $validated = $request->validate([
-            'name'                   => 'required|string|max:255',
-            'price'                  => 'required|numeric|min:0',
-            'duration_days'          => 'required|integer|min:1',
-            'max_salons'             => 'nullable|integer|min:1',
-            'max_staff'              => 'nullable|integer|min:1',
-            'max_services'           => 'nullable|integer|min:1',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'duration_days' => 'required|integer|min:1',
+            'max_salons' => 'nullable|integer|min:1',
+            'max_staff' => 'nullable|integer|min:1',
+            'max_services' => 'nullable|integer|min:1',
             'max_bookings_per_month' => 'nullable|integer|min:1',
-            'analytics'              => 'boolean',
-            'priority_support'       => 'boolean',
-            'calendar'               => 'boolean',
-            'is_active'              => 'boolean',
-            'is_popular'             => 'boolean',
-            'order_column'           => 'nullable|integer',
+            'analytics' => 'boolean',
+            'priority_support' => 'boolean',
+            'calendar' => 'boolean',
+            'is_active' => 'boolean',
+            'is_popular' => 'boolean',
+            'order_column' => 'nullable|integer',
         ]);
 
         $slug = $this->uniqueSlug(Str::slug($validated['name']), 'subscription_packages');
@@ -285,19 +241,19 @@ class AdminManagementController extends Controller
         $package = SubscriptionPackage::findOrFail($id);
 
         $validated = $request->validate([
-            'name'                   => 'required|string|max:255',
-            'price'                  => 'required|numeric|min:0',
-            'duration_days'          => 'required|integer|min:1',
-            'max_salons'             => 'nullable|integer|min:1',
-            'max_staff'              => 'nullable|integer|min:1',
-            'max_services'           => 'nullable|integer|min:1',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'duration_days' => 'required|integer|min:1',
+            'max_salons' => 'nullable|integer|min:1',
+            'max_staff' => 'nullable|integer|min:1',
+            'max_services' => 'nullable|integer|min:1',
             'max_bookings_per_month' => 'nullable|integer|min:1',
-            'analytics'              => 'boolean',
-            'priority_support'       => 'boolean',
-            'calendar'               => 'boolean',
-            'is_active'              => 'boolean',
-            'is_popular'             => 'boolean',
-            'order_column'           => 'nullable|integer',
+            'analytics' => 'boolean',
+            'priority_support' => 'boolean',
+            'calendar' => 'boolean',
+            'is_active' => 'boolean',
+            'is_popular' => 'boolean',
+            'order_column' => 'nullable|integer',
         ]);
 
         if ($package->name !== $validated['name']) {
@@ -339,9 +295,9 @@ class AdminManagementController extends Controller
     public function storeCategory(Request $request)
     {
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'department_id' => 'required|integer|exists:departments,id',
-            'is_active'     => 'boolean',
+            'is_active' => 'boolean',
         ]);
 
         return response()->json(
@@ -355,9 +311,9 @@ class AdminManagementController extends Controller
         $category = Category::findOrFail($id);
 
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'department_id' => 'required|integer|exists:departments,id',
-            'is_active'     => 'boolean',
+            'is_active' => 'boolean',
         ]);
 
         $category->update($validated);
@@ -384,11 +340,11 @@ class AdminManagementController extends Controller
     public function storeDepartment(Request $request)
     {
         $validated = $request->validate([
-            'name'             => 'required|string|max:255',
-            'slug'             => 'nullable|string|max:255',
-            'meta_title'       => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
-            'is_active'        => 'boolean',
+            'is_active' => 'boolean',
         ]);
 
         if (empty($validated['slug'])) {
@@ -406,11 +362,11 @@ class AdminManagementController extends Controller
         $department = Department::findOrFail($id);
 
         $validated = $request->validate([
-            'name'             => 'required|string|max:255',
-            'slug'             => 'nullable|string|max:255',
-            'meta_title'       => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
-            'is_active'        => 'boolean',
+            'is_active' => 'boolean',
         ]);
 
         if (empty($validated['slug'])) {
@@ -433,16 +389,16 @@ class AdminManagementController extends Controller
 
     private function uniqueSlug(string $base, string $table, ?int $exceptId = null): string
     {
-        $slug      = $base ?: 'item';
+        $slug = $base ?: 'item';
         $candidate = $slug;
-        $i         = 1;
+        $i = 1;
 
         while (true) {
             $query = DB::table($table)->where('slug', $candidate);
             if ($exceptId) {
                 $query->where('id', '!=', $exceptId);
             }
-            if (!$query->exists()) {
+            if (! $query->exists()) {
                 return $candidate;
             }
             $candidate = "{$slug}-{$i}";

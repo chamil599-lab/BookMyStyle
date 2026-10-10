@@ -110,8 +110,7 @@ class User extends Authenticatable implements FilamentUser
     public function activeSubscription()
     {
         return $this->hasOne(UserSubscription::class)
-            ->where('status', 'active')
-            ->where('ends_at', '>', now())
+            ->active()
             ->latest();
     }
 
@@ -138,7 +137,10 @@ class User extends Authenticatable implements FilamentUser
             return false;
         }
 
-        $package = $this->activeSubscription->package;
+        $package = $this->activeSubscription()->with('package')->first()?->package;
+        if (! $package) {
+            return false;
+        }
 
         return $this->salons()->count() < $package->max_salons;
     }
@@ -149,7 +151,10 @@ class User extends Authenticatable implements FilamentUser
             return false;
         }
 
-        $package = $this->activeSubscription->package;
+        $package = $this->activeSubscription()->with('package')->first()?->package;
+        if (! $package) {
+            return false;
+        }
 
         return $salon->staff()->count() < $package->max_staff;
     }
@@ -160,7 +165,10 @@ class User extends Authenticatable implements FilamentUser
             return false;
         }
 
-        $package = $this->activeSubscription->package;
+        $package = $this->activeSubscription()->with('package')->first()?->package;
+        if (! $package) {
+            return false;
+        }
 
         return $salon->services()->count() < $package->max_services;
     }
@@ -171,8 +179,11 @@ class User extends Authenticatable implements FilamentUser
             return false;
         }
 
-        $package = $this->activeSubscription->package;
-        if (! $package->max_bookings_per_month) {
+        $package = $this->activeSubscription()->with('package')->first()?->package;
+        if (! $package) {
+            return false;
+        }
+        if ($package->max_bookings_per_month === null) {
             return true; // No limit
         }
 
@@ -183,6 +194,7 @@ class User extends Authenticatable implements FilamentUser
             $this->salons()->pluck('id')
         )
             ->where('created_at', '>=', $currentMonth)
+            ->where('created_at', '<', $currentMonth->copy()->addMonth())
             ->count();
 
         return $currentMonthBookings < $package->max_bookings_per_month;
@@ -197,6 +209,7 @@ class User extends Authenticatable implements FilamentUser
             $this->salons()->pluck('id')
         )
             ->where('created_at', '>=', $currentMonth)
+            ->where('created_at', '<', $currentMonth->copy()->addMonth())
             ->count();
     }
 }

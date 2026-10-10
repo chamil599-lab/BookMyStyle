@@ -26,3 +26,19 @@ No dependency vulnerability audit or live penetration test was performed. Curren
 - Capture role-specific browser behavior without sending real notifications or payment actions.
 
 The populated-data backup and restore gate is now satisfied. See import-verification.md. Browser/visual parity checks remain pending; two index migrations are recorded but have not been executed.
+
+## Step three verification — 11 October 2026
+
+Shared booking/subscription services are connected to existing API, Livewire, Blade checkout, and Filament persistence/actions. The user approved retaining the paid plan while requests are pending, scheduling same-plan renewals after expiry, and starting approved different-plan changes immediately. See [step-three changes](step-3-shared-services.md).
+
+| Check | Result |
+|---|---|
+| Focused security and shared-service tests | 47 passed, 159 assertions; isolated SQLite and fake delivery |
+| Final full suite | 60 passed, same 22 pre-existing failures, 215 assertions |
+| Local MySQL concurrency | Four races passed: create, reactivate, quota across two salons, duplicate subscription request |
+| Blade compilation | Passed; compiled cache cleared afterward |
+| Changed PHP formatting | Passed Pint |
+| Imported data aggregate inspection | Counts unchanged; no FK orphans or missing media; transactional tables |
+| Imported schema changes | None; 51 migration rows remain |
+
+Concurrency fixtures and migrations ran only in uniquely named synthetic test databases. Private logs and worker results remain under `.local/migration-baseline/`. Browser parity and deployment/security gates listed above remain outstanding.

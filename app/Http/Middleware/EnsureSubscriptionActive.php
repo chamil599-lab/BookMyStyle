@@ -34,16 +34,8 @@ class EnsureSubscriptionActive
         return $next($request);
     }
 
-    /**
-     * Stricter than User::hasActiveSubscription(): also rejects when the subscription
-     * ends today (days_remaining <= 0). Filament's relation only checks ends_at > now()
-     * which keeps a sub "active" until the literal final timestamp, but operationally
-     * a 0-days-remaining owner should be treated as expired.
-     */
     private function ownerHasUsableSubscription($user): bool
     {
-        $sub = $user->activeSubscription;
-        if (! $sub) return false;
-        return $sub->daysRemaining() > 0;
+        return $user->hasActiveSubscription();
     }
 }

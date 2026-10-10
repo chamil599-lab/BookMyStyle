@@ -11,7 +11,6 @@ use App\Models\Salon;
 use App\Models\Service;
 use App\Models\SubscriptionPackage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class OwnerManagementController extends Controller
@@ -36,7 +35,7 @@ class OwnerManagementController extends Controller
     {
         $package = $this->activePackage();
 
-        if (!$package) {
+        if (! $package) {
             return response()->json([
                 'message' => 'An active subscription is required. Please subscribe to a plan first.',
             ], 403);
@@ -85,9 +84,9 @@ class OwnerManagementController extends Controller
     public function limits()
     {
         $package = $this->activePackage();
-        $userId  = auth()->id();
+        $userId = auth()->id();
 
-        $salonCount   = Salon::where('created_by', $userId)->count();
+        $salonCount = Salon::where('created_by', $userId)->count();
         $serviceCount = Service::where('created_by', $userId)->count();
         $bookingCount = Booking::whereIn('salon_id', $this->ownerSalonIds())
             ->whereYear('created_at', now()->year)
@@ -95,10 +94,10 @@ class OwnerManagementController extends Controller
             ->count();
 
         return response()->json([
-            'salons'   => ['used' => $salonCount,   'max' => $package?->max_salons],
+            'salons' => ['used' => $salonCount,   'max' => $package?->max_salons],
             'services' => ['used' => $serviceCount, 'max' => $package?->max_services],
             'bookings' => ['used' => $bookingCount, 'max' => $package?->max_bookings_per_month],
-            'package'  => $package?->name,
+            'package' => $package?->name,
         ]);
     }
 
@@ -139,31 +138,33 @@ class OwnerManagementController extends Controller
 
     public function storeSalon(Request $request)
     {
-        if ($err = $this->checkLimit('salon')) return $err;
+        if ($err = $this->checkLimit('salon')) {
+            return $err;
+        }
 
         $validated = $request->validate([
-            'name'            => 'required|string|max:255',
-            'owner_name'      => 'required|string|max:255',
-            'location'        => 'nullable|string|max:255',
-            'phone'           => 'nullable|string|max:20',
-            'email'           => 'nullable|email|max:255',
-            'description'     => 'nullable|string',
-            'open_time'       => 'nullable|date_format:H:i',
-            'close_time'      => 'nullable|date_format:H:i',
+            'name' => 'required|string|max:255',
+            'owner_name' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'description' => 'nullable|string',
+            'open_time' => 'nullable|date_format:H:i',
+            'close_time' => 'nullable|date_format:H:i',
             'number_of_staff' => 'nullable|integer|min:0',
-            'show_price'      => 'nullable|boolean',
-            'facebook_page'   => 'nullable|url|max:255',
-            'instagram_page'  => 'nullable|url|max:255',
-            'tiktok_page'     => 'nullable|url|max:255',
-            'cover'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
-            'gallery'         => 'nullable|array|max:10',
-            'gallery.*'       => 'image|mimes:jpg,jpeg,png,webp|max:1024',
+            'show_price' => 'nullable|boolean',
+            'facebook_page' => 'nullable|url|max:255',
+            'instagram_page' => 'nullable|url|max:255',
+            'tiktok_page' => 'nullable|url|max:255',
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+            'gallery' => 'nullable|array|max:10',
+            'gallery.*' => 'image|mimes:jpg,jpeg,png,webp|max:1024',
         ]);
 
         $slug = $this->uniqueSlug(Str::slug($validated['name']), 'salons');
 
         $salon = Salon::create(array_merge($validated, [
-            'slug'       => $slug,
+            'slug' => $slug,
             'created_by' => auth()->id(),
             'updated_by' => auth()->id(),
         ]));
@@ -185,23 +186,23 @@ class OwnerManagementController extends Controller
         $salon = Salon::where('created_by', auth()->id())->findOrFail($id);
 
         $validated = $request->validate([
-            'name'            => 'required|string|max:255',
-            'owner_name'      => 'required|string|max:255',
-            'location'        => 'nullable|string|max:255',
-            'phone'           => 'nullable|string|max:20',
-            'email'           => 'nullable|email|max:255',
-            'description'     => 'nullable|string',
-            'open_time'       => 'nullable|date_format:H:i',
-            'close_time'      => 'nullable|date_format:H:i',
+            'name' => 'required|string|max:255',
+            'owner_name' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'description' => 'nullable|string',
+            'open_time' => 'nullable|date_format:H:i',
+            'close_time' => 'nullable|date_format:H:i',
             'number_of_staff' => 'nullable|integer|min:0',
-            'show_price'      => 'nullable|boolean',
-            'facebook_page'   => 'nullable|url|max:255',
-            'instagram_page'  => 'nullable|url|max:255',
-            'tiktok_page'     => 'nullable|url|max:255',
-            'cover'              => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
-            'gallery'            => 'nullable|array|max:10',
-            'gallery.*'          => 'image|mimes:jpg,jpeg,png,webp|max:1024',
-            'remove_cover'       => 'nullable|boolean',
+            'show_price' => 'nullable|boolean',
+            'facebook_page' => 'nullable|url|max:255',
+            'instagram_page' => 'nullable|url|max:255',
+            'tiktok_page' => 'nullable|url|max:255',
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:1024',
+            'gallery' => 'nullable|array|max:10',
+            'gallery.*' => 'image|mimes:jpg,jpeg,png,webp|max:1024',
+            'remove_cover' => 'nullable|boolean',
             'remove_gallery_ids' => 'nullable|array',
             'remove_gallery_ids.*' => 'integer',
         ]);
@@ -245,8 +246,8 @@ class OwnerManagementController extends Controller
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -272,76 +273,73 @@ class OwnerManagementController extends Controller
 
     public function storeBooking(Request $request)
     {
-        if ($err = $this->checkLimit('booking')) return $err;
+        if ($err = $this->checkLimit('booking')) {
+            return $err;
+        }
 
         $salonIds = $this->ownerSalonIds();
         $serviceIds = $this->ownerServiceIds();
 
         $validated = $request->validate([
-            'salon_id'   => ['required', 'integer', function ($attr, $val, $fail) use ($salonIds) {
-                if (!$salonIds->contains((int) $val)) $fail('Invalid salon.');
+            'salon_id' => ['required', 'integer', function ($attr, $val, $fail) use ($salonIds) {
+                if (! $salonIds->contains((int) $val)) {
+                    $fail('Invalid salon.');
+                }
             }],
             'service_id' => ['required', 'integer', function ($attr, $val, $fail) use ($serviceIds) {
-                if (!$serviceIds->contains((int) $val)) $fail('Invalid service.');
+                if (! $serviceIds->contains((int) $val)) {
+                    $fail('Invalid service.');
+                }
             }],
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|max:255',
-            'phone'      => 'required|string|max:20',
-            'date'       => 'required|date_format:Y-m-d',
-            'time'       => 'required|date_format:H:i',
-            'status'     => 'nullable|in:pending,approved,completed,rejected',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'date' => 'required|date_format:Y-m-d',
+            'time' => 'required|date_format:H:i',
+            'status' => 'nullable|in:pending,approved,completed,rejected',
         ]);
 
-        return DB::transaction(function () use ($validated) {
-            if ($conflict = $this->bookingSlotConflictResponse($validated)) {
-                return $conflict;
-            }
+        $validated['status'] = $validated['status'] ?? 'pending';
+        $booking = app(\App\Services\BookingService::class)->create($validated, $request->user(), true);
 
-            $booking = Booking::create(array_merge($validated, [
-                'user_id' => null,
-                'status'  => $validated['status'] ?? 'pending',
-            ]));
-
-            return response()->json($booking->load('salon:id,name', 'service:id,title,price'), 201);
-        });
+        return response()->json($booking->load('salon:id,name', 'service:id,title,price'), 201);
     }
 
     public function updateBooking(Request $request, $id)
     {
         $salonIds = $this->ownerSalonIds();
         $serviceIds = $this->ownerServiceIds();
-        $booking  = Booking::whereIn('salon_id', $salonIds)->findOrFail($id);
+        $booking = Booking::whereIn('salon_id', $salonIds)->findOrFail($id);
 
         $validated = $request->validate([
-            'salon_id'   => ['required', 'integer', function ($attr, $val, $fail) use ($salonIds) {
-                if (!$salonIds->contains((int) $val)) $fail('Invalid salon.');
+            'salon_id' => ['required', 'integer', function ($attr, $val, $fail) use ($salonIds) {
+                if (! $salonIds->contains((int) $val)) {
+                    $fail('Invalid salon.');
+                }
             }],
             'service_id' => ['required', 'integer', function ($attr, $val, $fail) use ($serviceIds) {
-                if (!$serviceIds->contains((int) $val)) $fail('Invalid service.');
+                if (! $serviceIds->contains((int) $val)) {
+                    $fail('Invalid service.');
+                }
             }],
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|max:255',
-            'phone'      => 'required|string|max:20',
-            'date'       => 'required|date_format:Y-m-d',
-            'time'       => 'required|date_format:H:i',
-            'status'     => 'nullable|in:pending,approved,completed,rejected',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'date' => 'required|date_format:Y-m-d',
+            'time' => 'required|date_format:H:i',
+            'status' => 'nullable|in:pending,approved,completed,rejected',
         ]);
 
-        return DB::transaction(function () use ($booking, $validated) {
-            if ($conflict = $this->bookingSlotConflictResponse($validated, $booking->id)) {
-                return $conflict;
-            }
+        $validated['status'] = $validated['status'] ?? $booking->status;
+        $booking = app(\App\Services\BookingService::class)->update($booking, $validated, $request->user());
 
-            $booking->update($validated);
-
-            return response()->json($booking->load('salon:id,name', 'service:id,title,price'));
-        });
+        return response()->json($booking->load('salon:id,name', 'service:id,title,price'));
     }
 
     public function destroyBooking($id)
     {
         $salonIds = $this->ownerSalonIds();
-        $booking  = Booking::whereIn('salon_id', $salonIds)->findOrFail($id);
+        $booking = Booking::whereIn('salon_id', $salonIds)->findOrFail($id);
         $booking->delete();
 
         return response()->json(['message' => 'Booking deleted']);
@@ -350,21 +348,13 @@ class OwnerManagementController extends Controller
     public function updateBookingStatus(Request $request, $id)
     {
         $salonIds = $this->ownerSalonIds();
-        $booking  = Booking::whereIn('salon_id', $salonIds)->findOrFail($id);
+        $booking = Booking::whereIn('salon_id', $salonIds)->findOrFail($id);
 
         $validated = $request->validate([
             'status' => 'required|in:approved,rejected,completed,pending',
         ]);
 
-        $booking->update(['status' => $validated['status']]);
-
-        try {
-            if ($booking->user_id && $booking->user) {
-                $booking->user->notify(new \App\Notifications\BookingStatusChangedNotification($booking->fresh(['salon', 'service'])));
-            }
-        } catch (\Throwable $e) {
-            \Log::warning('Failed to send BookingStatusChangedNotification: ' . $e->getMessage());
-        }
+        $booking = app(\App\Services\BookingService::class)->changeStatus($booking, $validated['status'], $request->user());
 
         return response()->json(['message' => 'Status updated', 'booking' => $booking->load('salon:id,name', 'service:id,title')]);
     }
@@ -374,9 +364,10 @@ class OwnerManagementController extends Controller
     private function serviceBookingCountScope(): \Closure
     {
         $salonIds = $this->ownerSalonIds();
+
         return function ($q) use ($salonIds) {
             $q->whereIn('status', ['approved', 'completed'])
-              ->whereIn('salon_id', $salonIds);
+                ->whereIn('salon_id', $salonIds);
         };
     }
 
@@ -402,29 +393,31 @@ class OwnerManagementController extends Controller
 
     public function storeService(Request $request)
     {
-        if ($err = $this->checkLimit('service')) return $err;
+        if ($err = $this->checkLimit('service')) {
+            return $err;
+        }
 
         $validated = $request->validate([
-            'title'         => 'required|string|max:2000',
-            'description'   => 'required|string',
+            'title' => 'required|string|max:2000',
+            'description' => 'required|string',
             'department_id' => 'required|integer|exists:departments,id',
-            'category_id'   => 'required|integer|exists:categories,id',
-            'price'         => 'required|numeric|min:0',
-            'duration'      => 'required|integer|min:1',
-            'status'        => 'required|in:published,unpublished',
+            'category_id' => 'required|integer|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+            'duration' => 'required|integer|min:1',
+            'status' => 'required|in:published,unpublished',
         ]);
 
         $slug = $this->uniqueSlug(Str::slug($validated['title']), 'services');
 
         $service = Service::create(array_merge($validated, [
-            'slug'       => $slug,
+            'slug' => $slug,
             'created_by' => auth()->id(),
             'updated_by' => auth()->id(),
         ]));
 
         return response()->json(
             $service->load('department:id,name', 'category:id,name')
-                    ->loadCount(['bookings as bookings_count' => $this->serviceBookingCountScope()]),
+                ->loadCount(['bookings as bookings_count' => $this->serviceBookingCountScope()]),
             201
         );
     }
@@ -434,13 +427,13 @@ class OwnerManagementController extends Controller
         $service = Service::where('created_by', auth()->id())->findOrFail($id);
 
         $validated = $request->validate([
-            'title'         => 'required|string|max:2000',
-            'description'   => 'required|string',
+            'title' => 'required|string|max:2000',
+            'description' => 'required|string',
             'department_id' => 'required|integer|exists:departments,id',
-            'category_id'   => 'required|integer|exists:categories,id',
-            'price'         => 'required|numeric|min:0',
-            'duration'      => 'required|integer|min:1',
-            'status'        => 'required|in:published,unpublished',
+            'category_id' => 'required|integer|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+            'duration' => 'required|integer|min:1',
+            'status' => 'required|in:published,unpublished',
         ]);
 
         if ($service->title !== $validated['title']) {
@@ -451,7 +444,7 @@ class OwnerManagementController extends Controller
 
         return response()->json(
             $service->load('department:id,name', 'category:id,name')
-                    ->loadCount(['bookings as bookings_count' => $this->serviceBookingCountScope()])
+                ->loadCount(['bookings as bookings_count' => $this->serviceBookingCountScope()])
         );
     }
 
@@ -485,16 +478,16 @@ class OwnerManagementController extends Controller
 
     private function uniqueSlug(string $base, string $table, ?int $exceptId = null): string
     {
-        $slug      = $base ?: 'item';
+        $slug = $base ?: 'item';
         $candidate = $slug;
-        $i         = 1;
+        $i = 1;
 
         while (true) {
             $query = \DB::table($table)->where('slug', $candidate);
             if ($exceptId) {
                 $query->where('id', '!=', $exceptId);
             }
-            if (!$query->exists()) {
+            if (! $query->exists()) {
                 return $candidate;
             }
             $candidate = "{$slug}-{$i}";
@@ -539,69 +532,5 @@ class OwnerManagementController extends Controller
         foreach ($newGalleryFiles as $file) {
             $salon->addMedia($file)->toMediaCollection('gallery');
         }
-    }
-
-    private function bookingSlotConflictResponse(array $data, ?int $ignoreBookingId = null): ?\Illuminate\Http\JsonResponse
-    {
-        $status = $data['status'] ?? Booking::STATUS_PENDING;
-
-        if (! in_array($status, [Booking::STATUS_PENDING, Booking::STATUS_APPROVED], true)) {
-            return null;
-        }
-
-        $salon = Salon::whereKey($data['salon_id'])
-            ->lockForUpdate()
-            ->firstOrFail();
-
-        $service = Service::findOrFail($data['service_id']);
-        $staffCount = max(1, (int) ($salon->number_of_staff ?? 1));
-        $slotsNeeded = (int) ceil(max(30, (int) ($service->duration ?? 30)) / 30);
-
-        $existingBookings = Booking::where('salon_id', $data['salon_id'])
-            ->whereDate('date', $data['date'])
-            ->whereIn('status', [Booking::STATUS_PENDING, Booking::STATUS_APPROVED])
-            ->when($ignoreBookingId, fn ($query) => $query->whereKeyNot($ignoreBookingId))
-            ->lockForUpdate()
-            ->get(['time', 'service_id']);
-
-        $durations = Service::whereIn('id', $existingBookings->pluck('service_id')->filter()->unique())
-            ->pluck('duration', 'id');
-
-        $requestedMinutes = $this->bookingTimeToMinutes($data['time']);
-        $overlappingCount = 0;
-
-        foreach ($existingBookings as $booking) {
-            $existingSlots = (int) ceil(max(30, (int) ($durations[$booking->service_id] ?? 30)) / 30);
-            $existingStart = $this->bookingTimeToMinutes($booking->time);
-
-            if ($this->bookingTimesOverlap($requestedMinutes, $slotsNeeded, $existingStart, $existingSlots)) {
-                $overlappingCount++;
-            }
-        }
-
-        if ($overlappingCount < $staffCount) {
-            return null;
-        }
-
-        return response()->json([
-            'message' => 'This time slot is fully booked. Please choose another time.',
-            'available_slots' => 0,
-            'staff_count' => $staffCount,
-        ], 409);
-    }
-
-    private function bookingTimeToMinutes(string $time): int
-    {
-        [$hours, $minutes] = array_map('intval', explode(':', $time));
-
-        return ($hours * 60) + $minutes;
-    }
-
-    private function bookingTimesOverlap(int $startA, int $slotsA, int $startB, int $slotsB): bool
-    {
-        $endA = $startA + ($slotsA * 30);
-        $endB = $startB + ($slotsB * 30);
-
-        return $startA < $endB && $endA > $startB;
     }
 }

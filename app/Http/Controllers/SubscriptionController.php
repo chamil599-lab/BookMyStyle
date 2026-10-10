@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\SubscriptionPackage;
-use App\Models\UserSubscription;
 use App\RolesEnum;
+use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Filament\Facades\Filament;
 
 class SubscriptionController extends Controller
 {
@@ -15,7 +14,7 @@ class SubscriptionController extends Controller
     {
         // Only for salon owners
         $user = Filament::auth()->user();
-        if (!$user?->hasRole(RolesEnum::OWNER->value)) {
+        if (! $user?->hasRole(RolesEnum::OWNER->value)) {
             abort(403);
         }
 
@@ -32,7 +31,7 @@ class SubscriptionController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (!$user?->hasRole(RolesEnum::OWNER->value)) {
+        if (! $user?->hasRole(RolesEnum::OWNER->value)) {
             abort(403);
         }
 
@@ -54,7 +53,7 @@ class SubscriptionController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (!$user?->hasRole(RolesEnum::OWNER->value)) {
+        if (! $user?->hasRole(RolesEnum::OWNER->value)) {
             abort(403);
         }
 
@@ -70,47 +69,10 @@ class SubscriptionController extends Controller
             'transaction_id' => 'required_if:payment_method,bank_transfer|nullable|string|max:255',
         ]);
 
-        $featuresSnapshot = [
-            'name' => $package->name,
-            'max_salons' => $package->max_salons,
-            'max_staff' => $package->max_staff,
-            'max_services' => $package->max_services,
-            'max_bookings_per_month' => $package->max_bookings_per_month,
-            'analytics' => $package->analytics,
-            'priority_support' => $package->priority_support,
-        ];
+        $activeSubscription = $user->activeSubscription()->first();
+        app(\App\Services\SubscriptionService::class)->request($user, $package, $request->only(['payment_method', 'transaction_id']), $user);
 
-        // Check if owner has an active subscription (plan change)
-        $activeSubscription = $user->activeSubscription;
-
-        if ($activeSubscription) {
-            // Update existing subscription with new package
-            $activeSubscription->update([
-                'package_id' => $package->id,
-                'payment_method' => $request->payment_method,
-                'transaction_id' => $request->transaction_id,
-                'status' => 'pending',
-                'amount_paid' => 0,
-                'starts_at' => null,
-                'ends_at' => null,
-                'features_snapshot' => $featuresSnapshot,
-            ]);
-        } else {
-            // Create new pending subscription
-            UserSubscription::create([
-                'user_id' => $user->id,
-                'package_id' => $package->id,
-                'amount_paid' => 0,
-                'payment_method' => $request->payment_method,
-                'transaction_id' => $request->transaction_id,
-                'status' => 'pending',
-                'starts_at' => null,
-                'ends_at' => null,
-                'features_snapshot' => $featuresSnapshot,
-            ]);
-        }
-
-        return redirect('/admin/user-subscriptions')
+        return redirect(\App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource::getUrl('index'))
             ->with('success', $activeSubscription
                 ? 'Your plan change request has been submitted. Please wait for admin approval.'
                 : 'Your subscription request has been submitted. Please wait for admin approval.');

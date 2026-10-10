@@ -168,7 +168,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($record) {
                             Gate::authorize('updateStatus', $record);
-                            $record->update(['status' => 'approved']);
+                            app(\App\Services\BookingService::class)->changeStatus($record, 'approved', auth()->user());
 
                             Notification::make()
                                 ->title('Booking Approved')
@@ -185,7 +185,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($record) {
                             Gate::authorize('updateStatus', $record);
-                            $record->update(['status' => 'rejected']);
+                            app(\App\Services\BookingService::class)->changeStatus($record, 'rejected', auth()->user());
 
                             Notification::make()
                                 ->title('Booking Rejected')
@@ -222,7 +222,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($records) {
                             $records->each(fn ($record) => Gate::authorize('updateStatus', $record));
-                            $records->each->update(['status' => 'approved']);
+                            $records->each(fn ($record) => app(\App\Services\BookingService::class)->changeStatus($record, 'approved', auth()->user()));
 
                             $count = $records->count();
                             Notification::make()
@@ -238,7 +238,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($records) {
                             $records->each(fn ($record) => Gate::authorize('updateStatus', $record));
-                            $records->each->update(['status' => 'rejected']);
+                            $records->each(fn ($record) => app(\App\Services\BookingService::class)->changeStatus($record, 'rejected', auth()->user()));
 
                             $count = $records->count();
                             Notification::make()

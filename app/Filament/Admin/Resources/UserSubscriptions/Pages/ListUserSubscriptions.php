@@ -29,7 +29,7 @@ class ListUserSubscriptions extends ListRecords
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Generate Subscriptions')
-                    ->modalDescription('This will approve all pending subscriptions and activate them. Each owner\'s selected package will be used.')
+                    ->modalDescription('This will approve all pending subscriptions and activate them. Only proceed after verifying payment at the quoted package price for every pending request.')
                     ->modalSubmitActionLabel('Generate')
                     ->action(function () {
                         $pending = UserSubscription::where('status', 'pending')->get();
@@ -39,29 +39,13 @@ class ListUserSubscriptions extends ListRecords
                                 ->title('No pending subscriptions found')
                                 ->warning()
                                 ->send();
+
                             return;
                         }
 
                         $activated = 0;
                         foreach ($pending as $subscription) {
-                            $package = $subscription->package;
-
-                            // If this is a renewal, start after the parent subscription ends
-                            if ($subscription->renewed_from) {
-                                $parent = $subscription->renewedFrom;
-                                $startsAt = $parent && $parent->ends_at && $parent->ends_at->isFuture()
-                                    ? $parent->ends_at
-                                    : now();
-                            } else {
-                                $startsAt = now();
-                            }
-
-                            $subscription->update([
-                                'status' => 'active',
-                                'amount_paid' => $package->price,
-                                'starts_at' => $startsAt,
-                                'ends_at' => $startsAt->copy()->addDays($package->duration_days),
-                            ]);
+                            app(\App\Services\SubscriptionService::class)->approve($subscription, auth()->user(), $subscription->features_snapshot['price'] ?? $subscription->package->price);
                             $activated++;
                         }
 
