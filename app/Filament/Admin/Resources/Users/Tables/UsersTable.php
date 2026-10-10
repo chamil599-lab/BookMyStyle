@@ -2,8 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Users\Tables;
 
-use App\Mail\UserApproved;
-use App\Mail\UserRejected;
 use App\RolesEnum;
 use Filament\Actions\Action as ActionsAction;
 use Filament\Actions\ActionGroup as ActionsActionGroup;
@@ -18,7 +16,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Mail;
 
 class UsersTable
 {
@@ -71,35 +68,18 @@ class UsersTable
                                 ->label('Assign Role')
                                 ->options([
                                     'owner' => 'Owner',
-                                    'user' => 'User',
+                                    'customer' => 'Customer',
                                 ])
                                 ->required()
                                 ->default('owner'),
                         ])
                         ->action(function ($record, array $data) {
-                            \Illuminate\Support\Facades\Gate::forUser(auth()->user()->fresh())->authorize('update', $record);
-                            abort_if($record->hasRole('admin') || $record->is_approved, 403);
-                            \Illuminate\Support\Facades\Validator::make($data, ['role' => 'required|in:owner,customer'])->validate();
                             $role = $data['role'] ?? 'owner';
-                            $record->syncRoles([$role]);
-                            $record->approve();
-
-                            // ✅ Add logging BEFORE sending
-                            \Log::info('About to send approval email', [
-                                'user_id' => $record->id,
-                                'email' => $record->email,
-                                'name' => $record->name,
-                            ]);
-
-                            // Send approval email
-                            Mail::to($record->email)->send(new UserApproved($record));
-
-                            // ✅ Add logging AFTER sending
-                            \Log::info('Approval email sent successfully');
+                            app(\App\Services\UserModeration::class)->approve(auth()->user(), $record, $role);
 
                             Notification::make()
                                 ->title('User approved successfully')
-                                ->body("Role assigned: {$role}. Approval email sent.")
+                                ->body("Role assigned: {$role}. Approval notification scheduled.")
                                 ->success()
                                 ->send();
                         })
@@ -110,15 +90,11 @@ class UsersTable
                         ->color('danger')
                         ->visible(fn ($record) => ! $record->is_approved && ! $record->hasRole(RolesEnum::ADMIN->value))
                         ->action(function ($record) {
-                            \Illuminate\Support\Facades\Gate::forUser(auth()->user()->fresh())->authorize('delete', $record);
-                            // ✅ Send rejection email before deleting
-                            Mail::to($record->email)->send(new UserRejected($record));
-
-                            $record->delete();
+                            app(\App\Services\UserModeration::class)->reject(auth()->user(), $record);
 
                             Notification::make()
                                 ->title('User rejected and deleted')
-                                ->body('Rejection email sent.')
+                                ->body('Rejection notification scheduled.')
                                 ->warning()
                                 ->send();
                         })

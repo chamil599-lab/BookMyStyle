@@ -109,7 +109,7 @@ class UserSubscriptionsTable
                             ->required(),
                     ])
                     ->action(function ($record, array $data) {
-                        $record = app(\App\Services\SubscriptionService::class)->approve($record, auth()->user(), $data['amount_paid']);
+                        $record = app(\App\Services\SubscriptionService::class)->approve($record, auth()->user()->fresh(), $data['amount_paid']);
                         Notification::make()
                             ->title('Subscription Approved')
                             ->body("Activated for {$record->user->name} until {$record->ends_at->format('M d, Y')}.")
@@ -117,6 +117,15 @@ class UserSubscriptionsTable
                             ->send();
                     })
                     ->visible(fn ($record) => $isAdmin && $record->status === 'pending'),
+                Action::make('cancel')
+                    ->label('Cancel subscription')->color('danger')->requiresConfirmation()
+                    ->modalDescription('Cancel this active or scheduled subscription. This does not record a refund.')
+                    ->visible(fn ($record) => $isAdmin && $record->status === 'active')
+                    ->action(function ($record) {
+                        abort_unless(\App\Support\ManagementAccess::admin(auth()->user()->fresh()), 403);
+                        app(\App\Services\SubscriptionService::class)->cancel($record, auth()->user()->fresh());
+                        Notification::make()->title('Subscription canceled')->success()->send();
+                    }),
                 Action::make('reject')
                     ->label('Reject')
                     ->icon('heroicon-m-x-circle')
@@ -125,7 +134,7 @@ class UserSubscriptionsTable
                     ->modalHeading('Reject Subscription')
                     ->modalDescription('Are you sure you want to reject this subscription request?')
                     ->action(function ($record) {
-                        app(\App\Services\SubscriptionService::class)->cancel($record, auth()->user(), true);
+                        app(\App\Services\SubscriptionService::class)->cancel($record, auth()->user()->fresh(), true);
                         Notification::make()
                             ->title('Subscription Rejected')
                             ->body("Rejected subscription for {$record->user->name}.")

@@ -4,17 +4,16 @@ namespace App\Filament\Admin\Pages;
 
 use App\Models\Booking;
 use App\Models\UserSubscription;
-use App\RolesEnum;
+use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
-use BackedEnum;
 use Illuminate\Support\Collection;
 
 class Dashboard extends Page
 {
     protected string $view = 'filament.admin.pages.dashboard';
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-home';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-home';
 
     protected static ?string $navigationLabel = 'Dashboard';
 
@@ -24,36 +23,27 @@ class Dashboard extends Page
     {
         /** @var \App\Models\User|null $user */
         $user = Filament::auth()->user();
-        return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
+
+        return \App\Support\ManagementAccess::admin($user?->fresh());
     }
 
     public function getSubscriptionStatsProperty(): array
     {
-        return [
-            'total' => UserSubscription::count(),
-            'active' => UserSubscription::where('status', 'active')->where('ends_at', '>', now())->count(),
-            'pending' => UserSubscription::where('status', 'pending')->count(),
-            'expired' => UserSubscription::where(function ($q) {
-                $q->where('status', 'expired')->orWhere('ends_at', '<=', now());
-            })->where('status', '!=', 'canceled')->count(),
-            'canceled' => UserSubscription::where('status', 'canceled')->count(),
-        ];
+        abort_unless(static::canAccess(), 403);
+
+        return app(\App\Support\SubscriptionSummary::class)->counts();
     }
 
     public function getRevenueStatsProperty(): array
     {
-        $subscriptionRevenue = UserSubscription::where('status', 'active')->sum('amount_paid');
+        abort_unless(static::canAccess(), 403);
+        $subscriptionRevenue = UserSubscription::whereIn('status', ['active', 'expired', 'canceled'])->sum('amount_paid');
 
-        $bookingRevenue = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->with('service')
+        $bookingRevenue = \App\Support\BookingValue::query()
             ->get()
             ->sum(fn ($b) => $b->service?->price ?? 0);
 
-        $todayBookingRevenue = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->whereDate('created_at', today())
-            ->with('service')
+        $todayBookingRevenue = \App\Support\BookingValue::query()->whereDate('date', today())
             ->get()
             ->sum(fn ($b) => $b->service?->price ?? 0);
 
@@ -69,15 +59,16 @@ class Dashboard extends Page
 
     public function getMonthlySubRevenueProperty(): array
     {
-        $subscriptions = UserSubscription::where('status', 'active')
-            ->where('starts_at', '>=', now()->subMonths(11)->startOfMonth())
+        abort_unless(static::canAccess(), 403);
+        $subscriptions = UserSubscription::whereIn('status', ['active', 'expired', 'canceled'])
+            ->where('starts_at', '>=', now()->startOfMonth()->subMonthsNoOverflow(11))
             ->get();
 
         $months = [];
         $data = [];
 
         for ($i = 11; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
+            $date = now()->startOfMonth()->subMonthsNoOverflow($i);
             $key = $date->format('Y-m');
             $months[] = $date->format('M Y');
             $data[] = $subscriptions
@@ -92,46 +83,28 @@ class Dashboard extends Page
     {
         $stats = $this->subscriptionStats;
 
-        return [
-            $stats['active'],
-            $stats['pending'],
-            $stats['expired'],
-            $stats['canceled'],
-        ];
+        return array_map(fn ($status) => $stats[$status], ['active', 'scheduled', 'pending', 'expired', 'canceled', 'rejected']);
     }
 
     public function getDailyBookingRevenueProperty(): array
     {
-        $bookings = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->where('date', '>=', now()->subDays(30))
-            ->with('service')
-            ->get();
+        abort_unless(static::canAccess(), 403);
 
-        $labels = [];
-        $data = [];
-
-        for ($i = 30; $i >= 0; $i--) {
-            $date = now()->subDays($i);
-            $key = $date->format('Y-m-d');
-            $labels[] = $date->format('M d');
-            $data[] = $bookings
-                ->filter(fn ($b) => $b->date->format('Y-m-d') === $key)
-                ->sum(fn ($b) => $b->service?->price ?? 0);
-        }
-
-        return ['labels' => $labels, 'data' => $data];
+        return \App\Support\BookingValue::chart(\App\Support\BookingValue::query(), today()->subDays(29), today());
     }
 
     public function getTopPackagesProperty(): Collection
     {
+        abort_unless(static::canAccess(), 403);
+
         return UserSubscription::query()
-            ->where('status', 'active')
+            ->active()
             ->with('package')
             ->get()
             ->groupBy('package_id')
             ->map(function ($group) {
                 $package = $group->first()->package;
+
                 return [
                     'name' => $package?->name ?? 'Unknown',
                     'count' => $group->count(),
@@ -143,4 +116,19 @@ class Dashboard extends Page
             ->values();
     }
 
+    public function getOverviewProperty(): array
+    {
+        abort_unless(static::canAccess(), 403);
+        $visits = \App\Models\SiteVisit::query();
+
+        return [
+            'owners' => \App\Models\User::role('owner')->count(),
+            'pending_owners' => \App\Models\User::role('owner')->where('is_approved', false)->count(),
+            'visits' => (clone $visits)->count(),
+            'today_visits' => (clone $visits)->whereDate('occurred_at', today())->count(),
+            'month_visits' => (clone $visits)->where('occurred_at', '>=', now()->startOfMonth())
+                ->where('occurred_at', '<', now()->startOfMonth()->addMonth())->count(),
+            'unique_visitors' => (clone $visits)->whereNotNull('visitor_id_hash')->distinct()->count('visitor_id_hash'),
+        ];
+    }
 }

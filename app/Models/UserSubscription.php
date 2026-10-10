@@ -39,7 +39,7 @@ class UserSubscription extends Model
 
     public function package(): BelongsTo
     {
-        return $this->belongsTo(SubscriptionPackage::class, 'package_id');
+        return $this->belongsTo(SubscriptionPackage::class, 'package_id')->withTrashed();
     }
 
     public function renewedFrom(): BelongsTo

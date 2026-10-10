@@ -153,9 +153,19 @@ try {
             expect(await evaluate("document.body.textContent.includes('Signature cut')"), `${role}_filament_services_visible`);
             await viewport(390, 844);
             expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), `${role}_filament_mobile_no_overflow`);
-            await screenshot(`mobile-filament-${role}-services`);
+            await screenshot('mobile-filament-' + role + '-services');
+            await navigate('/filament/analytics-dashboard');
+            await until("typeof Chart !== 'undefined' && document.querySelectorAll('canvas').length >= 3 && [...document.querySelectorAll('canvas')].every(c => Chart.getChart(c))", role + ' analytics charts');
+            checks[role + '_analytics_charts'] = true;
+            expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), role + '_analytics_mobile_no_overflow');
+            await screenshot('mobile-filament-' + role + '-analytics');
+            await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.trim() === '7 Days').click()");
+            await until("[...document.querySelectorAll('div')].some(el => el.getAttribute('wire:key')?.startsWith('daily-chart-7d')) && [...document.querySelectorAll('canvas')].every(c => Chart.getChart(c))", role + ' analytics filter');
+            checks[role + '_analytics_filter_update'] = true;
+            await viewport(1440, 1000); await screenshot('desktop-filament-' + role + '-analytics');
         }
     }
+    await writeFile(path.join(directory, 'browser-summary.json'), JSON.stringify({ checks, errors }, null, 2));
     expect(errors.length === 0, 'no_uncaught_javascript_errors');
     await writeFile(path.join(directory, 'browser-summary.json'), JSON.stringify({ checks, errors }, null, 2));
     console.log(JSON.stringify({ checks, errors }, null, 2));

@@ -70,7 +70,7 @@ $category = \App\Models\Category::create(['name' => 'Cuts', 'department_id' => $
 $service = \App\Models\Service::create(['title' => 'Signature cut', 'slug' => 'signature-cut', 'description' => 'A fresh cut.',
     'created_by' => $owner->id, 'updated_by' => $owner->id, 'department_id' => $department->id, 'category_id' => $category->id,
     'price' => 2500, 'duration' => 60, 'status' => 'published']);
-$package = \App\Models\SubscriptionPackage::create(['name' => 'Fixture', 'slug' => 'fixture', 'price' => 100, 'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5]);
+$package = \App\Models\SubscriptionPackage::create(['name' => 'Fixture', 'slug' => 'fixture', 'price' => 100, 'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5, 'analytics' => true]);
 \App\Models\UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id, 'amount_paid' => 100, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth()]);
 \App\Models\ServicePage::create(['title' => 'Signature beauty', 'status' => 'published', 'description' => 'Care for your style.', 'price' => 2500, 'duration' => 60]);
 \App\Models\DealsPage::create(['title' => 'A little extra', 'status' => 1, 'original_price' => 2500, 'discounted_price' => 2000, 'salon' => $salon->name]);
@@ -89,13 +89,13 @@ file_put_contents($fixtureFile, json_encode(['email' => $user->email, 'password'
     'admin' => ['email' => $admin->email, 'password' => $adminPassword]], JSON_THROW_ON_ERROR));
 $log = $directory.'/server.log';
 $environment = array_merge(getenv(), ['BMS_AUTH_SMOKE_DIRECTORY' => $directory, 'BMS_AUTH_SMOKE_PORT' => (string) $port]);
-$process = proc_open([PHP_BINARY, '-S', '127.0.0.1:'.$port, '-t', $root.'/public', __FILE__],
+$process = proc_open([PHP_BINARY, '-d', 'memory_limit=512M', '-S', '127.0.0.1:'.$port, '-t', $root.'/public', __FILE__],
     [0 => ['pipe', 'r'], 1 => ['file', $log, 'a'], 2 => ['file', $log, 'a']], $pipes, $root, $environment);
 if (! is_resource($process)) {
     throw new RuntimeException('Unable to start the isolated HTTP server.');
 }
 fclose($pipes[0]);
-$client = new Client(['base_uri' => $url, 'cookies' => new CookieJar, 'http_errors' => false, 'allow_redirects' => false, 'timeout' => 10]);
+$client = new Client(['base_uri' => $url, 'cookies' => new CookieJar, 'http_errors' => false, 'allow_redirects' => false, 'timeout' => 30]);
 $checks = [];
 $expect = function (bool $condition, string $label) use (&$checks) {
     if (! $condition) {
@@ -176,6 +176,12 @@ try {
         }
         foreach (['salons', 'services'] as $resource) {
             $expect($client->get('/filament/'.$resource.'/create')->getStatusCode() === 200, 'filament_create:'.$role.':'.$resource);
+        }
+        $response = $client->get('/filament/analytics-dashboard');
+        $expect($response->getStatusCode() === 200, 'analytics:'.$role);
+        $expect(str_contains((string) $response->getBody(), 'Values are estimates'), 'analytics_estimate_label:'.$role);
+        if ($role === 'admin') {
+            $expect($client->get('/filament/subscription-packages/'.$package->id.'/edit')->getStatusCode() === 200, 'admin_package_edit');
         }
         if ($role === 'owner') {
             $expect($client->get('/filament/users/create')->getStatusCode() === 403, 'owner_cannot_create_users');

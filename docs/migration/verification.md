@@ -117,3 +117,24 @@ See [secure Filament management foundation](step-7-filament-management.md).
 | Import integrity/schema | No FK orphans or missing media originals/conversions; no nontransactional tables, imported migrations, seeds or record edits |
 
 Final HTTP/browser artifacts are private under `.local/migration-baseline/auth-smoke-20261010_201745_5c2949/`. All fixture accounts and temporary credentials are synthetic; mail is suppressed. Native profile and password forms remain the account settings destination. Legacy API/write/nested routes and React source are retained during staged retirement. Analytics financial definitions, remaining package/user/subscription actions, production integrations, live MySQL catalogue concurrency/load testing and full deployment gates remain open. This checkpoint does not claim complete dashboard parity or a complete security audit.
+
+## Step eight verification - 11 October 2026
+
+See [Filament reporting and administrative actions](step-8-filament-reporting.md).
+
+| Check | Result |
+|---|---|
+| Full suite | 189 passed, 838 assertions; CLI memory 512 MB |
+| Reporting/action regressions | 14 passed, 89 assertions; scheduled/expired/pending buckets, retained payment history, exact daily windows/month-end rollover, deleted service value, foreign/invalid filters, revoked analytics feature, scoped years, package edit/quote preservation and validation, removed automatic batch approval, archived history, customer approval/stale rejection, protected administrator editing, unchanged password/audit fields, active subscription cancellation, one-time trial, safe package archival, creation roles and availability dates |
+| Real HTTP | 72 passed plus successful browser runner; analytics and package edit added to existing public/auth/customer/owner/admin checks |
+| Chrome | 31 passed, zero uncaught JavaScript errors; both roles' analytics chart initialization, live 7-day filtering and mobile overflow checks included |
+| Visual inspection | Final mobile owner analytics and desktop admin analytics screenshots inspected with corrected estimate labels and settled responsive layout |
+| Root assets | Build passed with Vite 7.3.7 and pinned locally bundled Chart.js 4.4.8; existing empty app JS warning remains |
+| Root npm audit | Initially 11 vulnerable dependencies (1 critical, 9 high, 1 moderate); compatible updates within existing ranges applied; final full root audit reports zero known vulnerabilities |
+| Templates/source | All Blade views compile, cache cleared; changed PHP passes Pint, browser script syntax and git whitespace checks pass |
+| Imported data | 35 tables; users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51; counts unchanged |
+| Import integrity | No FK orphans, missing media originals/conversions or nontransactional tables; no imported migrations, seeds or record writes |
+
+Final HTTP/browser artifacts are private under .local/migration-baseline/auth-smoke-20261010_204431_dd4d19/. The summary contains 72 HTTP checks plus one successful browser-runner flag; its browser summary contains 31 checks. Fixture credentials remain synthetic/ignored and mail is suppressed. Root audit evidence is private in step-8-npm-audit.json and step-8-npm-audit-final.json. Browser testing exposed and resolved reactive Chart.js cleanup errors rather than ignoring them. The fixture server uses a 30-second request timeout and 512 MB memory for cold Filament renders.
+
+No production deployment was performed. The separate React/PHP dependency audits, reporting API reconciliation/retirement, exact visual/filter parity, notification/WhatsApp workflows, calendar interaction/timezone comparison, account retention decisions, mail/payment integration, production MySQL archive/request concurrency and load tests remain open. Native values are estimates or recorded subscription amounts, not certified cash receipts/profit. See the stage document for these financial definitions and the retained legacy surfaces.

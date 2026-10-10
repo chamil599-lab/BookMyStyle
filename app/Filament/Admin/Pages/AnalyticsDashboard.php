@@ -2,17 +2,19 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Models\AdminShare;
 use App\Models\Booking;
 use App\Models\Salon;
-use App\RolesEnum;
+use App\Models\SalonRating;
+use App\Support\BookingValue;
+use App\Support\ManagementAccess;
 use BackedEnum;
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 
 class AnalyticsDashboard extends Page
 {
@@ -34,338 +36,165 @@ class AnalyticsDashboard extends Page
 
     public int $profitMonth;
 
+    #[\Livewire\Attributes\Locked]
+    public array $validFilters = [];
+
     public static function canAccess(): bool
     {
-        /** @var \App\Models\User|null $user */
-        $user = Filament::auth()->user();
+        $user = Filament::auth()->user()?->fresh();
 
-        if (\App\Support\ManagementAccess::admin($user)) {
-            return true;
-        }
-
-        $subscription = $user?->activeSubscription;
-
-        return \App\Support\ManagementAccess::owner($user, true) && $subscription?->package?->analytics;
+        return ManagementAccess::admin($user) ||
+            (ManagementAccess::owner($user, true) && $user->activeSubscription?->package?->analytics);
     }
 
     public function mount(): void
     {
-        if (! static::canAccess()) {
-            Notification::make()
-                ->title('Analytics is not available in your current plan.')
-                ->body('Please upgrade your subscription to access analytics.')
-                ->danger()
-                ->send();
-
-            $this->redirect(url()->previous());
-
-            return;
-        }
-
-        $this->profitYear = (int) now()->year;
-        $this->profitMonth = (int) now()->month;
+        abort_unless(static::canAccess(), 403);
+        $this->profitYear = now()->year;
+        $this->profitMonth = now()->month;
+        $this->validFilters = ['period' => $this->period, 'salonId' => $this->salonId, 'profitYear' => $this->profitYear, 'profitMonth' => $this->profitMonth];
     }
 
-    public function updatedPeriod(): void {}
+    public function updated(string $property): void
+    {
+        abort_unless(static::canAccess(), 403);
+        $rules = ['period' => 'required|in:7d,30d,90d,12m,all', 'salonId' => 'nullable|integer|min:1',
+            'profitYear' => 'required|integer|between:1900,2100', 'profitMonth' => 'required|integer|between:1,12'];
+        abort_unless(array_key_exists($property, $rules), 422);
+        $value = $this->{$property};
+        $validator = Validator::make([$property => $value], [$property => $rules[$property]]);
+        if ($validator->fails()) {
+            $this->{$property} = $this->validFilters[$property];
+            $validator->validate();
+        }
+        if ($property === 'salonId' && $value !== null && $value !== '') {
+            abort_unless($this->ownerSalons->pluck('id')->contains((int) $value), 404);
+        }
+        $this->validFilters[$property] = $this->{$property};
+        $this->resetErrorBag($property);
+    }
 
-    public function updatedSalonId(): void {}
+    protected function validateFilters(): void
+    {
+        abort_unless(static::canAccess(), 403);
+        Validator::make(['period' => $this->period, 'salonId' => $this->salonId,
+            'profitYear' => $this->profitYear, 'profitMonth' => $this->profitMonth], [
+                'period' => 'required|in:7d,30d,90d,12m,all', 'salonId' => 'nullable|integer|min:1',
+                'profitYear' => 'required|integer|between:1900,2100', 'profitMonth' => 'required|integer|between:1,12',
+            ])->validate();
+    }
 
-    public function updatedProfitYear(): void {}
+    public function getOwnerSalonsProperty(): Collection
+    {
+        abort_unless(static::canAccess(), 403);
+        $user = Filament::auth()->user()->fresh();
 
-    public function updatedProfitMonth(): void {}
+        return Salon::query()->when(! ManagementAccess::admin($user), fn ($q) => $q->where('created_by', $user->id))
+            ->select('id', 'name')->get();
+    }
 
     public function getOwnerSalonIds(): Collection
     {
-        abort_unless(static::canAccess(), 403);
-        $user = Filament::auth()->user();
+        $this->validateFilters();
+        $ids = $this->ownerSalons->pluck('id');
+        if ($this->salonId !== null) {
+            abort_unless($ids->contains($this->salonId), 404);
 
-        if ($user?->hasRole(RolesEnum::ADMIN->value)) {
-            if ($this->salonId) {
-                return collect([$this->salonId]);
-            }
-
-            return Salon::pluck('id');
-        }
-
-        $ids = Salon::where('created_by', $user->id)->pluck('id');
-
-        if ($this->salonId && $ids->contains($this->salonId)) {
             return collect([$this->salonId]);
         }
 
         return $ids;
     }
 
-    public function getOwnerSalonsProperty(): Collection
-    {
-        $user = Filament::auth()->user();
-
-        if ($user?->hasRole(RolesEnum::ADMIN->value)) {
-            return Salon::select('id', 'name')->get();
-        }
-
-        return Salon::where('created_by', $user->id)->select('id', 'name')->get();
-    }
-
     public function getPeriodStartDate(): ?Carbon
     {
+        $this->validateFilters();
+
         return match ($this->period) {
-            '7d' => now()->subDays(7),
-            '30d' => now()->subDays(30),
-            '90d' => now()->subDays(90),
-            '12m' => now()->subMonths(12),
-            default => null,
+            '7d' => today()->subDays(6), '30d' => today()->subDays(29), '90d' => today()->subDays(89),
+            '12m' => today()->startOfMonth()->subMonthsNoOverflow(11), 'all' => null,
         };
+    }
+
+    protected function periodQuery(bool $confirmed = false): Builder
+    {
+        $ids = $this->getOwnerSalonIds();
+        $query = $confirmed ? BookingValue::query($ids) : Booking::whereIn('salon_id', $ids);
+        $start = $this->getPeriodStartDate();
+
+        return $query->where('date', '<=', today()->toDateString())
+            ->when($start, fn ($q) => $q->where('date', '>=', $start->toDateString()));
     }
 
     public function getRevenueStatsProperty(): array
     {
-        $salonIds = $this->getOwnerSalonIds();
-
-        $allBookings = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->whereIn('salon_id', $salonIds)
-            ->with('service')
-            ->get();
-
-        $totalRevenue = $allBookings->sum(fn ($b) => $b->service?->price ?? 0);
-
-        $todayRevenue = $allBookings
-            ->filter(fn ($b) => $b->created_at->isToday())
-            ->sum(fn ($b) => $b->service?->price ?? 0);
-
-        $periodStart = $this->getPeriodStartDate();
-        $periodBookings = $periodStart
-            ? $allBookings->filter(fn ($b) => $b->date->gte($periodStart))
-            : $allBookings;
-
-        $periodRevenue = $periodBookings->sum(fn ($b) => $b->service?->price ?? 0);
+        $query = BookingValue::query($this->getOwnerSalonIds());
 
         return [
-            'total' => $totalRevenue,
-            'today' => $todayRevenue,
-            'period' => $periodRevenue,
+            'total' => (clone $query)->get()->sum(fn ($b) => $b->service?->price ?? 0),
+            'today' => (clone $query)->whereDate('date', today())->get()->sum(fn ($b) => $b->service?->price ?? 0),
+            'period' => $this->periodQuery(true)->get()->sum(fn ($b) => $b->service?->price ?? 0),
         ];
     }
 
     public function getBookingStatsProperty(): array
     {
-        $salonIds = $this->getOwnerSalonIds();
-        $periodStart = $this->getPeriodStartDate();
+        $bookings = $this->periodQuery()->get();
+        $user = Filament::auth()->user()->fresh();
+        // Quotas count requests created this month, matching BookingService.
+        $currentMonthCount = Booking::whereIn('salon_id', $this->ownerSalons->pluck('id'))
+            ->where('created_at', '>=', now()->startOfMonth())->where('created_at', '<', now()->startOfMonth()->addMonth())->count();
 
-        $query = Booking::query()->whereIn('salon_id', $salonIds);
-
-        if ($periodStart) {
-            $query->where('date', '>=', $periodStart);
-        }
-
-        $bookings = $query->get();
-        $total = $bookings->count();
-
-        $currentMonthCount = Booking::query()
-            ->whereIn('salon_id', $salonIds)
-            ->whereYear('date', now()->year)
-            ->whereMonth('date', now()->month)
-            ->count();
-
-        $user = Filament::auth()->user();
-        $maxPerMonth = null;
-
-        if (! $user?->hasRole(RolesEnum::ADMIN->value)) {
-            $maxPerMonth = $user?->activeSubscription?->package?->max_bookings_per_month;
-        }
-
-        return [
-            'total' => $total,
-            'approved' => $bookings->where('status', 'approved')->count(),
-            'pending' => $bookings->where('status', 'pending')->count(),
-            'rejected' => $bookings->where('status', 'rejected')->count(),
+        return ['total' => $bookings->count(), 'approved' => $bookings->where('status', 'approved')->count(),
+            'completed' => $bookings->where('status', 'completed')->count(),
+            'pending' => $bookings->where('status', 'pending')->count(), 'rejected' => $bookings->where('status', 'rejected')->count(),
             'current_month' => $currentMonthCount,
-            'max_per_month' => $maxPerMonth,
-        ];
+            'max_per_month' => ManagementAccess::admin($user) ? null : $user->activeSubscription?->package?->max_bookings_per_month];
     }
 
     public function getMonthlyRevenueDataProperty(): array
     {
-        $salonIds = $this->getOwnerSalonIds();
-
-        $bookings = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->whereIn('salon_id', $salonIds)
-            ->where('date', '>=', now()->subMonths(11)->startOfMonth())
-            ->with('service')
-            ->get();
-
-        $months = [];
-        $revenues = [];
-
-        for ($i = 11; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $key = $date->format('Y-m');
-            $months[] = $date->format('M Y');
-
-            $revenues[] = $bookings
-                ->filter(fn ($b) => $b->date->format('Y-m') === $key)
-                ->sum(fn ($b) => $b->service?->price ?? 0);
-        }
-
-        return [
-            'labels' => $months,
-            'data' => $revenues,
-        ];
+        return BookingValue::chart(BookingValue::query($this->getOwnerSalonIds()), today()->startOfMonth()->subMonthsNoOverflow(11), today(), true);
     }
 
     public function getDailyRevenueDataProperty(): array
     {
-        $salonIds = $this->getOwnerSalonIds();
-        $periodStart = $this->getPeriodStartDate() ?? now()->subDays(30);
-        $days = (int) $periodStart->diffInDays(now());
-
-        $bookings = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->whereIn('salon_id', $salonIds)
-            ->where('date', '>=', $periodStart)
-            ->with('service')
-            ->get();
-
-        $labels = [];
-        $data = [];
-
-        for ($i = $days; $i >= 0; $i--) {
-            $date = now()->subDays($i);
-            $key = $date->format('Y-m-d');
-            $labels[] = $date->format('M d');
-
-            $data[] = $bookings
-                ->filter(fn ($b) => $b->date->format('Y-m-d') === $key)
-                ->sum(fn ($b) => $b->service?->price ?? 0);
+        if ($this->period === '12m') {
+            return $this->monthlyRevenueData;
         }
 
-        return [
-            'labels' => $labels,
-            'data' => $data,
-        ];
+        return BookingValue::chart(BookingValue::query($this->getOwnerSalonIds()), $this->getPeriodStartDate() ?? today()->subDays(29), today());
     }
 
     public function getTopServicesProperty(): Collection
     {
-        $salonIds = $this->getOwnerSalonIds();
-        $periodStart = $this->getPeriodStartDate();
-
-        $query = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->whereIn('salon_id', $salonIds)
-            ->with('service');
-
-        if ($periodStart) {
-            $query->where('date', '>=', $periodStart);
-        }
-
-        return $query->get()
-            ->groupBy('service_id')
-            ->map(function ($group) {
-                $service = $group->first()->service;
-
-                return [
-                    'name' => $service?->title ?? 'Unknown',
-                    'bookings' => $group->count(),
-                    'revenue' => $group->sum(fn ($b) => $b->service?->price ?? 0),
-                ];
-            })
-            ->sortByDesc('bookings')
-            ->take(5)
-            ->values();
+        return $this->periodQuery(true)->get()->groupBy('service_id')->map(fn ($group) => [
+            'name' => $group->first()->service?->title ?? 'Deleted service', 'bookings' => $group->count(),
+            'revenue' => $group->sum(fn ($b) => $b->service?->price ?? 0),
+        ])->sortByDesc('bookings')->take(5)->values();
     }
 
     public function getFilteredProfitProperty(): array
     {
-        $salonIds = $this->getOwnerSalonIds();
+        $bookings = BookingValue::query($this->getOwnerSalonIds())->whereYear('date', $this->profitYear)
+            ->whereMonth('date', $this->profitMonth)->with('salon')->get();
 
-        $bookings = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->whereIn('salon_id', $salonIds)
-            ->whereYear('date', $this->profitYear)
-            ->whereMonth('date', $this->profitMonth)
-            ->with(['service', 'salon'])
-            ->get();
-
-        $totalRevenue = $bookings->sum(fn ($b) => $b->service?->price ?? 0);
-
-        $bySalon = $bookings
-            ->groupBy('salon_id')
-            ->map(function ($group) {
-                $salon = $group->first()->salon;
-
-                return [
-                    'name' => $salon?->name ?? 'Unknown',
-                    'revenue' => $group->sum(fn ($b) => $b->service?->price ?? 0),
-                    'bookings' => $group->count(),
-                ];
-            })
-            ->sortByDesc('revenue')
-            ->values();
-
-        return [
-            'total_revenue' => $totalRevenue,
-            'by_salon' => $bySalon,
-        ];
+        return ['total_revenue' => $bookings->sum(fn ($b) => $b->service?->price ?? 0),
+            'by_salon' => $bookings->groupBy('salon_id')->map(fn ($group) => [
+                'name' => $group->first()->salon?->name ?? 'Deleted salon', 'bookings' => $group->count(),
+                'revenue' => $group->sum(fn ($b) => $b->service?->price ?? 0),
+            ])->sortByDesc('revenue')->values()];
     }
 
     public function getProfitYearsProperty(): array
     {
-        $earliest = Booking::min('date');
-        $startYear = $earliest ? Carbon::parse($earliest)->year : now()->year;
-        $years = [];
-        for ($y = now()->year; $y >= $startYear; $y--) {
-            $years[] = $y;
-        }
+        $earliest = Booking::whereIn('salon_id', $this->getOwnerSalonIds())->min('date');
 
-        return $years;
+        return range(now()->year, min(now()->year, max(1900, $earliest ? Carbon::parse($earliest)->year : now()->year)));
     }
 
     public function getAverageRatingProperty(): float
     {
-        $salonIds = $this->getOwnerSalonIds();
-
-        return (float) Salon::whereIn('id', $salonIds)
-            ->withAvg('ratings', 'rating')
-            ->get()
-            ->avg('ratings_avg_rating') ?? 0;
-    }
-
-    public function getProfitBreakdownProperty(): array
-    {
-        $salonIds = $this->getOwnerSalonIds();
-
-        // Get bookings for the selected period
-        $bookings = Booking::query()
-            ->whereIn('status', ['approved', 'completed'])
-            ->whereIn('salon_id', $salonIds)
-            ->with(['service', 'salon'])
-            ->get();
-
-        $totalRevenue = $bookings->sum(fn ($b) => $b->service?->price ?? 0);
-
-        // Get admin commission percentage (default 20%)
-        $adminPercent = 20;
-
-        // Calculate admin commission and owner earnings
-        $adminCommission = $totalRevenue * ($adminPercent / 100);
-        $ownerEarnings = $totalRevenue - $adminCommission;
-
-        // Get admin shares (what's owed to/from salon owners)
-        $adminShares = AdminShare::whereIn('salon_id', $salonIds)->get();
-        $totalOwed = $adminShares->sum('amount');
-        $totalPaid = $adminShares->sum('paid');
-        $balanceOwed = $totalOwed - $totalPaid;
-
-        return [
-            'total_revenue' => $totalRevenue,
-            'admin_percent' => $adminPercent,
-            'admin_commission' => $adminCommission,
-            'owner_earnings' => $ownerEarnings,
-            'total_paid' => $totalPaid,
-            'balance_owed' => $balanceOwed,
-        ];
+        return (float) (SalonRating::whereIn('salon_id', $this->getOwnerSalonIds())->avg('rating') ?? 0);
     }
 }

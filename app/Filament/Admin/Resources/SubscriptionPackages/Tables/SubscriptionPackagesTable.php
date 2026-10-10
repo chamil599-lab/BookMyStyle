@@ -3,13 +3,11 @@
 namespace App\Filament\Admin\Resources\SubscriptionPackages\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -41,7 +39,7 @@ class SubscriptionPackagesTable
 
                 TextColumn::make('price')
                     ->label('Price')
-                    ->money('usd')
+                    ->money('LKR')
                     ->sortable(),
 
                 TextColumn::make('duration_days')
@@ -117,12 +115,13 @@ class SubscriptionPackagesTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     RestoreBulkAction::make(),
                 ])
-                ->visible(fn () => true), // Show only restore action for soft-deleted items
+                    ->visible(fn () => true), // Show only restore action for soft-deleted items
             ]);
     }
 }

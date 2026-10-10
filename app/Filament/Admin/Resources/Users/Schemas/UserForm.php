@@ -3,13 +3,12 @@
 namespace App\Filament\Admin\Resources\Users\Schemas;
 
 use App\RolesEnum;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Spatie\Permission\Models\Role;
 
 class UserForm
 {
@@ -29,7 +28,7 @@ class UserForm
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         TextInput::make('password')
-                            ->password()
+                            ->password()->minLength(8)->maxLength(255)
                             ->required(fn ($operation) => $operation === 'create')
                             ->dehydrated(fn ($state) => filled($state))
                             ->label(fn ($operation) => $operation === 'create' ? 'Password' : 'New Password (leave blank to keep current)'),
@@ -45,7 +44,7 @@ class UserForm
                                 RolesEnum::CUSTOMER->value => 'Customer',
                             ])
                             ->required()
-                            ->default(RolesEnum::USER->value)
+                            ->default(RolesEnum::CUSTOMER->value)
                             ->disabled(fn ($record) => $record?->hasRole(RolesEnum::ADMIN->value))
                             ->helperText(fn ($record) => $record?->hasRole(RolesEnum::ADMIN->value) ? 'Admin role cannot be changed' : null)
                             ->dehydrated(false)

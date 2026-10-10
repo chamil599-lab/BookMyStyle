@@ -6,13 +6,15 @@
         $subStatus = $this->subStatusData;
         $dailyBooking = $this->dailyBookingRevenue;
         $topPkgs = $this->topPackages;
+        $overview = $this->overview;
     @endphp
 
     @assets
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    @vite('resources/js/management-charts.js')
     @endassets
 
     <div class="space-y-6">
+        <p class="text-sm">Subscription payments retain expired and canceled history; no refund ledger is available. Monthly payments are grouped by subscription start date. Booking values estimate current prices for confirmed appointments.</p>
 
         {{-- Stat Cards --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -22,7 +24,7 @@
                         <x-filament::icon icon="heroicon-o-currency-dollar" class="w-5 h-5 text-success-600 dark:text-success-400" />
                     </div>
                     <div>
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Subscription Revenue</p>
+                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Recorded subscription payments</p>
                         <p class="text-xl font-bold text-gray-900 dark:text-white">LKR {{ number_format($rev['subscription_revenue'], 2) }}</p>
                     </div>
                 </div>
@@ -65,34 +67,40 @@
             </div>
         </div>
 
+        <x-filament::section heading="Owners and site visits">
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                @foreach(['owners' => 'Owners', 'pending_owners' => 'Owners awaiting approval', 'visits' => 'Total visits', 'today_visits' => 'Visits today', 'month_visits' => 'Visits this month', 'unique_visitors' => 'Unique visitor identifiers'] as $key => $label)
+                    <div><dt>{{ $label }}</dt><dd>{{ number_format($overview[$key]) }}</dd></div>
+                @endforeach
+            </dl>
+        </x-filament::section>
         {{-- Charts Row --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {{-- Monthly Subscription Revenue --}}
+            {{-- Payments by subscription start month --}}
             <div class="lg:col-span-2">
                 <x-filament::section>
                     <x-slot name="heading">
                         <div class="flex items-center gap-2">
                             <x-filament::icon icon="heroicon-o-chart-bar" class="w-5 h-5" />
-                            Monthly Subscription Revenue
+                            Payments by subscription start month
                         </div>
                     </x-slot>
 
                     <div
                         class="h-72"
                         x-data="{
-                            chart: null,
                             init() { this.$nextTick(() => this.waitAndRender()); },
                             waitAndRender() {
                                 if (typeof Chart === 'undefined') { setTimeout(() => this.waitAndRender(), 100); return; }
                                 this.renderChart();
                             },
                             renderChart() {
-                                if (this.chart) { this.chart.destroy(); }
+                                if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); }
                                 const labels = JSON.parse(this.$el.dataset.labels);
                                 const values = JSON.parse(this.$el.dataset.values);
                                 const isDark = document.documentElement.classList.contains('dark');
-                                this.chart = new Chart(this.$refs.canvas, {
+                                new Chart(this.$refs.canvas, {
                                     type: 'bar',
                                     data: {
                                         labels: labels,
@@ -123,7 +131,7 @@
                                     }
                                 });
                             },
-                            destroy() { if (this.chart) { this.chart.destroy(); } }
+                            destroy() { if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); } }
                         }"
                         data-labels='@json($monthlySub["labels"])'
                         data-values='@json($monthlySub["data"])'
@@ -147,6 +155,8 @@
                         @php $subTotal = max($subs['total'], 1); @endphp
                         @foreach([
                             ['label' => 'Active', 'count' => $subs['active'], 'color' => 'success'],
+                            ['label' => 'Scheduled', 'count' => $subs['scheduled'], 'color' => 'info'],
+                            ['label' => 'Rejected', 'count' => $subs['rejected'], 'color' => 'gray'],
                             ['label' => 'Pending', 'count' => $subs['pending'], 'color' => 'warning'],
                             ['label' => 'Expired', 'count' => $subs['expired'], 'color' => 'danger'],
                             ['label' => 'Canceled', 'count' => $subs['canceled'], 'color' => 'gray'],
@@ -167,21 +177,20 @@
                             <div
                                 class="w-40 h-40"
                                 x-data="{
-                                    chart: null,
                                     init() { this.$nextTick(() => this.waitAndRender()); },
                                     waitAndRender() {
                                         if (typeof Chart === 'undefined') { setTimeout(() => this.waitAndRender(), 100); return; }
                                         this.renderChart();
                                     },
                                     renderChart() {
-                                        if (this.chart) { this.chart.destroy(); }
+                                        if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); }
                                         const values = JSON.parse(this.$el.dataset.values);
                                         const isDark = document.documentElement.classList.contains('dark');
-                                        this.chart = new Chart(this.$refs.canvas, {
+                                        new Chart(this.$refs.canvas, {
                                             type: 'doughnut',
                                             data: {
-                                                labels: ['Active', 'Pending', 'Expired', 'Canceled'],
-                                                datasets: [{ data: values, backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#6b7280'], borderWidth: 0 }]
+                                                labels: ['Active', 'Scheduled', 'Pending', 'Expired', 'Canceled', 'Rejected'],
+                                                datasets: [{ data: values, backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#6b7280', '#a855f7'], borderWidth: 0 }]
                                             },
                                             options: {
                                                 responsive: true,
@@ -193,7 +202,7 @@
                                             }
                                         });
                                     },
-                                    destroy() { if (this.chart) { this.chart.destroy(); } }
+                                    destroy() { if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); } }
                                 }"
                                 data-values='@json($subStatus)'
                             >
@@ -210,25 +219,24 @@
             <x-slot name="heading">
                 <div class="flex items-center gap-2">
                     <x-filament::icon icon="heroicon-o-arrow-trending-up" class="w-5 h-5" />
-                    Booking Revenue (Last 30 Days)
+                    Estimated booking value (Last 30 Days)
                 </div>
             </x-slot>
 
             <div
                 class="h-64"
                 x-data="{
-                    chart: null,
                     init() { this.$nextTick(() => this.waitAndRender()); },
                     waitAndRender() {
                         if (typeof Chart === 'undefined') { setTimeout(() => this.waitAndRender(), 100); return; }
                         this.renderChart();
                     },
                     renderChart() {
-                        if (this.chart) { this.chart.destroy(); }
+                        if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); }
                         const labels = JSON.parse(this.$el.dataset.labels);
                         const values = JSON.parse(this.$el.dataset.values);
                         const isDark = document.documentElement.classList.contains('dark');
-                        this.chart = new Chart(this.$refs.canvas, {
+                        new Chart(this.$refs.canvas, {
                             type: 'line',
                             data: {
                                 labels: labels,
@@ -261,7 +269,7 @@
                             }
                         });
                     },
-                    destroy() { if (this.chart) { this.chart.destroy(); } }
+                    destroy() { if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); } }
                 }"
                 data-labels='@json($dailyBooking["labels"])'
                 data-values='@json($dailyBooking["data"])'

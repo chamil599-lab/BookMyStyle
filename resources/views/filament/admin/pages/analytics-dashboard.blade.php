@@ -5,7 +5,6 @@
         $monthly = $this->monthlyRevenueData;
         $daily = $this->dailyRevenueData;
         $topServices = $this->topServices;
-        $profit = $this->profitBreakdown;
         $filteredProfit = $this->filteredProfit;
         $profitYears = $this->profitYears;
         $avgRating = $this->averageRating;
@@ -15,11 +14,16 @@
 
     {{-- Load Chart.js --}}
     @assets
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    @vite('resources/js/management-charts.js')
     @endassets
 
     <div class="space-y-6">
+        <p class="text-sm">Values are estimates using current service prices, not payments or profit. Period charts include appointments through today; all-time and selected-month totals include future confirmed appointments.</p>
 
+        @foreach(['period', 'salonId', 'profitYear', 'profitMonth'] as $field)
+            @error($field)<p class="text-danger-600" role="alert">{{ $message }}</p>@enderror
+        @endforeach
+        <p class="text-sm">Completed bookings in this period: {{ $bookings['completed'] }}. Monthly usage counts requests created across all your salons.</p>
         {{-- Filters --}}
         <div
             x-data="{ period: @js($this->period), salonId: @js($this->salonId) }"
@@ -67,27 +71,27 @@
 
         {{-- Stat Cards --}}
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {{-- Total Revenue --}}
+            {{-- All confirmed booking value --}}
             <div class="p-5 bg-white border border-gray-200 rounded-xl dark:bg-gray-900 dark:border-gray-700">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30">
                         <x-filament::icon icon="heroicon-o-currency-dollar" class="w-5 h-5 text-success-600 dark:text-success-400" />
                     </div>
                     <div>
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Total Revenue</p>
+                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">All confirmed booking value</p>
                         <p class="text-xl font-bold text-gray-900 dark:text-white">LKR {{ number_format($revenue['total'], 2) }}</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Period Revenue --}}
+            {{-- Period booking value --}}
             <div class="p-5 bg-white border border-gray-200 rounded-xl dark:bg-gray-900 dark:border-gray-700">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30">
                         <x-filament::icon icon="heroicon-o-arrow-trending-up" class="w-5 h-5 text-primary-600 dark:text-primary-400" />
                     </div>
                     <div>
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Period Revenue</p>
+                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Period booking value</p>
                         <p class="text-xl font-bold text-gray-900 dark:text-white">LKR {{ number_format($revenue['period'], 2) }}</p>
                     </div>
                 </div>
@@ -123,13 +127,13 @@
         {{-- Charts Row --}}
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
-            {{-- Monthly Revenue Chart --}}
+            {{-- Monthly booking value Chart --}}
             <div class="lg:col-span-2">
                 <x-filament::section>
                     <x-slot name="heading">
                         <div class="flex items-center gap-2">
                             <x-filament::icon icon="heroicon-o-chart-bar" class="w-5 h-5" />
-                            Monthly Revenue
+                            Monthly booking value
                         </div>
                     </x-slot>
 
@@ -137,7 +141,6 @@
                         class="h-72"
                         wire:ignore
                         x-data="{
-                            chart: null,
                             init() {
                                 this.$nextTick(() => this.renderChart());
                             },
@@ -146,14 +149,14 @@
                                     setTimeout(() => this.renderChart(), 100);
                                     return;
                                 }
-                                if (this.chart) { this.chart.destroy(); }
+                                if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); }
                                 const isDark = document.documentElement.classList.contains('dark');
-                                this.chart = new Chart(this.$refs.canvas, {
+                                new Chart(this.$refs.canvas, {
                                     type: 'bar',
                                     data: {
                                         labels: @js($monthly['labels']),
                                         datasets: [{
-                                            label: 'Revenue (LKR)',
+                                            label: 'Estimated booking value (LKR)',
                                             data: @js($monthly['data']),
                                             backgroundColor: isDark ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.8)',
                                             borderColor: '#22c55e',
@@ -179,7 +182,7 @@
                                     }
                                 });
                             },
-                            destroy() { if (this.chart) { this.chart.destroy(); } }
+                            destroy() { if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); } }
                         }"
                         wire:key="monthly-chart-{{ $this->period }}-{{ $this->salonId }}"
                     >
@@ -298,7 +301,6 @@
                                 class="w-40 h-40"
                                 wire:ignore
                                 x-data="{
-                                    chart: null,
                                     init() {
                                         this.$nextTick(() => this.renderChart());
                                     },
@@ -307,15 +309,15 @@
                                             setTimeout(() => this.renderChart(), 100);
                                             return;
                                         }
-                                        if (this.chart) { this.chart.destroy(); }
+                                        if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); }
                                         const isDark = document.documentElement.classList.contains('dark');
-                                        this.chart = new Chart(this.$refs.canvas, {
+                                        new Chart(this.$refs.canvas, {
                                             type: 'doughnut',
                                             data: {
-                                                labels: ['Approved', 'Pending', 'Rejected'],
+                                                labels: ['Approved', 'Completed', 'Pending', 'Rejected'],
                                                 datasets: [{
-                                                    data: [{{ $bookings['approved'] }}, {{ $bookings['pending'] }}, {{ $bookings['rejected'] }}],
-                                                    backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
+                                                    data: [{{ $bookings['approved'] }}, {{ $bookings['completed'] }}, {{ $bookings['pending'] }}, {{ $bookings['rejected'] }}],
+                                                    backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444'],
                                                     borderWidth: 0,
                                                 }]
                                             },
@@ -332,7 +334,7 @@
                                             }
                                         });
                                     },
-                                    destroy() { if (this.chart) { this.chart.destroy(); } }
+                                    destroy() { if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); } }
                                 }"
                                 wire:key="donut-chart-{{ $this->period }}-{{ $this->salonId }}"
                             >
@@ -349,7 +351,7 @@
             <x-slot name="heading">
                 <div class="flex items-center gap-2">
                     <x-filament::icon icon="heroicon-o-arrow-trending-up" class="w-5 h-5" />
-                    Daily Revenue Trend
+                    Booking value trend
                 </div>
             </x-slot>
 
@@ -357,7 +359,6 @@
                 class="h-64"
                 wire:ignore
                 x-data="{
-                    chart: null,
                     init() {
                         this.$nextTick(() => this.renderChart());
                     },
@@ -366,14 +367,14 @@
                             setTimeout(() => this.renderChart(), 100);
                             return;
                         }
-                        if (this.chart) { this.chart.destroy(); }
+                        if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); }
                         const isDark = document.documentElement.classList.contains('dark');
-                        this.chart = new Chart(this.$refs.canvas, {
+                        new Chart(this.$refs.canvas, {
                             type: 'line',
                             data: {
                                 labels: @js($daily['labels']),
                                 datasets: [{
-                                    label: 'Revenue (LKR)',
+                                    label: 'Estimated booking value (LKR)',
                                     data: @js($daily['data']),
                                     borderColor: '#3b82f6',
                                     backgroundColor: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.15)',
@@ -401,7 +402,7 @@
                             }
                         });
                     },
-                    destroy() { if (this.chart) { this.chart.destroy(); } }
+                    destroy() { if (typeof Chart !== 'undefined') { Chart.getChart(this.$refs.canvas)?.destroy(); } }
                 }"
                 wire:key="daily-chart-{{ $this->period }}-{{ $this->salonId }}"
             >
@@ -444,13 +445,13 @@
                 @endif
             </x-filament::section>
 
-            {{-- Monthly Revenue --}}
+            {{-- Monthly booking value --}}
             <x-filament::section>
                 <x-slot name="heading">
                     <div class="flex items-center justify-between w-full">
                         <div class="flex items-center gap-2">
                             <x-filament::icon icon="heroicon-o-banknotes" class="w-5 h-5" />
-                            Monthly Revenue
+                            Monthly booking value
                         </div>
                         <div class="flex items-center gap-2">
                             <select
@@ -458,7 +459,7 @@
                                 class="text-xs border-gray-300 rounded-md shadow-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:border-primary-500 focus:ring-primary-500"
                             >
                                 @foreach(range(1, 12) as $m)
-                                    <option value="{{ $m }}">{{ \Carbon\Carbon::create()->month($m)->format('M') }}</option>
+                                    <option value="{{ $m }}">{{ \Carbon\Carbon::create(2000, $m, 1)->format('M') }}</option>
                                 @endforeach
                             </select>
                             <select
@@ -474,13 +475,13 @@
                 </x-slot>
 
                 <div class="space-y-3">
-                    {{-- Monthly Total Revenue --}}
+                    {{-- Monthly All confirmed booking value --}}
                     <div class="flex items-center justify-between py-2.5 bg-success-50 dark:bg-success-950/10 rounded-lg px-3 -mx-3">
                         <div class="flex items-center gap-2.5">
                             <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-success-100 dark:bg-success-900/30">
                                 <x-filament::icon icon="heroicon-o-currency-dollar" class="w-4 h-4 text-success-600 dark:text-success-400" />
                             </div>
-                            <span class="text-sm font-bold text-gray-900 dark:text-white">Total Revenue</span>
+                            <span class="text-sm font-bold text-gray-900 dark:text-white">All confirmed booking value</span>
                         </div>
                         <span class="text-sm font-bold text-success-600 dark:text-success-400">LKR {{ number_format($filteredProfit['total_revenue'], 2) }}</span>
                     </div>

@@ -17,7 +17,8 @@ class SubscriptionService
 
         return DB::transaction(function () use ($owner, $package) {
             User::whereKey($owner->id)->lockForUpdate()->firstOrFail();
-            if ($owner->subscriptions()->exists() || ! $package->is_active) {
+            $package = SubscriptionPackage::whereKey($package->id)->lockForUpdate()->firstOrFail();
+            if ($owner->subscriptions()->exists() || ! $package->isAvailable()) {
                 return null;
             }
 
@@ -39,8 +40,8 @@ class SubscriptionService
 
         return DB::transaction(function () use ($owner, $package, $payment) {
             User::whereKey($owner->id)->lockForUpdate()->firstOrFail();
-            $package = SubscriptionPackage::whereKey($package->id)->firstOrFail();
-            if (! $package->is_active || $package->duration_days < 1) {
+            $package = SubscriptionPackage::whereKey($package->id)->lockForUpdate()->firstOrFail();
+            if (! $package->isAvailable() || $package->duration_days < 1) {
                 throw ValidationException::withMessages(['package_id' => 'This package is unavailable.']);
             }
             if ($owner->subscriptions()->pending()->exists()) {

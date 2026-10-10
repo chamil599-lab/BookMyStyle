@@ -32,7 +32,8 @@ class AppServiceProvider extends ServiceProvider
         }
         Gate::policy(\App\Models\UserSubscription::class, \App\Policies\UserSubscriptionPolicy::class);
         Gate::policy(\App\Models\User::class, \App\Policies\UserManagementPolicy::class);
-        foreach ([\App\Models\SubscriptionPackage::class, \App\Models\Category::class,
+        Gate::policy(\App\Models\SubscriptionPackage::class, \App\Policies\SubscriptionPackagePolicy::class);
+        foreach ([\App\Models\Category::class,
             \App\Models\Department::class, \App\Models\FeaturedSalon::class, \App\Models\ImageCycle::class,
             \App\Models\ServicePage::class, \App\Models\DealsPage::class, \App\Models\TeamMember::class] as $model) {
             Gate::policy($model, \App\Policies\AdminOnlyPolicy::class);

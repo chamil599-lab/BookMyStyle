@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\UserSubscription;
 
 class SubscriptionPackage extends Model
 {
@@ -75,6 +74,13 @@ class SubscriptionPackage extends Model
     public function isFree()
     {
         return $this->price == 0;
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->is_active && ! $this->trashed()
+            && (! $this->start_date || $this->start_date->lte(today()))
+            && (! $this->end_date || $this->end_date->gte(today()));
     }
 
     public function durationMonths()

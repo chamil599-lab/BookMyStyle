@@ -3,12 +3,10 @@
 namespace App\Filament\Admin\Resources\UserSubscriptions\Pages;
 
 use App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource;
-use App\Models\UserSubscription;
 use App\RolesEnum;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 class ListUserSubscriptions extends ListRecords
@@ -23,38 +21,6 @@ class ListUserSubscriptions extends ListRecords
 
         if ($isAdmin) {
             return [
-                Action::make('generate')
-                    ->label('Generate Subscriptions')
-                    ->icon('heroicon-m-sparkles')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Generate Subscriptions')
-                    ->modalDescription('This will approve all pending subscriptions and activate them. Only proceed after verifying payment at the quoted package price for every pending request.')
-                    ->modalSubmitActionLabel('Generate')
-                    ->action(function () {
-                        $pending = UserSubscription::where('status', 'pending')->get();
-
-                        if ($pending->isEmpty()) {
-                            Notification::make()
-                                ->title('No pending subscriptions found')
-                                ->warning()
-                                ->send();
-
-                            return;
-                        }
-
-                        $activated = 0;
-                        foreach ($pending as $subscription) {
-                            app(\App\Services\SubscriptionService::class)->approve($subscription, auth()->user(), $subscription->features_snapshot['price'] ?? $subscription->package->price);
-                            $activated++;
-                        }
-
-                        Notification::make()
-                            ->title('Subscriptions Generated')
-                            ->body("Activated {$activated} subscription(s).")
-                            ->success()
-                            ->send();
-                    }),
                 CreateAction::make(),
             ];
         }

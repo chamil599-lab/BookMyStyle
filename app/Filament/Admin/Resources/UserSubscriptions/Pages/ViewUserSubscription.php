@@ -59,7 +59,7 @@ class ViewUserSubscription extends ViewRecord
     {
         return [
             EditAction::make()
-                ->visible(fn () => auth()->user()?->hasRole('admin')),
+                ->visible(fn () => auth()->user()?->hasRole('admin') && $this->record->isPending()),
         ];
     }
 }

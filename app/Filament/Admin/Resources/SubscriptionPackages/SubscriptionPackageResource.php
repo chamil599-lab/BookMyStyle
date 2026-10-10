@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\SubscriptionPackages;
 
 use App\Filament\Admin\Resources\SubscriptionPackages\Pages\CreateSubscriptionPackage;
+use App\Filament\Admin\Resources\SubscriptionPackages\Pages\EditSubscriptionPackage;
 use App\Filament\Admin\Resources\SubscriptionPackages\Pages\ListSubscriptionPackages;
 use App\Filament\Admin\Resources\SubscriptionPackages\Pages\ViewSubscriptionPackage;
 use App\Filament\Admin\Resources\SubscriptionPackages\Schemas\SubscriptionPackageForm;
@@ -23,7 +24,7 @@ class SubscriptionPackageResource extends Resource
 {
     protected static ?string $model = SubscriptionPackage::class;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Billing';
+    protected static string|\UnitEnum|null $navigationGroup = 'Billing';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellAlert;
 
@@ -33,6 +34,7 @@ class SubscriptionPackageResource extends Resource
     {
         /** @var \App\Models\User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 
@@ -74,6 +76,7 @@ class SubscriptionPackageResource extends Resource
             'index' => ListSubscriptionPackages::route('/'),
             'create' => CreateSubscriptionPackage::route('/create'),
             'view' => ViewSubscriptionPackage::route('/{record}'),
+            'edit' => EditSubscriptionPackage::route('/{record}/edit'),
         ];
     }
 

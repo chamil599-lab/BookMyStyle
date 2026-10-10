@@ -132,25 +132,7 @@ class AdminManagementController extends Controller
 
     public function approveUser(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-
-        if ($user->hasRole('admin')) {
-            return response()->json(['message' => 'Cannot modify admin users'], 403);
-        }
-
-        $user->update([
-            'is_approved' => true,
-            'approved_at' => now(),
-            'approved_by' => auth()->id(),
-        ]);
-
-        if ($user->hasRole('owner') && ! $user->hasActiveOrPendingSubscription()) {
-            $proPackage = SubscriptionPackage::where('slug', 'pro-salon')
-                ->where('is_active', true)->first();
-            if ($proPackage) {
-                app(\App\Services\SubscriptionService::class)->grantTrial($user, $proPackage, $request->user());
-            }
-        }
+        $user = app(\App\Services\UserModeration::class)->approve($request->user(), User::findOrFail($id));
 
         return response()->json(['message' => 'User approved', 'user' => $user]);
     }
@@ -163,6 +145,7 @@ class AdminManagementController extends Controller
             return response()->json(['message' => 'Cannot delete admin users'], 403);
         }
 
+        \Illuminate\Support\Facades\Gate::forUser(auth()->user()->fresh())->authorize('delete', $user);
         $user->delete();
 
         return response()->json(['message' => 'User rejected and removed']);
@@ -271,14 +254,7 @@ class AdminManagementController extends Controller
     {
         $package = SubscriptionPackage::findOrFail($id);
 
-        $activeCount = $package->subscriptions()->where('status', 'active')->where('ends_at', '>', now())->count();
-        if ($activeCount > 0) {
-            return response()->json([
-                'message' => "Cannot delete: {$activeCount} active subscription(s) are using this package.",
-            ], 422);
-        }
-
-        $package->delete();
+        app(\App\Services\PackageManagement::class)->archive(auth()->user(), $package);
 
         return response()->json(['message' => 'Package deleted']);
     }
