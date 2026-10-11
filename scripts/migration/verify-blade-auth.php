@@ -70,7 +70,7 @@ $category = \App\Models\Category::create(['name' => 'Cuts', 'department_id' => $
 $service = \App\Models\Service::create(['title' => 'Signature cut', 'slug' => 'signature-cut', 'description' => 'A fresh cut.',
     'created_by' => $owner->id, 'updated_by' => $owner->id, 'department_id' => $department->id, 'category_id' => $category->id,
     'price' => 2500, 'duration' => 60, 'status' => 'published']);
-$package = \App\Models\SubscriptionPackage::create(['name' => 'Fixture', 'slug' => 'fixture', 'price' => 100, 'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5, 'analytics' => true]);
+$package = \App\Models\SubscriptionPackage::create(['name' => 'Fixture', 'slug' => 'fixture', 'price' => 100, 'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5, 'analytics' => true, 'calendar' => true]);
 \App\Models\UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id, 'amount_paid' => 100, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth()]);
 \App\Models\ServicePage::create(['title' => 'Signature beauty', 'status' => 'published', 'description' => 'Care for your style.', 'price' => 2500, 'duration' => 60]);
 \App\Models\DealsPage::create(['title' => 'A little extra', 'status' => 1, 'original_price' => 2500, 'discounted_price' => 2000, 'salon' => $salon->name]);
@@ -83,6 +83,10 @@ $foreignBooking = \App\Models\Booking::create(array_merge($bookingData, ['user_i
 \App\Models\FavoriteSalon::create(['user_id' => $user->id, 'salon_id' => $salon->id]);
 $user->notifications()->create(['id' => (string) \Illuminate\Support\Str::uuid(), 'type' => 'fixture',
     'data' => ['title' => 'Booking approved', 'message' => 'Your appointment at Amber Studio was approved.']]);
+foreach ([$owner, $admin] as $recipient) {
+    $recipient->notifications()->create(['id' => (string) \Illuminate\Support\Str::uuid(), 'type' => 'fixture',
+        'data' => ['title' => 'Management appointment update', 'message' => 'A fixture booking needs review.']]);
+}
 $fixtureFile = $directory.'/customer-fixture.json';
 file_put_contents($fixtureFile, json_encode(['email' => $user->email, 'password' => $password,
     'bookingId' => $customerBooking->id, 'owner' => ['email' => $owner->email, 'password' => $ownerPassword],
@@ -177,6 +181,9 @@ try {
         foreach (['salons', 'services'] as $resource) {
             $expect($client->get('/filament/'.$resource.'/create')->getStatusCode() === 200, 'filament_create:'.$role.':'.$resource);
         }
+        $response = $client->get('/filament/notification-inbox');
+        $expect($response->getStatusCode() === 200, 'notification_inbox:'.$role);
+        $expect(str_contains((string) $response->getBody(), 'Management appointment update'), 'notification_content:'.$role);
         $response = $client->get('/filament/analytics-dashboard');
         $expect($response->getStatusCode() === 200, 'analytics:'.$role);
         $expect(str_contains((string) $response->getBody(), 'Values are estimates'), 'analytics_estimate_label:'.$role);

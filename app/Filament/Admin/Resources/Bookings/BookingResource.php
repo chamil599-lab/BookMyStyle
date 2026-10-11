@@ -51,7 +51,7 @@ class BookingResource extends Resource
     // Filter which bookings are visible
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
+        $query = parent::getEloquentQuery()->with(['service' => fn ($q) => $q->withTrashed(), 'salon']);
 
         // Admin sees all bookings
         if (auth()->user()->hasRole('admin')) {

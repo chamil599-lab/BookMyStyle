@@ -28,12 +28,12 @@ class SubscriptionExpiringNotification extends Notification
 
         return [
             'subscription_id' => $this->subscription->id,
-            'days_remaining'  => $days,
-            'package_name'    => $packageName,
-            'expires_at'      => $expiryDate,
-            'title'           => 'Subscription expiring',
-            'message'         => "Your {$packageName} subscription expires in {$days} days ({$expiryDate}).",
-            'link'            => '/admin',
+            'days_remaining' => $days,
+            'package_name' => $packageName,
+            'expires_at' => $expiryDate,
+            'title' => 'Subscription expiring',
+            'message' => "Your {$packageName} subscription expires in {$days} days ({$expiryDate}).",
+            'link' => '/owner/subscription',
         ];
     }
 
@@ -48,7 +48,7 @@ class SubscriptionExpiringNotification extends Notification
             ->greeting("Hi {$notifiable->name},")
             ->line("Your **{$packageName}** subscription will expire on **{$expiryDate}** ({$days} days from now).")
             ->line('To continue enjoying uninterrupted access to your salon management features, please renew your subscription before it expires.')
-            ->action('Renew Subscription', url('/admin'))
+            ->action('Renew Subscription', url('/owner/subscription'))
             ->line('If you have any questions, feel free to contact our support team.');
     }
 }

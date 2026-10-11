@@ -138,3 +138,22 @@ See [Filament reporting and administrative actions](step-8-filament-reporting.md
 Final HTTP/browser artifacts are private under .local/migration-baseline/auth-smoke-20261010_204431_dd4d19/. The summary contains 72 HTTP checks plus one successful browser-runner flag; its browser summary contains 31 checks. Fixture credentials remain synthetic/ignored and mail is suppressed. Root audit evidence is private in step-8-npm-audit.json and step-8-npm-audit-final.json. Browser testing exposed and resolved reactive Chart.js cleanup errors rather than ignoring them. The fixture server uses a 30-second request timeout and 512 MB memory for cold Filament renders.
 
 No production deployment was performed. The separate React/PHP dependency audits, reporting API reconciliation/retirement, exact visual/filter parity, notification/WhatsApp workflows, calendar interaction/timezone comparison, account retention decisions, mail/payment integration, production MySQL archive/request concurrency and load tests remain open. Native values are estimates or recorded subscription amounts, not certified cash receipts/profit. See the stage document for these financial definitions and the retained legacy surfaces.
+
+## Step nine verification - 11 October 2026
+
+See [notifications, WhatsApp and calendar](step-9-notifications-calendar.md).
+
+| Check | Result |
+|---|---|
+| Full suite | 200 passed, 898 assertions; CLI memory 512 MB |
+| New regressions | 11 tests, 60 assertions: account-scoped notification actions, revoked verification/approval, escaped imported content, safe API destinations, correct service/audience links, expired owner inbox, WhatsApp normalization and cross-owner denial, timezone-independent calendar dates including midnight, forbidden calendar mutations and revoked SSE tokens/accounts |
+| Real HTTP | 76 passed plus successful browser runner; management inboxes added to prior public/auth/customer/owner/admin checks |
+| Chrome | 44 passed, zero uncaught JavaScript errors; inbox read/delete, bell refresh, safe WhatsApp URLs, calendar popup in Los Angeles browser timezone, existing customer journeys and analytics included |
+| Assets | Both root Laravel/Filament and retained React builds passed. Root empty app chunk warning remains; retained React build reports outdated Browserslist data and a large bundle |
+| Templates/source | All Blade templates compile and compiled cache is cleared; changed PHP passes Pint, browser script syntax and git whitespace checks pass |
+| Imported data | Read-only aggregate counts unchanged: 35 tables; users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51 |
+| Import integrity | No FK orphans, missing media originals/conversions or nontransactional tables; no imported migrations, seeds or record edits |
+
+Final synthetic HTTP/browser artifacts: `.local/migration-baseline/auth-smoke-20261011_031641_0618bb/`. Credentials and fixture data remain private/ignored; mail is suppressed and no WhatsApp message is sent. Calendar popup and mobile owner inbox screenshots were inspected. The initial review exposed a stale unread badge after management actions; Livewire events now refresh it immediately, with Chrome checking the result. Snapshot timing allows modal animations to settle.
+
+No production deployment was performed. Legacy APIs/React remain, and native notifications use polling rather than push. Real mail/payment delivery, production SSE worker capacity/revocation, MySQL concurrency/load testing, broader dependency/media security audits, account retention decisions and final visual/route parity remain release gates. No database date/time conversion was performed.

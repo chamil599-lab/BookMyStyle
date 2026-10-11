@@ -3,134 +3,101 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\AccountNotifications;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class NotificationController extends Controller
 {
     public function index(Request $request)
     {
-        $user = $request->user();
-
-        return response()->json($this->notificationPayload($user));
+        return response()->json($this->payload($request->user()))->header('Cache-Control', 'private, no-store');
     }
 
     public function stream(Request $request)
     {
-        $user = $request->user();
+        $service = app(AccountNotifications::class);
+        $user = $service->actor($request->user());
+        $accessToken = $request->user()->currentAccessToken();
+        $tokenId = $accessToken instanceof PersonalAccessToken ? $accessToken->getKey() : null;
 
-        return response()->stream(function () use ($user) {
+        return response()->stream(function () use ($user, $service, $tokenId) {
             $lastSignature = null;
-            $lastHeartbeatAt = time();
-
-            while (! connection_aborted()) {
-                $payload = $this->notificationPayload($user);
-                $signature = md5(json_encode([
-                    'unread_count' => $payload['unread_count'],
-                    'notifications' => collect($payload['notifications'])->map(fn ($notification) => [
-                        'id' => $notification['id'],
-                        'read_at' => $notification['read_at'],
-                        'created_at' => $notification['created_at'],
-                    ])->all(),
-                ]));
-
+            $deadline = microtime(true) + 25;
+            $lastHeartbeat = microtime(true);
+            while (! connection_aborted() && microtime(true) < $deadline) {
+                if (! $service->canAccess($user->fresh())) {
+                    break;
+                }
+                if ($tokenId !== null) {
+                    $token = PersonalAccessToken::find($tokenId);
+                    $expiration = config('sanctum.expiration');
+                    if (! $token || ($token->expires_at && $token->expires_at->isPast())
+                        || ($expiration && $token->created_at->lte(now()->subMinutes($expiration)))) {
+                        break;
+                    }
+                }
+                $payload = $this->payload($user);
+                $signature = hash('sha256', json_encode($payload));
                 if ($signature !== $lastSignature) {
                     echo "event: notifications\n";
-                    echo 'data: ' . json_encode($payload) . "\n\n";
+                    echo 'data: '.json_encode($payload)."\n\n";
                     @ob_flush();
                     flush();
-
                     $lastSignature = $signature;
-                    $lastHeartbeatAt = time();
-                } elseif ((time() - $lastHeartbeatAt) >= 15) {
+                    $lastHeartbeat = microtime(true);
+                } elseif (microtime(true) - $lastHeartbeat >= 15) {
                     echo ": heartbeat\n\n";
                     @ob_flush();
                     flush();
-
-                    $lastHeartbeatAt = time();
+                    $lastHeartbeat = microtime(true);
                 }
-
                 sleep(1);
             }
-        }, 200, [
-            'Content-Type' => 'text/event-stream',
-            'Cache-Control' => 'no-cache, no-transform',
-            'Connection' => 'keep-alive',
-            'X-Accel-Buffering' => 'no',
-        ]);
+        }, 200, ['Content-Type' => 'text/event-stream', 'Cache-Control' => 'private, no-store, no-transform',
+            'X-Accel-Buffering' => 'no']);
     }
 
-    private function notificationPayload($user): array
+    private function payload($user): array
     {
-        $notifications = $user->notifications()
-            ->limit(30)
-            ->get()
-            ->map(function ($n) {
-                return [
-                    'id'         => $n->id,
-                    'type'       => $n->type,
-                    'data'       => $n->data,
-                    'read_at'    => $n->read_at,
-                    'created_at' => $n->created_at,
-                ];
-            });
+        $service = app(AccountNotifications::class);
 
-        return [
-            'unread_count'  => $user->unreadNotifications()->count(),
-            'notifications' => $notifications,
-        ];
+        return ['unread_count' => $service->unread($user), 'notifications' => $service->query($user)->limit(30)->get()
+            ->map(fn ($n) => ['id' => $n->id, 'type' => $n->type, 'data' => array_replace($n->data, ['link' => parse_url($service->destination($user, $n->data), PHP_URL_PATH)]),
+                'read_at' => $n->read_at, 'created_at' => $n->created_at])];
     }
 
     public function markAsRead(Request $request, string $id)
     {
-        $user = $request->user();
-        $notification = $user->notifications()->where('id', $id)->first();
+        app(AccountNotifications::class)->read($request->user(), $id);
 
-        if (!$notification) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        $notification->markAsRead();
-
-        return response()->json([
-            'message'      => 'Marked as read',
-            'unread_count' => $user->unreadNotifications()->count(),
-        ]);
+        return $this->result($request, 'Marked as read');
     }
 
     public function markAllAsRead(Request $request)
     {
-        $request->user()->unreadNotifications->markAsRead();
+        app(AccountNotifications::class)->read($request->user());
 
-        return response()->json([
-            'message'      => 'All marked as read',
-            'unread_count' => 0,
-        ]);
+        return $this->result($request, 'All marked as read');
     }
 
     public function destroy(Request $request, string $id)
     {
-        $user = $request->user();
-        $notification = $user->notifications()->where('id', $id)->first();
+        app(AccountNotifications::class)->delete($request->user(), $id);
 
-        if (!$notification) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        $notification->delete();
-
-        return response()->json([
-            'message'      => 'Cleared',
-            'unread_count' => $user->unreadNotifications()->count(),
-        ]);
+        return $this->result($request, 'Cleared');
     }
 
     public function destroyAll(Request $request)
     {
-        $request->user()->notifications()->delete();
+        app(AccountNotifications::class)->delete($request->user());
 
-        return response()->json([
-            'message'      => 'All cleared',
-            'unread_count' => 0,
-        ]);
+        return $this->result($request, 'All cleared');
+    }
+
+    private function result(Request $request, string $message)
+    {
+        return response()->json(['message' => $message,
+            'unread_count' => app(AccountNotifications::class)->unread($request->user())])->header('Cache-Control', 'private, no-store');
     }
 }

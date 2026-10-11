@@ -16,7 +16,7 @@ class BookingCalendarWidget extends CalendarWidget
 {
     public static function canView(): bool
     {
-        $user = \Filament\Facades\Filament::auth()->user();
+        $user = \Filament\Facades\Filament::auth()->user()?->fresh();
 
         return \App\Support\ManagementAccess::admin($user)
             || (\App\Support\ManagementAccess::owner($user, true) && $user->activeSubscription?->package?->calendar);
@@ -25,7 +25,7 @@ class BookingCalendarWidget extends CalendarWidget
     protected function getEloquentQuery(string $model): \Illuminate\Database\Eloquent\Builder
     {
         abort_unless(static::canView() && $model === Booking::class, 403);
-        $query = Booking::query();
+        $query = Booking::query()->with(['salon', 'service' => fn ($q) => $q->withTrashed()]);
         if (! auth()->user()->hasRole('admin')) {
             $query->whereIn('salon_id', Salon::where('created_by', auth()->id())->select('id'));
         }
@@ -37,16 +37,58 @@ class BookingCalendarWidget extends CalendarWidget
 
     protected bool $eventClickEnabled = true;
 
-    /**
-     * 🔥 CRITICAL FIX
-     * Force FullCalendar to render in LOCAL timezone
-     * Prevents UTC shifting in calendar grid
-     */
+    public function onEventClickJs(array $data = [], ?string $action = null): void
+    {
+        abort_unless(static::canView(), 403);
+        $action ??= data_get($data, 'event.extendedProps.action') ?? 'view';
+        abort_unless($action === 'view', 403);
+        parent::onEventClickJs($data, 'view');
+    }
+
+    public function editAction(): \Guava\Calendar\Filament\Actions\EditAction
+    {
+        return parent::editAction()->authorize(false)->visible(false);
+    }
+
+    public function deleteAction(): \Guava\Calendar\Filament\Actions\DeleteAction
+    {
+        return parent::deleteAction()->authorize(false)->visible(false);
+    }
+
+    protected function onEventClick(\Guava\Calendar\ValueObjects\EventClickInfo $info, \Illuminate\Database\Eloquent\Model $event, ?string $action = null): void
+    {
+        abort_unless(static::canView() && $action === 'view', 403);
+        parent::onEventClick($info, $event, 'view');
+    }
+
+    /** Appointment times are salon wall times, not the browser's timezone. */
     protected function getCalendarOptions(): array
     {
         return [
             'timeZone' => 'local',
         ];
+    }
+
+    public function getEventsJs(array $info): array
+    {
+        abort_unless(static::canView(), 403);
+        \Illuminate\Support\Facades\Validator::make($info, [
+            'startStr' => 'required|string|max:64|date', 'endStr' => 'required|string|max:64|date',
+            'tzOffset' => 'nullable|integer|between:-840,840',
+        ])->validate();
+        $range = new FetchInfo(['startStr' => Carbon::parse($info['startStr'])->toDateString(),
+            'endStr' => Carbon::parse($info['endStr'])->toDateString()]);
+
+        return $this->getEvents($range)->map(function (CalendarEvent $event) {
+            $start = $event->getStart()->format('Y-m-d\TH:i:s');
+            $end = $event->getEnd()->format('Y-m-d\TH:i:s');
+            $data = $event->toCalendarObject(0, true);
+            $data['start'] = $start;
+            $data['end'] = $end;
+            $data['editable'] = $data['startEditable'] = $data['durationEditable'] = false;
+
+            return $data;
+        })->all();
     }
 
     /**
@@ -105,6 +147,7 @@ class BookingCalendarWidget extends CalendarWidget
     {
         return match ($status) {
             'approved' => '#22c55e',
+            'completed' => '#3b82f6',
             'pending' => '#f59e0b',
             'rejected' => '#ef4444',
             default => '#6b7280',

@@ -57,6 +57,7 @@
         </x-filament::section>
         {{-- Booking Calendar --}}
         @if(\App\Filament\Admin\Widgets\BookingCalendarWidget::canView())
+            <p class="text-sm">Appointments use salon time ({{ config('app.timezone') }}). Select an event to view details; change appointments from Bookings.</p>
             @livewire(\App\Filament\Admin\Widgets\BookingCalendarWidget::class)
         @else
             <p>Your plan does not include the booking calendar. <a class="underline" href="{{ route('subscription.required') }}">View subscription options</a></p>

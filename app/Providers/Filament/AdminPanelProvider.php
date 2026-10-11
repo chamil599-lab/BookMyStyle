@@ -50,6 +50,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([])
+            ->renderHook('panels::topbar.end', fn () => view('filament.notification-bell'))
             ->login(Login::class)
             ->registration(Register::class)
             ->passwordReset()

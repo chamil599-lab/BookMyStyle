@@ -57,33 +57,33 @@ class CustomerDashboardController extends Controller
     {
         $request->validate(['page' => 'nullable|integer|min:1|max:100000']);
 
-        return view('customer.notifications', ['notifications' => $request->user()->notifications()->paginate(15)]);
+        return view('customer.notifications', ['notifications' => app(\App\Services\AccountNotifications::class)->query($request->user())->paginate(15)]);
     }
 
     public function readNotification(Request $request, string $id)
     {
-        $request->user()->notifications()->whereKey($id)->firstOrFail()->markAsRead();
+        app(\App\Services\AccountNotifications::class)->read($request->user(), $id);
 
         return redirect()->route('customer.notifications')->with('status', 'Notification marked as read.');
     }
 
     public function readAllNotifications(Request $request)
     {
-        $request->user()->unreadNotifications()->update(['read_at' => now()]);
+        app(\App\Services\AccountNotifications::class)->read($request->user());
 
         return redirect()->route('customer.notifications')->with('status', 'Notifications marked as read.');
     }
 
     public function deleteNotification(Request $request, string $id)
     {
-        $request->user()->notifications()->whereKey($id)->firstOrFail()->delete();
+        app(\App\Services\AccountNotifications::class)->delete($request->user(), $id);
 
         return redirect()->route('customer.notifications')->with('status', 'Notification deleted.');
     }
 
     public function deleteAllNotifications(Request $request)
     {
-        $request->user()->notifications()->delete();
+        app(\App\Services\AccountNotifications::class)->delete($request->user());
 
         return redirect()->route('customer.notifications')->with('status', 'Notifications cleared.');
     }

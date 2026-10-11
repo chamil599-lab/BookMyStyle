@@ -102,12 +102,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/salons/{salon}/can-rate', [SalonRatingController::class, 'canRate']);
     Route::post('/salons/{salon}/ratings', [SalonRatingController::class, 'store'])->middleware('throttle:reviews');
 
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::get('/notifications/stream', [NotificationController::class, 'stream']);
-    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
-    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
-    Route::delete('/notifications', [NotificationController::class, 'destroyAll']);
+    Route::get('/notifications', [NotificationController::class, 'index'])->middleware(['verified', 'throttle:10,1']);
+    Route::get('/notifications/stream', [NotificationController::class, 'stream'])->middleware(['verified', 'throttle:10,1']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->middleware(['verified', 'throttle:40,1']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->middleware(['verified', 'throttle:40,1']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->middleware(['verified', 'throttle:40,1']);
+    Route::delete('/notifications', [NotificationController::class, 'destroyAll'])->middleware(['verified', 'throttle:40,1']);
 
     Route::prefix('customer')->group(function () {
         Route::get('/stats', [CustomerController::class, 'stats']);

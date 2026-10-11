@@ -27,21 +27,23 @@ class BookingStatusChangedNotification extends Notification
         $time = $this->booking->time;
 
         $messageMap = [
-            'approved'  => "Your booking at {$salonName} on {$date} at {$time} was approved.",
-            'rejected'  => "Your booking at {$salonName} on {$date} at {$time} was rejected.",
+            'approved' => "Your booking at {$salonName} on {$date} at {$time} was approved.",
+            'rejected' => "Your booking at {$salonName} on {$date} at {$time} was rejected.",
             'completed' => "Your booking at {$salonName} on {$date} at {$time} is marked completed.",
-            'pending'   => "Your booking at {$salonName} is pending review.",
+            'pending' => "Your booking at {$salonName} is pending review.",
         ];
 
         return [
             'booking_id' => $this->booking->id,
-            'status'     => $status,
+            'status' => $status,
             'salon_name' => $salonName,
-            'date'       => $date,
-            'time'       => $time,
-            'title'      => 'Booking ' . ucfirst($status),
-            'message'    => $messageMap[$status] ?? "Your booking status changed to {$status}.",
-            'link'       => '/dashboard/bookings',
+            'date' => $date,
+            'time' => $time,
+            'title' => 'Booking '.ucfirst($status),
+            'message' => $notifiable->hasRole('owner') || $notifiable->hasRole('admin')
+                ? "Booking for {$this->booking->name} at {$salonName} on {$date} at {$time} is {$status}."
+                : $messageMap[$status] ?? "Your booking status changed to {$status}.",
+            'link' => $notifiable->hasRole('owner') || $notifiable->hasRole('admin') ? '/filament/bookings' : '/dashboard/bookings',
         ];
     }
 }

@@ -149,6 +149,34 @@ try {
             await sleep(700);
             checks[`${role}_filament_session_handoff`] = true;
             await viewport(1440, 1000); await screenshot(`desktop-filament-${role}`);
+            expect(await evaluate("!!document.querySelector('[data-notification-bell]')"), role + '_notification_bell');
+            if (role === 'owner') {
+                await call('Emulation.setTimezoneOverride', { timezoneId: 'America/Los_Angeles' });
+                await navigate('/filament/owner-dashboard');
+                await until("!!document.querySelector('.ec-event')", 'owner calendar events');
+                await evaluate("document.querySelector('.ec-event').click()");
+                await until("[...document.querySelectorAll('[role=dialog]')].some(el => getComputedStyle(el).display !== 'none' && el.textContent.includes('Signature cut'))", 'calendar details popup');
+                checks.owner_calendar_popup = true;
+                await sleep(700);
+                await screenshot('desktop-owner-calendar-popup');
+                await call('Emulation.setTimezoneOverride', { timezoneId: 'Asia/Colombo' });
+            }
+            await navigate('/filament/notification-inbox');
+            await until("document.querySelector('article[data-notification-id]') !== null", role + ' inbox');
+            await evaluate("[...document.querySelectorAll('main button')].find(b => b.textContent.trim() === 'Mark all as read').click()");
+            await until("![...document.querySelectorAll('main article button')].some(b => b.textContent.trim() === 'Mark as read')", role + ' read notifications');
+            await until("document.querySelector('[data-notification-bell]').getAttribute('aria-label') === 'Notifications: 0 unread'", role + ' bell refresh');
+            checks[role + '_notification_read_all'] = true;
+            checks[role + '_notification_bell_refresh'] = true;
+            const inboxCount = await evaluate("document.querySelectorAll('main article').length");
+            await evaluate("[...document.querySelectorAll('main button')].find(b => b.textContent.trim() === 'Delete notification').click()");
+            await until('document.querySelectorAll("main article").length === ' + (inboxCount - 1), role + ' delete notification');
+            checks[role + '_notification_delete'] = true;
+            await viewport(390, 844);
+            expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), role + '_notification_mobile_no_overflow');
+            await screenshot('mobile-filament-' + role + '-notifications');
+            await navigate('/filament/bookings');
+            expect(await evaluate("[...document.querySelectorAll('a')].some(a => a.href.startsWith('https://wa.me/947') && a.target === '_blank' && a.rel.includes('noopener'))"), role + '_whatsapp_safe_link');
             await navigate('/filament/services');
             expect(await evaluate("document.body.textContent.includes('Signature cut')"), `${role}_filament_services_visible`);
             await viewport(390, 844);

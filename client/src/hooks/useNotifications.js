@@ -94,6 +94,7 @@ export function useNotifications({ enabled = true } = {}) {
             }
           });
         }
+        if (!cancelled) reconnectTimer = window.setTimeout(connect, 3000);
       } catch (error) {
         if (!cancelled && error.name !== 'AbortError') {
           reconnectTimer = window.setTimeout(connect, 3000);

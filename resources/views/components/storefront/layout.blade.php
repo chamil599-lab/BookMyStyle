@@ -37,6 +37,9 @@
         <div class="flex items-center gap-3 text-xs">
             <button type="button" aria-label="Toggle color theme" @click="const dark = document.documentElement.classList.toggle('dark'); try { localStorage.setItem('appearance', dark ? 'dark' : 'light') } catch (_) {}" class="border border-white/30 px-3 py-2">◐</button>
             @auth
+                @if(app(\App\Services\AccountNotifications::class)->canAccess(auth()->user()?->fresh()))
+                    @livewire('notification-bell')
+                @endif
                 <a href="{{ route('dashboard') }}" class="hidden sm:block">My account</a>
                 <form method="POST" action="{{ route('logout') }}" class="hidden lg:block">@csrf<button type="submit">Log out</button></form>
             @else
