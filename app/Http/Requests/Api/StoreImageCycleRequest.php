@@ -8,19 +8,19 @@ class StoreImageCycleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole('admin') ?? false;
+        return \App\Support\ManagementAccess::admin($this->user()?->fresh());
     }
 
     public function rules(): array
     {
         return [
             'title' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'description' => ['nullable', 'string', 'max:10000'],
             'alt' => ['nullable', 'string', 'max:255'],
-            'src_url' => ['nullable', 'url'],
+            'src_url' => ['nullable', 'url:http,https', 'max:2048'],
             'order' => ['nullable', 'integer', 'min:0'],
             'status' => ['nullable', 'in:0,1'],
-            'file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,webp', 'max:10240'],
+            'file' => ['nullable', 'image', 'dimensions:max_width=6000,max_height=6000', 'mimes:jpg,jpeg,png,gif,webp', 'max:10240'],
         ];
     }
 

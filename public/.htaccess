@@ -5,6 +5,9 @@
 
     RewriteEngine On
 
+    # Uploaded files must never execute as server scripts.
+    RewriteRule ^storage/.*\.(?:php[0-9]*|phtml|phar|cgi|pl|py|sh|shtml)(?:[./]|$) - [F,L,NC]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

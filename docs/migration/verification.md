@@ -177,3 +177,19 @@ See [management route retirement and native renewal](step-10-legacy-route-retire
 Final synthetic artifacts: `.local/migration-baseline/auth-smoke-20261011_125919_19b697/`. Mail is suppressed; only the private fixture database is mutated. The first Chrome attempt timed out navigating to analytics while the full suite ran; the final runner allows 45 seconds for page navigation and runs separately from the suite. Other CDP operations remain bounded to 15 seconds. A global variable redeclaration and a body-read race during form navigation were corrected in the browser harness. Final desktop plan selection and mobile checkout screenshots were inspected. This is a local test timeout adjustment, not production performance evidence.
 
 The retained React build/dependencies are unchanged in this stage; its management screens now receive explicit retirement responses. External consumers and deployed frontend domains must be reviewed before releasing the breaking API change. Remaining integration, dependency/media security, retention, MySQL load/concurrency and production release gates are described in the stage document. No deployment was performed.
+
+## Step eleven upload hardening and audit
+
+See [step eleven](step-11-upload-security-audit.md) for the changes, dependency findings and release gates.
+
+## Verification
+
+- Full isolated SQLite suite: 219 tests passed, 1,391 assertions.
+- Four new upload tests cover raster storage, SVG/script disguises, excessive dimensions, unsafe URL schemes and revoked cached roles.
+- Both root and React production builds passed. Existing empty root app chunk and large React chunk warnings remain.
+- Synthetic HTTP checks: 89 successful check flags (including the browser-runner flag). Chrome: 50 successful flags and zero uncaught JavaScript errors.
+- Browser artifacts: .local/migration-baseline/auth-smoke-20261011_130947_9ad6d7/.
+- Imported database read-only inspection: 35 tables; users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51. No foreign-key orphans or missing media originals/conversions; no nontransactional tables. No imported records, schema or files were changed.
+- Changed PHP passes Pint and Git whitespace checks pass. Apache execution blocking still requires verification on the actual deployment host.
+
+No production deployment was performed. Unrelated pre-existing image deletions and untracked files are excluded from this checkpoint.

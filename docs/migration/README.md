@@ -40,3 +40,5 @@ Machine-readable evidence is in `baseline/`: the booted Laravel route collection
 The configured local MySQL server initially reported SQLSTATE HY000 / 1049 (unknown database). At the user's request, the empty database `book-my-style` was created for their import. The user subsequently imported their data. Its 35-table backup now passes an isolated MySQL restore with matching schema, row counts, and record fingerprints. No migrations or seeds were run into the imported database. The workspace SQLite file is a separate legacy artifact. Browser/visual parity and production-specific backup gates remain open.
 
 Step one's tagged checkpoint deliberately makes no application behavior, authentication, schema, or routing changes. Step two proceeds with source-level security fixes and isolated tests while the user prepares the database import. Populated-data backup and restore verification remain mandatory before schema changes and cutover.
+
+Step eleven: [upload hardening and dependency audit](step-11-upload-security-audit.md). PHP dependency remediation and React major upgrades remain release gates.
