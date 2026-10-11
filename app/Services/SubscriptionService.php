@@ -13,10 +13,13 @@ class SubscriptionService
 {
     public function grantTrial(User $owner, SubscriptionPackage $package, User $actor): ?UserSubscription
     {
-        abort_unless($actor->hasRole('admin') && $owner->hasRole('owner'), 403);
+        $this->authorize($actor);
+        abort_unless($owner->fresh()?->hasRole('owner'), 403);
 
-        return DB::transaction(function () use ($owner, $package) {
-            User::whereKey($owner->id)->lockForUpdate()->firstOrFail();
+        return DB::transaction(function () use ($owner, $package, $actor) {
+            $owner = User::whereKey($owner->id)->lockForUpdate()->firstOrFail();
+            $this->authorize($actor);
+            abort_unless($owner->hasRole('owner'), 403);
             $package = SubscriptionPackage::whereKey($package->id)->lockForUpdate()->firstOrFail();
             if ($owner->subscriptions()->exists() || ! $package->isAvailable()) {
                 return null;
@@ -31,15 +34,17 @@ class SubscriptionService
 
     public function request(User $owner, SubscriptionPackage $package, array $payment, User $actor): UserSubscription
     {
-        abort_unless($owner->hasRole('owner'), 403);
-        abort_unless($actor->hasRole('admin') || ($actor->id === $owner->id && $owner->hasRole('owner')), 403);
+        $this->authorize($actor, $owner);
+        abort_unless($owner->fresh()?->hasRole('owner'), 403);
         $payment = Validator::make($payment, [
             'payment_method' => 'required|in:bank_transfer,one_pay',
             'transaction_id' => 'required_if:payment_method,bank_transfer|nullable|string|max:255',
         ])->validate();
 
-        return DB::transaction(function () use ($owner, $package, $payment) {
-            User::whereKey($owner->id)->lockForUpdate()->firstOrFail();
+        return DB::transaction(function () use ($owner, $package, $payment, $actor) {
+            $owner = User::whereKey($owner->id)->lockForUpdate()->firstOrFail();
+            $this->authorize($actor, $owner);
+            abort_unless($owner->hasRole('owner'), 403);
             $package = SubscriptionPackage::whereKey($package->id)->lockForUpdate()->firstOrFail();
             if (! $package->isAvailable() || $package->duration_days < 1) {
                 throw ValidationException::withMessages(['package_id' => 'This package is unavailable.']);
@@ -61,11 +66,13 @@ class SubscriptionService
 
     public function approve(UserSubscription $subscription, User $actor, mixed $amount): UserSubscription
     {
-        abort_unless($actor->hasRole('admin'), 403);
-        $amount = Validator::make(['amount_paid' => $amount], ['amount_paid' => 'required|numeric|min:0'])->validate()['amount_paid'];
+        $this->authorize($actor);
+        $amount = Validator::make(['amount_paid' => $amount], ['amount_paid' => 'required|numeric|min:0|max:99999999.99'])->validate()['amount_paid'];
 
-        return DB::transaction(function () use ($subscription, $amount) {
-            User::whereKey($subscription->user_id)->lockForUpdate()->firstOrFail();
+        return DB::transaction(function () use ($subscription, $amount, $actor) {
+            $this->authorize($actor);
+            $owner = User::whereKey($subscription->user_id)->lockForUpdate()->firstOrFail();
+            $this->authorize($actor);
             $record = UserSubscription::whereKey($subscription->id)->lockForUpdate()->firstOrFail();
             if (! $record->isPending()) {
                 throw ValidationException::withMessages(['status' => 'Only pending requests can be approved.']);
@@ -92,10 +99,12 @@ class SubscriptionService
 
     public function cancel(UserSubscription $subscription, User $actor, bool $pendingOnly = false): UserSubscription
     {
-        abort_unless($actor->hasRole('admin'), 403);
+        $this->authorize($actor);
 
-        return DB::transaction(function () use ($subscription, $pendingOnly) {
-            User::whereKey($subscription->user_id)->lockForUpdate()->firstOrFail();
+        return DB::transaction(function () use ($subscription, $pendingOnly, $actor) {
+            $this->authorize($actor);
+            $owner = User::whereKey($subscription->user_id)->lockForUpdate()->firstOrFail();
+            $this->authorize($actor);
             $record = UserSubscription::whereKey($subscription->id)->lockForUpdate()->firstOrFail();
             if (! in_array($record->status, $pendingOnly ? ['pending'] : ['pending', 'active'], true)) {
                 throw ValidationException::withMessages(['status' => 'This subscription cannot be cancelled.']);
@@ -108,13 +117,14 @@ class SubscriptionService
 
     public function updatePayment(UserSubscription $subscription, User $actor, array $payment): UserSubscription
     {
-        abort_unless($actor->hasRole('admin') || ($actor->hasRole('owner') && (int) $actor->id === (int) $subscription->user_id), 403);
+        $this->authorize($actor, User::findOrFail($subscription->user_id));
         $payment = Validator::make($payment, ['payment_method' => 'required|in:bank_transfer,one_pay',
             'transaction_id' => 'required_if:payment_method,bank_transfer|nullable|string|max:255'])->validate();
         $payment['transaction_id'] = $payment['payment_method'] === 'bank_transfer' ? $payment['transaction_id'] : null;
 
-        return DB::transaction(function () use ($subscription, $payment) {
-            User::whereKey($subscription->user_id)->lockForUpdate()->firstOrFail();
+        return DB::transaction(function () use ($subscription, $payment, $actor) {
+            $owner = User::whereKey($subscription->user_id)->lockForUpdate()->firstOrFail();
+            $this->authorize($actor, $owner);
             $record = UserSubscription::whereKey($subscription->id)->lockForUpdate()->firstOrFail();
             if (! $record->isPending()) {
                 throw ValidationException::withMessages(['payment_method' => 'Only pending payment details can be changed.']);
@@ -123,5 +133,12 @@ class SubscriptionService
 
             return $record;
         }, 3);
+    }
+
+    private function authorize(User $actor, ?User $owner = null): void
+    {
+        $actor = $actor->fresh();
+        abort_unless(\App\Support\ManagementAccess::admin($actor)
+            || ($owner && $actor && (int) $actor->id === (int) $owner->id && \App\Support\ManagementAccess::owner($actor)), 403);
     }
 }

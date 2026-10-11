@@ -157,3 +157,23 @@ See [notifications, WhatsApp and calendar](step-9-notifications-calendar.md).
 Final synthetic HTTP/browser artifacts: `.local/migration-baseline/auth-smoke-20261011_031641_0618bb/`. Credentials and fixture data remain private/ignored; mail is suppressed and no WhatsApp message is sent. Calendar popup and mobile owner inbox screenshots were inspected. The initial review exposed a stale unread badge after management actions; Livewire events now refresh it immediately, with Chrome checking the result. Snapshot timing allows modal animations to settle.
 
 No production deployment was performed. Legacy APIs/React remain, and native notifications use polling rather than push. Real mail/payment delivery, production SSE worker capacity/revocation, MySQL concurrency/load testing, broader dependency/media security audits, account retention decisions and final visual/route parity remain release gates. No database date/time conversion was performed.
+
+## Step ten verification - 11 October 2026
+
+See [management route retirement and native renewal](step-10-legacy-route-retirement.md).
+
+| Check | Result |
+|---|---|
+| Full suite | 215 passed, 1,365 assertions; CLI memory 512 MB |
+| Retirement/recovery regressions | 15 passed, 462 assertions; all 56 documented management API methods return 410 and leave business tables unchanged; role/verification/approval checks, stale account objects, retired nested/session writes, preserved GET bookmarks, active LKR plans, expired recovery, duplicate requests, forged subscription fields, unavailable packages, bank references and amount bounds |
+| Native request/approval | Existing shared-service regression now submits the Blade renewal form and approves through the actual Filament table action; renewal starts after the current period |
+| Real HTTP | 88 passed plus successful browser runner; retired API read/write, retired CSRF-protected session writes, plans/checkout, missing-CSRF rejection, expired recovery and preserved current plan after browser renewal added to prior checks |
+| Chrome | 50 passed, zero uncaught JavaScript errors; native plan state, mobile plans/checkout, conditional payment-reference field, actual renewal submission and pending state added to existing workflows |
+| Root assets | Build passed; existing empty app chunk warning remains. Subscription/error views and bell included in storefront CSS scanning |
+| Templates/routes/source | Blade templates and routes cache successfully, caches cleared; changed PHP passes Pint, browser script syntax and git whitespace checks pass |
+| Imported data | Read-only counts unchanged: 35 tables; users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51 |
+| Import integrity | No FK orphans, missing media originals/conversions or nontransactional tables; no imported writes/migrations/seeds |
+
+Final synthetic artifacts: `.local/migration-baseline/auth-smoke-20261011_125919_19b697/`. Mail is suppressed; only the private fixture database is mutated. The first Chrome attempt timed out navigating to analytics while the full suite ran; the final runner allows 45 seconds for page navigation and runs separately from the suite. Other CDP operations remain bounded to 15 seconds. A global variable redeclaration and a body-read race during form navigation were corrected in the browser harness. Final desktop plan selection and mobile checkout screenshots were inspected. This is a local test timeout adjustment, not production performance evidence.
+
+The retained React build/dependencies are unchanged in this stage; its management screens now receive explicit retirement responses. External consumers and deployed frontend domains must be reviewed before releasing the breaking API change. Remaining integration, dependency/media security, retention, MySQL load/concurrency and production release gates are described in the stage document. No deployment was performed.

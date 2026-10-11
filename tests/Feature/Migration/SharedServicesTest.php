@@ -196,11 +196,11 @@ it('uses the submitted package duration snapshot for approval', function () {
 it('allows access until the actual expiry timestamp including the final partial day', function () {
     $this->paid->update(['ends_at' => now()->addHours(2)]);
     Sanctum::actingAs($this->owner);
-    $this->getJson('/api/owner/bookings')->assertOk();
+    $this->getJson('/api/salons/'.$this->salon->id.'/bookings')->assertOk();
     expect($this->paid->daysRemaining())->toBe(1);
     $this->travelTo($this->paid->ends_at);
     expect($this->owner->hasActiveSubscription())->toBeFalse();
-    $this->getJson('/api/owner/bookings')->assertForbidden();
+    $this->getJson('/api/salons/'.$this->salon->id.'/bookings')->assertForbidden();
 });
 
 it('rejects unavailable packages and invalid payment details', function () {
@@ -221,12 +221,14 @@ it('preserves the existing public API success and conflict response fields', fun
     $this->postJson('/api/bookings', $this->data)->assertConflict()->assertJsonStructure(['error', 'errors', 'available_slots']);
 });
 
-it('uses shared rules for API plan requests and administrator approval', function () {
-    Sanctum::actingAs($this->owner);
-    $this->postJson('/api/owner/subscription/subscribe/'.$this->package->id, $this->payment)->assertOk();
+it('uses shared rules for native plan requests and Filament administrator approval', function () {
+    $this->actingAs($this->owner)->post('/subscription/subscribe/'.$this->package->id, $this->payment)
+        ->assertRedirect('/filament/user-subscriptions');
     $pending = $this->owner->subscriptions()->pending()->firstOrFail();
-    Sanctum::actingAs($this->admin);
-    $this->patchJson('/api/admin/subscriptions/'.$pending->id.'/status', ['status' => 'active'])->assertOk();
+    $this->actingAs($this->admin);
+    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Livewire::test(\App\Filament\Admin\Resources\UserSubscriptions\Pages\ListUserSubscriptions::class)
+        ->callTableAction('approve', $pending, data: ['amount_paid' => 100])->assertHasNoActionErrors();
     expect($pending->fresh()->starts_at->equalTo($this->paid->ends_at))->toBeTrue();
 });
 

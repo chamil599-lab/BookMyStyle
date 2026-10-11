@@ -3,6 +3,9 @@
 @source '../views/storefront/**/*.blade.php';
 @source '../views/components/storefront/**/*.blade.php';
 @source '../views/customer/**/*.blade.php';
+@source '../views/subscription/**/*.blade.php';
+@source '../views/errors/*.blade.php';
+@source '../views/livewire/notification-bell.blade.php';
 @source '../views/components/customer/**/*.blade.php';
 @source '../views/livewire/booking-form.blade.php';
 @source '../views/livewire/frontend/**/*.blade.php';

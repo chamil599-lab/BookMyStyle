@@ -1,0 +1,341 @@
+{
+  "scope": "Admin/owner React management APIs retired in step ten. Public/customer/auth APIs retained.",
+  "endpoints": [
+    {
+      "method": "GET",
+      "uri": "/api/admin/dashboard/stats",
+      "replacement_route": "filament.admin.pages.dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/dashboard/revenue-chart",
+      "replacement_route": "filament.admin.pages.dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/dashboard/visits-chart",
+      "replacement_route": "filament.admin.pages.dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/dashboard/subscription-chart",
+      "replacement_route": "filament.admin.pages.dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/dashboard/top-packages",
+      "replacement_route": "filament.admin.pages.dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/bookings",
+      "replacement_route": "filament.admin.resources.bookings.index",
+      "status": 410
+    },
+    {
+      "method": "PATCH",
+      "uri": "/api/admin/bookings/{id}/status",
+      "replacement_route": "filament.admin.resources.bookings.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/salons",
+      "replacement_route": "filament.admin.resources.salons.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/users",
+      "replacement_route": "filament.admin.resources.users.index",
+      "status": 410
+    },
+    {
+      "method": "PATCH",
+      "uri": "/api/admin/users/{id}/approve",
+      "replacement_route": "filament.admin.resources.users.index",
+      "status": 410
+    },
+    {
+      "method": "DELETE",
+      "uri": "/api/admin/users/{id}",
+      "replacement_route": "filament.admin.resources.users.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/subscriptions",
+      "replacement_route": "filament.admin.resources.user-subscriptions.index",
+      "status": 410
+    },
+    {
+      "method": "PATCH",
+      "uri": "/api/admin/subscriptions/{id}/status",
+      "replacement_route": "filament.admin.resources.user-subscriptions.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/packages",
+      "replacement_route": "filament.admin.resources.subscription-packages.index",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "uri": "/api/admin/packages",
+      "replacement_route": "filament.admin.resources.subscription-packages.index",
+      "status": 410
+    },
+    {
+      "method": "PUT",
+      "uri": "/api/admin/packages/{id}",
+      "replacement_route": "filament.admin.resources.subscription-packages.index",
+      "status": 410
+    },
+    {
+      "method": "DELETE",
+      "uri": "/api/admin/packages/{id}",
+      "replacement_route": "filament.admin.resources.subscription-packages.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/categories",
+      "replacement_route": "filament.admin.resources.categories.index",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "uri": "/api/admin/categories",
+      "replacement_route": "filament.admin.resources.categories.index",
+      "status": 410
+    },
+    {
+      "method": "PUT",
+      "uri": "/api/admin/categories/{id}",
+      "replacement_route": "filament.admin.resources.categories.index",
+      "status": 410
+    },
+    {
+      "method": "DELETE",
+      "uri": "/api/admin/categories/{id}",
+      "replacement_route": "filament.admin.resources.categories.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/admin/departments",
+      "replacement_route": "filament.admin.resources.departments.index",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "uri": "/api/admin/departments",
+      "replacement_route": "filament.admin.resources.departments.index",
+      "status": 410
+    },
+    {
+      "method": "PUT",
+      "uri": "/api/admin/departments/{id}",
+      "replacement_route": "filament.admin.resources.departments.index",
+      "status": 410
+    },
+    {
+      "method": "DELETE",
+      "uri": "/api/admin/departments/{id}",
+      "replacement_route": "filament.admin.resources.departments.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/stats",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/revenue-chart",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/top-services",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/bookings-by-status",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/salons",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/calendar",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/analytics",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/daily-revenue",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/monthly-revenue",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/profit-breakdown",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/dashboard/profit-by-month",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/salons",
+      "replacement_route": "filament.admin.resources.salons.index",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "uri": "/api/owner/salons",
+      "replacement_route": "filament.admin.resources.salons.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/salons/{id}",
+      "replacement_route": "filament.admin.resources.salons.index",
+      "status": 410
+    },
+    {
+      "method": "PUT",
+      "uri": "/api/owner/salons/{id}",
+      "replacement_route": "filament.admin.resources.salons.index",
+      "status": 410
+    },
+    {
+      "method": "DELETE",
+      "uri": "/api/owner/salons/{id}",
+      "replacement_route": "filament.admin.resources.salons.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/bookings",
+      "replacement_route": "filament.admin.resources.bookings.index",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "uri": "/api/owner/bookings",
+      "replacement_route": "filament.admin.resources.bookings.index",
+      "status": 410
+    },
+    {
+      "method": "PUT",
+      "uri": "/api/owner/bookings/{id}",
+      "replacement_route": "filament.admin.resources.bookings.index",
+      "status": 410
+    },
+    {
+      "method": "DELETE",
+      "uri": "/api/owner/bookings/{id}",
+      "replacement_route": "filament.admin.resources.bookings.index",
+      "status": 410
+    },
+    {
+      "method": "PATCH",
+      "uri": "/api/owner/bookings/{id}/status",
+      "replacement_route": "filament.admin.resources.bookings.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/services",
+      "replacement_route": "filament.admin.resources.services.index",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "uri": "/api/owner/services",
+      "replacement_route": "filament.admin.resources.services.index",
+      "status": 410
+    },
+    {
+      "method": "PUT",
+      "uri": "/api/owner/services/{id}",
+      "replacement_route": "filament.admin.resources.services.index",
+      "status": 410
+    },
+    {
+      "method": "DELETE",
+      "uri": "/api/owner/services/{id}",
+      "replacement_route": "filament.admin.resources.services.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/departments",
+      "replacement_route": "filament.admin.resources.departments.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/categories",
+      "replacement_route": "filament.admin.resources.categories.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/limits",
+      "replacement_route": "filament.admin.pages.owner-dashboard",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/subscription/packages",
+      "replacement_route": "filament.admin.resources.user-subscriptions.index",
+      "status": 410
+    },
+    {
+      "method": "POST",
+      "uri": "/api/owner/subscription/subscribe/{package}",
+      "replacement_route": "filament.admin.resources.user-subscriptions.index",
+      "status": 410
+    },
+    {
+      "method": "GET",
+      "uri": "/api/owner/subscription/history",
+      "replacement_route": "filament.admin.resources.user-subscriptions.index",
+      "status": 410
+    }
+  ]
+}

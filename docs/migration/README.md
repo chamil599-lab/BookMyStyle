@@ -24,6 +24,7 @@ Read these documents before changing behavior:
 - [Step seven secure Filament management foundation](step-7-filament-management.md)
 - [Step eight Filament reporting and administrative actions](step-8-filament-reporting.md)
 - [Step nine notifications, WhatsApp and calendar](step-9-notifications-calendar.md)
+- [Step ten management route retirement and native renewal](step-10-legacy-route-retirement.md)
 
 Machine-readable evidence is in `baseline/`: the booted Laravel route collection, scheduler events, and a sanitized environment summary. The database schema is emitted only when the configured database is reachable. Database records, credentials, build/test logs, uploads, and backup archives belong exclusively under ignored `.local/migration-baseline/`.
 

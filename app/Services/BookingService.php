@@ -24,6 +24,7 @@ class BookingService
             $salon = $this->lockSalon((int) $data['salon_id'], $ownerId);
             $owner = User::whereKey($salon->created_by)->lockForUpdate()->firstOrFail();
             if ($management) {
+                $actor = $actor?->fresh();
                 abort_unless($actor !== null, 403);
                 Gate::forUser($actor)->authorize('create', Booking::class);
                 abort_unless($actor->hasRole('admin') || (int) $salon->created_by === (int) $actor->id, 403);
@@ -50,6 +51,8 @@ class BookingService
 
     public function update(Booking $booking, array $changes, User $actor): Booking
     {
+        $actor = $actor->fresh();
+        abort_unless($actor, 403);
         Gate::forUser($actor)->authorize('update', $booking);
         $data = $this->validate(array_merge($booking->only(['salon_id', 'service_id', 'name', 'email', 'phone', 'date', 'time', 'status']), $changes));
         $salonIds = array_values(array_unique([(int) $booking->salon_id, (int) $data['salon_id']]));
@@ -67,6 +70,8 @@ class BookingService
             if ($locked->only($fields) != $booking->only($fields) || $locked->updated_at?->ne($booking->updated_at)) {
                 throw ValidationException::withMessages(['time' => 'This booking changed. Refresh and try again.'])->status(409);
             }
+            $actor = $actor->fresh();
+            abort_unless($actor, 403);
             Gate::forUser($actor)->authorize('update', $locked);
             $salon = $salons->get((int) $data['salon_id']);
             abort_unless($salon && ($actor->hasRole('admin') || (int) $salon->created_by === (int) $actor->id), 403);

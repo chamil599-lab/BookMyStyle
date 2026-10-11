@@ -1,10 +1,5 @@
 <?php
 
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\SalonController;
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\SubscriptionRequiredController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -73,32 +68,31 @@ Route::get('/reset-password', function (Request $request) {
     return redirect()->route('password.reset', $data);
 });
 
-// routes/web.php
-Route::middleware(['auth'])->group(function () {
-    Route::get('/subscription/packages', [App\Http\Controllers\SubscriptionController::class, 'packages'])
-        ->name('subscription.packages');
-    Route::get('/subscription/checkout/{package}', [App\Http\Controllers\SubscriptionController::class, 'checkout'])
-        ->name('subscription.checkout');
-    Route::post('/subscription/subscribe/{package}', [App\Http\Controllers\SubscriptionController::class, 'subscribe'])
-        ->name('subscription.subscribe');
+// Subscription recovery remains available to expired, approved owners.
+Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->group(function () {
+    Route::get('/subscription/packages', [App\Http\Controllers\SubscriptionController::class, 'packages'])->name('subscription.packages');
+    Route::get('/subscription/checkout/{package}', [App\Http\Controllers\SubscriptionController::class, 'checkout'])->whereNumber('package')->name('subscription.checkout');
+    Route::post('/subscription/subscribe/{package}', [App\Http\Controllers\SubscriptionController::class, 'subscribe'])->whereNumber('package')->middleware('throttle:10,1')->name('subscription.subscribe');
+    Route::get('/subscription/required', [App\Http\Controllers\SubscriptionRequiredController::class, 'index'])->name('subscription.required');
+
+    // Empty legacy resource controllers provided no working workflow.
+    foreach (['salons', 'bookings'] as $section) {
+        $destination = 'filament.admin.resources.'.$section.'.index';
+        Route::post('/owner/'.$section, \App\Http\Controllers\RetiredManagementController::class)->defaults('native_route', $destination);
+        Route::match(['PUT', 'PATCH', 'DELETE'], '/owner/'.$section.'/{record}', \App\Http\Controllers\RetiredManagementController::class)
+            ->whereNumber('record')->defaults('native_route', $destination);
+    }
+    foreach (['services', 'staff'] as $section) {
+        Route::get('/owner/salons/{salon}/'.$section.'/create', \App\Http\Controllers\RetiredManagementController::class)
+            ->whereNumber('salon')->defaults('native_route', 'filament.admin.resources.'.($section === 'staff' ? 'salons' : 'services').'.index');
+        Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/owner/salons/{salon}/'.$section.'/{record?}', \App\Http\Controllers\RetiredManagementController::class)
+            ->whereNumber(['salon', 'record'])->defaults('native_route', 'filament.admin.resources.'.($section === 'staff' ? 'salons' : 'services').'.index');
+        Route::get('/owner/salons/{salon}/'.$section.'/{record}/edit', \App\Http\Controllers\RetiredManagementController::class)
+            ->whereNumber(['salon', 'record'])->defaults('native_route', 'filament.admin.resources.'.($section === 'staff' ? 'salons' : 'services').'.index');
+    }
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/subscription/required', [SubscriptionRequiredController::class, 'index'])
-        ->name('subscription.required');
-});
-
-Route::middleware(['auth', 'verified', 'role:owner', 'approved', 'subscription'])->group(function () {
-    // Salon owner routes
-    Route::prefix('owner')->group(function () {
-        Route::resource('salons', SalonController::class)->only(['store', 'update', 'destroy']);
-        Route::resource('salons.staff', StaffController::class);
-        Route::resource('salons.services', ServiceController::class);
-        Route::resource('bookings', BookingController::class)->only(['store', 'update', 'destroy']);
-    });
-});
-
-// Retained dashboard bookmarks now enter native pages. Keep legacy write routes during staged migration.
+// Retained dashboard bookmarks now enter native pages. Legacy writes return 410 instead of replaying requests.
 Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->group(function () {
     foreach (['dashboard' => 'owner.dashboard', 'salons' => 'salons.index', 'bookings' => 'bookings.index'] as $path => $name) {
         Route::get('/owner/'.$path, \App\Http\Controllers\LegacyDashboardController::class)->defaults('path', $path)->name($name);

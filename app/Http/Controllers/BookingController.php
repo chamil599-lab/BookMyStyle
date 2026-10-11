@@ -26,7 +26,7 @@ class BookingController extends Controller
             return response()->json(['error' => 'Booking not found'], 404);
         }
 
-        Gate::authorize('updateStatus', $booking);
+        Gate::forUser(auth()->user()->fresh())->authorize('updateStatus', $booking);
 
         $booking = app(\App\Services\BookingService::class)->changeStatus($booking, $validated['status'], $request->user());
 
@@ -57,7 +57,7 @@ class BookingController extends Controller
      */
     public function getSalonBookings($salonId)
     {
-        Gate::authorize('view-salon-bookings', Salon::findOrFail($salonId));
+        Gate::forUser(auth()->user()->fresh())->authorize('view-salon-bookings', Salon::findOrFail($salonId));
         $bookings = Booking::where('salon_id', $salonId)
             ->orderBy('date', 'desc')
             ->orderBy('time', 'desc')

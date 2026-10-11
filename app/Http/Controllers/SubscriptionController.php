@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SubscriptionPackage;
-use App\RolesEnum;
-use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,28 +10,20 @@ class SubscriptionController extends Controller
 {
     public function packages()
     {
-        // Only for salon owners
-        $user = Filament::auth()->user();
-        if (! $user?->hasRole(RolesEnum::OWNER->value)) {
-            abort(403);
-        }
+        abort_unless(\App\Support\ManagementAccess::owner(Auth::user()?->fresh()), 403);
 
-        $packages = SubscriptionPackage::active()
-            ->ordered()
-            ->get();
-
-        $currentSubscription = Auth::user()->activeSubscription;
-
-        return view('subscription.packages', compact('packages', 'currentSubscription'));
+        return redirect()->route('subscription.required');
     }
 
     public function checkout(SubscriptionPackage $package)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (! $user?->hasRole(RolesEnum::OWNER->value)) {
+        if (! \App\Support\ManagementAccess::owner($user?->fresh())) {
             abort(403);
         }
+
+        abort_unless($package->isAvailable(), 404);
 
         // Block if pending (must wait for approval first)
         $pendingSub = $user->subscriptions()->where('status', 'pending')->first();
@@ -53,7 +43,7 @@ class SubscriptionController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (! $user?->hasRole(RolesEnum::OWNER->value)) {
+        if (! \App\Support\ManagementAccess::owner($user?->fresh())) {
             abort(403);
         }
 
@@ -72,7 +62,7 @@ class SubscriptionController extends Controller
         $activeSubscription = $user->activeSubscription()->first();
         app(\App\Services\SubscriptionService::class)->request($user, $package, $request->only(['payment_method', 'transaction_id']), $user);
 
-        return redirect(\App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource::getUrl('index'))
+        return redirect()->route('filament.admin.resources.user-subscriptions.index')
             ->with('success', $activeSubscription
                 ? 'Your plan change request has been submitted. Please wait for admin approval.'
                 : 'Your subscription request has been submitted. Please wait for admin approval.');

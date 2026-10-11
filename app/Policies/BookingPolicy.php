@@ -10,7 +10,7 @@ class BookingPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin') || $this->isActiveOwner($user);
+        return \App\Support\ManagementAccess::admin($user) || $this->isActiveOwner($user);
     }
 
     public function view(User $user, Booking $booking): bool
@@ -20,12 +20,12 @@ class BookingPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole('admin') || ($this->isActiveOwner($user) && $user->canCreateMoreBookings());
+        return \App\Support\ManagementAccess::admin($user) || ($this->isActiveOwner($user) && $user->canCreateMoreBookings());
     }
 
     public function update(User $user, Booking $booking): bool
     {
-        return $user->hasRole('admin') || ($this->isActiveOwner($user)
+        return \App\Support\ManagementAccess::admin($user) || ($this->isActiveOwner($user)
             && Salon::whereKey($booking->salon_id)->where('created_by', $user->id)->exists());
     }
 
@@ -36,7 +36,7 @@ class BookingPolicy
 
     public function viewSalonBookings(User $user, Salon $salon): bool
     {
-        return $user->hasRole('admin') || ($this->isActiveOwner($user) && (int) $salon->created_by === (int) $user->id);
+        return \App\Support\ManagementAccess::admin($user) || ($this->isActiveOwner($user) && (int) $salon->created_by === (int) $user->id);
     }
 
     public function delete(User $user, Booking $booking): bool
@@ -51,6 +51,6 @@ class BookingPolicy
 
     private function isActiveOwner(User $user): bool
     {
-        return $user->hasRole('owner') && $user->is_approved && $user->hasActiveSubscription();
+        return \App\Support\ManagementAccess::owner($user, true);
     }
 }

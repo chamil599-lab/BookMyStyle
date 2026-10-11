@@ -32,7 +32,7 @@ try {
     });
     const call = (method, params = {}) => new Promise((resolve, reject) => {
         const id = ++sequence;
-        const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Timed out: ${method}`)); }, 15000);
+        const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Timed out: ${method}`)); }, method === 'Page.navigate' ? 45000 : 15000);
         pending.set(id, { resolve, reject, timer }); socket.send(JSON.stringify({ id, method, params }));
     });
     const evaluate = async expression => {
@@ -191,6 +191,29 @@ try {
             await until("[...document.querySelectorAll('div')].some(el => el.getAttribute('wire:key')?.startsWith('daily-chart-7d')) && [...document.querySelectorAll('canvas')].every(c => Chart.getChart(c))", role + ' analytics filter');
             checks[role + '_analytics_filter_update'] = true;
             await viewport(1440, 1000); await screenshot('desktop-filament-' + role + '-analytics');
+            if (role === 'owner') {
+                await navigate('/subscription/required');
+                expect(await evaluate("document.body.textContent.includes('Your current plan is Fixture') && document.body.textContent.includes('LKR 100.00')"), 'owner_native_plan_state');
+                await screenshot('desktop-owner-subscription-plans');
+                await viewport(390, 844);
+                expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'owner_plans_mobile_no_overflow');
+                await screenshot('mobile-owner-subscription-plans');
+                await navigate('/subscription/checkout/' + fixture.packageId);
+                await until("document.querySelector('#transaction-id').required", 'bank reference required');
+                await evaluate("document.querySelector('#payment-method').value = 'one_pay'; document.querySelector('#payment-method').dispatchEvent(new Event('change', { bubbles: true }));");
+                await until("!document.querySelector('#transaction-id').required", 'payment method changes');
+                await evaluate("document.querySelector('#payment-method').value = 'bank_transfer'; document.querySelector('#payment-method').dispatchEvent(new Event('change', { bubbles: true }));");
+                await until("document.querySelector('#transaction-id').required", 'bank reference restored');
+                checks.owner_payment_method_fields = true;
+                expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'owner_checkout_mobile_no_overflow');
+                await screenshot('mobile-owner-subscription-checkout');
+                await evaluate("document.querySelector('#transaction-id').value = 'BROWSER-RENEWAL'; document.querySelector('[data-subscription-request]').requestSubmit();");
+                await until("location.pathname === '/filament/user-subscriptions' && document.body?.textContent.includes('Pending') && typeof Alpine !== 'undefined'", 'native renewal submitted');
+                checks.owner_native_renewal_request = true;
+                await navigate('/subscription/required');
+                expect(await evaluate("document.body.textContent.includes('request is pending approval') && ![...document.querySelectorAll('a')].some(a => a.textContent.trim() === 'Request renewal')"), 'owner_pending_plan_state');
+                await screenshot('mobile-owner-subscription-pending');
+            }
         }
     }
     await writeFile(path.join(directory, 'browser-summary.json'), JSON.stringify({ checks, errors }, null, 2));

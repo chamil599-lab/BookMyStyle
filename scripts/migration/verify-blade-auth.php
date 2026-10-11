@@ -89,7 +89,7 @@ foreach ([$owner, $admin] as $recipient) {
 }
 $fixtureFile = $directory.'/customer-fixture.json';
 file_put_contents($fixtureFile, json_encode(['email' => $user->email, 'password' => $password,
-    'bookingId' => $customerBooking->id, 'owner' => ['email' => $owner->email, 'password' => $ownerPassword],
+    'bookingId' => $customerBooking->id, 'packageId' => $package->id, 'owner' => ['email' => $owner->email, 'password' => $ownerPassword],
     'admin' => ['email' => $admin->email, 'password' => $adminPassword]], JSON_THROW_ON_ERROR));
 $log = $directory.'/server.log';
 $environment = array_merge(getenv(), ['BMS_AUTH_SMOKE_DIRECTORY' => $directory, 'BMS_AUTH_SMOKE_PORT' => (string) $port]);
@@ -181,6 +181,30 @@ try {
         foreach (['salons', 'services'] as $resource) {
             $expect($client->get('/filament/'.$resource.'/create')->getStatusCode() === 200, 'filament_create:'.$role.':'.$resource);
         }
+        $apiToken = $account->createToken('migration-retirement-smoke')->plainTextToken;
+        $apiHeaders = ['Authorization' => 'Bearer '.$apiToken, 'Accept' => 'application/json'];
+        $response = $client->get('/api/'.$role.'/dashboard/stats', ['headers' => $apiHeaders]);
+        $expect($response->getStatusCode() === 410 && str_contains($response->getHeaderLine('Cache-Control'), 'no-store'), 'retired_api_read:'.$role);
+        $response = $client->patch('/api/'.$role.'/bookings/'.$customerBooking->id.'/status', ['headers' => $apiHeaders, 'json' => ['status' => 'rejected']]);
+        $expect($response->getStatusCode() === 410 && $customerBooking->fresh()->status === 'approved', 'retired_api_write_unchanged:'.$role);
+        if ($role === 'owner') {
+            $response = $client->get('/subscription/required');
+            $expect($response->getStatusCode() === 200 && str_contains((string) $response->getBody(), 'Request renewal'), 'native_subscription_plans');
+            $html = (string) $client->get('/subscription/checkout/'.$package->id)->getBody();
+            $expect(str_contains($html, 'data-subscription-request') && ! str_contains($html, 'cdn.tailwindcss.com'), 'native_subscription_checkout');
+            $response = $client->post('/subscription/subscribe/'.$package->id, ['form_params' => ['payment_method' => 'bank_transfer', 'transaction_id' => 'MISSING-CSRF']]);
+            $expect($response->getStatusCode() === 419, 'subscription_request_requires_csrf');
+            preg_match('/name="csrf-token" content="([^"]+)"/', $html, $csrf);
+            $response = $client->post('/owner/salons', ['form_params' => ['_token' => $csrf[1], 'name' => 'Retired injection']]);
+            $expect($response->getStatusCode() === 410 && $salon->fresh()->name === 'Amber Studio', 'retired_web_write_unchanged');
+            $sub = $owner->subscriptions()->active()->firstOrFail();
+            $endsAt = $sub->ends_at->copy();
+            $sub->update(['ends_at' => now()->subDay()]);
+            $expect($client->get('/subscription/required')->getStatusCode() === 200, 'expired_owner_subscription_recovery');
+            $response = $client->get('/filament/bookings');
+            $expect($response->getStatusCode() === 403, 'expired_owner_bookings_locked');
+            $sub->update(['ends_at' => $endsAt]);
+        }
         $response = $client->get('/filament/notification-inbox');
         $expect($response->getStatusCode() === 200, 'notification_inbox:'.$role);
         $expect(str_contains((string) $response->getBody(), 'Management appointment update'), 'notification_content:'.$role);
@@ -217,6 +241,9 @@ try {
         }
         fclose($browserPipes[0]);
         $expect(proc_close($browser) === 0, 'browser_checks');
+        $pending = $owner->subscriptions()->pending()->first();
+        $expect($pending && $pending->transaction_id === 'BROWSER-RENEWAL' && (float) $pending->amount_paid === 0.0, 'browser_subscription_request_pending');
+        $expect($owner->fresh()->hasActiveSubscription(), 'browser_renewal_keeps_current_plan');
     }
     $summary = ['scope' => 'Synthetic SQLite database; real local HTTP; mail suppressed', 'checks' => $checks];
     file_put_contents($directory.'/summary.json', json_encode($summary, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));

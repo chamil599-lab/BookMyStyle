@@ -1,103 +1,93 @@
 <?php
 
-use App\Http\Controllers\Api\AdminDashboardController;
-use App\Http\Controllers\Api\AdminManagementController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingApiController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Api\OwnerDashboardController;
-use App\Http\Controllers\Api\OwnerManagementController;
-use App\Http\Controllers\Api\OwnerSubscriptionController;
 use App\Http\Controllers\Api\PublicContentController;
 use App\Http\Controllers\Api\PublicSalonController;
 use App\Http\Controllers\Api\SalonRatingController;
 use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
 
-// Admin routes
-Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
-    // Dashboard
-    Route::prefix('dashboard')->group(function () {
-        Route::get('/stats', [AdminDashboardController::class, 'stats']);
-        Route::get('/revenue-chart', [AdminDashboardController::class, 'revenueChart']);
-        Route::get('/visits-chart', [AdminDashboardController::class, 'visitsChart']);
-        Route::get('/subscription-chart', [AdminDashboardController::class, 'subscriptionChart']);
-        Route::get('/top-packages', [AdminDashboardController::class, 'topPackages']);
-    });
-    // Management
-    Route::get('/bookings', [AdminManagementController::class, 'bookings']);
-    Route::patch('/bookings/{id}/status', [AdminManagementController::class, 'updateBookingStatus']);
-    Route::get('/salons', [AdminManagementController::class, 'salons']);
-    Route::get('/users', [AdminManagementController::class, 'users']);
-    Route::patch('/users/{id}/approve', [AdminManagementController::class, 'approveUser']);
-    Route::delete('/users/{id}', [AdminManagementController::class, 'rejectUser']);
-    Route::get('/subscriptions', [AdminManagementController::class, 'subscriptions']);
-    Route::patch('/subscriptions/{id}/status', [AdminManagementController::class, 'updateSubscriptionStatus']);
-    Route::get('/packages', [AdminManagementController::class, 'packages']);
-    Route::post('/packages', [AdminManagementController::class, 'storePackage']);
-    Route::put('/packages/{id}', [AdminManagementController::class, 'updatePackage']);
-    Route::delete('/packages/{id}', [AdminManagementController::class, 'destroyPackage']);
-
-    Route::get('/categories', [AdminManagementController::class, 'categories']);
-    Route::post('/categories', [AdminManagementController::class, 'storeCategory']);
-    Route::put('/categories/{id}', [AdminManagementController::class, 'updateCategory']);
-    Route::delete('/categories/{id}', [AdminManagementController::class, 'destroyCategory']);
-
-    Route::get('/departments', [AdminManagementController::class, 'departments']);
-    Route::post('/departments', [AdminManagementController::class, 'storeDepartment']);
-    Route::put('/departments/{id}', [AdminManagementController::class, 'updateDepartment']);
-    Route::delete('/departments/{id}', [AdminManagementController::class, 'destroyDepartment']);
+// Management has moved to Filament. Retired endpoints never replay mutations.
+Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:sanctum', 'verified', 'role:admin', 'throttle:60,1'])->prefix('admin')->group(function () {
+    foreach ([
+        ['get', '/dashboard/stats', 'filament.admin.pages.dashboard'],
+        ['get', '/dashboard/revenue-chart', 'filament.admin.pages.dashboard'],
+        ['get', '/dashboard/visits-chart', 'filament.admin.pages.dashboard'],
+        ['get', '/dashboard/subscription-chart', 'filament.admin.pages.dashboard'],
+        ['get', '/dashboard/top-packages', 'filament.admin.pages.dashboard'],
+        ['get', '/bookings', 'filament.admin.resources.bookings.index'],
+        ['patch', '/bookings/{id}/status', 'filament.admin.resources.bookings.index'],
+        ['get', '/salons', 'filament.admin.resources.salons.index'],
+        ['get', '/users', 'filament.admin.resources.users.index'],
+        ['patch', '/users/{id}/approve', 'filament.admin.resources.users.index'],
+        ['delete', '/users/{id}', 'filament.admin.resources.users.index'],
+        ['get', '/subscriptions', 'filament.admin.resources.user-subscriptions.index'],
+        ['patch', '/subscriptions/{id}/status', 'filament.admin.resources.user-subscriptions.index'],
+        ['get', '/packages', 'filament.admin.resources.subscription-packages.index'],
+        ['post', '/packages', 'filament.admin.resources.subscription-packages.index'],
+        ['put', '/packages/{id}', 'filament.admin.resources.subscription-packages.index'],
+        ['delete', '/packages/{id}', 'filament.admin.resources.subscription-packages.index'],
+        ['get', '/categories', 'filament.admin.resources.categories.index'],
+        ['post', '/categories', 'filament.admin.resources.categories.index'],
+        ['put', '/categories/{id}', 'filament.admin.resources.categories.index'],
+        ['delete', '/categories/{id}', 'filament.admin.resources.categories.index'],
+        ['get', '/departments', 'filament.admin.resources.departments.index'],
+        ['post', '/departments', 'filament.admin.resources.departments.index'],
+        ['put', '/departments/{id}', 'filament.admin.resources.departments.index'],
+        ['delete', '/departments/{id}', 'filament.admin.resources.departments.index'],
+    ] as [$method, $path, $destination]) {
+        Route::$method($path, \App\Http\Controllers\RetiredManagementController::class)
+            ->defaults('native_route', $destination)->whereNumber(['id', 'package']);
+    }
 });
 
-// Owner routes
-Route::middleware(['auth:sanctum', 'role:owner', 'approved', 'subscription.active'])->prefix('owner')->group(function () {
-    // Dashboard
-    Route::prefix('dashboard')->group(function () {
-        Route::get('/stats', [OwnerDashboardController::class, 'stats']);
-        Route::get('/revenue-chart', [OwnerDashboardController::class, 'revenueChart']);
-        Route::get('/top-services', [OwnerDashboardController::class, 'topServices']);
-        Route::get('/bookings-by-status', [OwnerDashboardController::class, 'bookingsByStatus']);
-        Route::get('/salons', [OwnerDashboardController::class, 'salons']);
-        Route::get('/calendar', [OwnerDashboardController::class, 'calendar']);
-        Route::get('/analytics', [OwnerDashboardController::class, 'analytics']);
-        Route::get('/daily-revenue', [OwnerDashboardController::class, 'dailyRevenue']);
-        Route::get('/monthly-revenue', [OwnerDashboardController::class, 'monthlyRevenue']);
-        Route::get('/profit-breakdown', [OwnerDashboardController::class, 'profitBreakdown']);
-        Route::get('/profit-by-month', [OwnerDashboardController::class, 'profitByMonth']);
-    });
-    // Management — Salons
-    Route::get('/salons', [OwnerManagementController::class, 'salons']);
-    Route::post('/salons', [OwnerManagementController::class, 'storeSalon']);
-    Route::get('/salons/{id}', [OwnerManagementController::class, 'salon']);
-    Route::put('/salons/{id}', [OwnerManagementController::class, 'updateSalon']);
-    Route::delete('/salons/{id}', [OwnerManagementController::class, 'destroySalon']);
-    // Management — Bookings
-    Route::get('/bookings', [OwnerManagementController::class, 'bookings']);
-    Route::post('/bookings', [OwnerManagementController::class, 'storeBooking']);
-    Route::put('/bookings/{id}', [OwnerManagementController::class, 'updateBooking']);
-    Route::delete('/bookings/{id}', [OwnerManagementController::class, 'destroyBooking']);
-    Route::patch('/bookings/{id}/status', [OwnerManagementController::class, 'updateBookingStatus']);
-    // Management — Services
-    Route::get('/services', [OwnerManagementController::class, 'services']);
-    Route::post('/services', [OwnerManagementController::class, 'storeService']);
-    Route::put('/services/{id}', [OwnerManagementController::class, 'updateService']);
-    Route::delete('/services/{id}', [OwnerManagementController::class, 'destroyService']);
-    Route::get('/departments', [OwnerManagementController::class, 'departments']);
-    Route::get('/categories', [OwnerManagementController::class, 'categories']);
-    Route::get('/limits', [OwnerManagementController::class, 'limits']);
-
-    // Subscription management
-    Route::get('/subscription/packages', [OwnerSubscriptionController::class, 'packages']);
-    Route::post('/subscription/subscribe/{package}', [OwnerSubscriptionController::class, 'subscribe']);
-    Route::get('/subscription/history', [OwnerSubscriptionController::class, 'history']);
+Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:sanctum', 'verified', 'role:owner', 'approved', 'throttle:60,1'])->prefix('owner')->group(function () {
+    foreach ([
+        ['get', '/dashboard/stats', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/revenue-chart', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/top-services', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/bookings-by-status', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/salons', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/calendar', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/analytics', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/daily-revenue', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/monthly-revenue', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/profit-breakdown', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/dashboard/profit-by-month', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/salons', 'filament.admin.resources.salons.index'],
+        ['post', '/salons', 'filament.admin.resources.salons.index'],
+        ['get', '/salons/{id}', 'filament.admin.resources.salons.index'],
+        ['put', '/salons/{id}', 'filament.admin.resources.salons.index'],
+        ['delete', '/salons/{id}', 'filament.admin.resources.salons.index'],
+        ['get', '/bookings', 'filament.admin.resources.bookings.index'],
+        ['post', '/bookings', 'filament.admin.resources.bookings.index'],
+        ['put', '/bookings/{id}', 'filament.admin.resources.bookings.index'],
+        ['delete', '/bookings/{id}', 'filament.admin.resources.bookings.index'],
+        ['patch', '/bookings/{id}/status', 'filament.admin.resources.bookings.index'],
+        ['get', '/services', 'filament.admin.resources.services.index'],
+        ['post', '/services', 'filament.admin.resources.services.index'],
+        ['put', '/services/{id}', 'filament.admin.resources.services.index'],
+        ['delete', '/services/{id}', 'filament.admin.resources.services.index'],
+        ['get', '/departments', 'filament.admin.resources.departments.index'],
+        ['get', '/categories', 'filament.admin.resources.categories.index'],
+        ['get', '/limits', 'filament.admin.pages.owner-dashboard'],
+        ['get', '/subscription/packages', 'filament.admin.resources.user-subscriptions.index'],
+        ['post', '/subscription/subscribe/{package}', 'filament.admin.resources.user-subscriptions.index'],
+        ['get', '/subscription/history', 'filament.admin.resources.user-subscriptions.index'],
+    ] as [$method, $path, $destination]) {
+        Route::$method($path, \App\Http\Controllers\RetiredManagementController::class)
+            ->defaults('native_route', $destination)->whereNumber(['id', 'package']);
+    }
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:sanctum'])->group(function () {
     Route::patch('/bookings/{id}/status', [BookingController::class, 'updateStatus'])
-        ->middleware(['role:admin|owner', 'approved', 'subscription.active']);
+        ->middleware(['verified', 'role:admin|owner', 'approved', 'subscription.active', 'throttle:20,1']);
     Route::get('/salons/{salonId}/bookings', [BookingController::class, 'getSalonBookings'])
-        ->middleware(['role:admin|owner', 'approved', 'subscription.active']);
+        ->middleware(['verified', 'role:admin|owner', 'approved', 'subscription.active', 'throttle:20,1']);
     Route::post('/bookings/my-bookings', [BookingController::class, 'getUserBookings']);
     Route::get('/salons/{salon}/can-rate', [SalonRatingController::class, 'canRate']);
     Route::post('/salons/{salon}/ratings', [SalonRatingController::class, 'store'])->middleware('throttle:reviews');
@@ -122,7 +112,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/favorites/{salonId}/check', [CustomerController::class, 'checkFavorite'])->whereNumber('salonId');
     });
 
-    Route::post('/image-cycles', [PublicContentController::class, 'storeImageCycle'])->middleware('role:admin');
+    Route::post('/image-cycles', [PublicContentController::class, 'storeImageCycle'])->middleware(['verified', 'role:admin', 'throttle:20,1']);
 });
 
 Route::get('/salons', [PublicSalonController::class, 'index']);
