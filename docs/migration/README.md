@@ -42,3 +42,5 @@ The configured local MySQL server initially reported SQLSTATE HY000 / 1049 (unkn
 Step one's tagged checkpoint deliberately makes no application behavior, authentication, schema, or routing changes. Step two proceeds with source-level security fixes and isolated tests while the user prepares the database import. Populated-data backup and restore verification remain mandatory before schema changes and cutover.
 
 Step eleven: [upload hardening and dependency audit](step-11-upload-security-audit.md). PHP dependency remediation and React major upgrades remain release gates.
+
+Step twelve: [PHP security upgrades](step-12-php-security-upgrades.md). The locked and installed PHP dependency audits now report zero advisories; retained React and host verification gates remain.

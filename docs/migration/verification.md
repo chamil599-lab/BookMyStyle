@@ -193,3 +193,29 @@ See [step eleven](step-11-upload-security-audit.md) for the changes, dependency 
 - Changed PHP passes Pint and Git whitespace checks pass. Apache execution blocking still requires verification on the actual deployment host.
 
 No production deployment was performed. Unrelated pre-existing image deletions and untracked files are excluded from this checkpoint.
+
+## Step twelve PHP security upgrades
+
+See [step twelve](step-12-php-security-upgrades.md) for resolved versions, installation details and release gates.
+
+## Final verification
+
+| Check | Result |
+|---|---|
+| Composer lockfile and installed audits | Zero advisories; zero abandoned packages |
+| Manifest/platform | Valid manifest (existing exact calendar-pin warning); all current PHP/extension requirements satisfied |
+| Installed versions | No-write Composer install dry run: nothing to install, update or remove |
+| Full regression suite | 220 passed, 1,396 assertions; SQLite in memory, PHP 8.4.26, 512 MB CLI memory |
+| Native upload | Actual Filament image-cycle form stores a generated raster-image path on the isolated fake public disk |
+| Root Vite assets | Build passed; existing empty app chunk warning remains |
+| HTTP/Chrome | 89 successful check flags including browser-runner flag; 50 Chrome check flags; zero uncaught JavaScript errors |
+| Visual inspection | Desktop owner calendar popup and mobile owner analytics screenshot inspected |
+| Routes/views | Cache generation passed; route and compiled-view caches cleared afterward |
+| Imported data | Read-only inspection unchanged: 35 tables, users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51 |
+| Imported media/integrity | No foreign-key orphans, missing originals/conversions or nontransactional tables; no imported writes |
+
+Final browser artifacts: .local/migration-baseline/auth-smoke-20261011_180554_da8690/. Synthetic database only; mail suppressed. The React source and dependencies are unchanged in this checkpoint, so its previous 11 findings remain unresolved.
+
+Changed PHP passes Pint. Authored files pass Git whitespace checks. A full whitespace check reports two upstream trailing-space literals in the published file-upload.js and rich-editor.js bundles; both files were verified byte-for-byte against the installed vendor bundles and retained intact.
+
+Checkpoint: migration-step-12-php-security-upgrades. Private full-history rollback bundle: .local/migration-baseline/step-12-php-security-upgrades.bundle. Restore the chosen source checkpoint, install its matching locked dependencies and rebuild/publish matching assets using the rollback runbook. No imported-data restoration is needed for this source/dependency-only stage.

@@ -1,8 +1,13 @@
 <?php
 
+use App\Filament\Admin\Resources\ImageCycles\Pages\CreateImageCycle;
+use App\Http\Requests\Api\StoreImageCycleRequest;
+use App\Models\ImageCycle;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -16,7 +21,7 @@ it('accepts a raster upload with a generated storage name', function () {
     $this->actingAs($this->admin)->postJson('/api/image-cycles', [
         'file' => UploadedFile::fake()->image('portrait.png', 100, 100),
     ])->assertCreated();
-    $path = App\Models\ImageCycle::firstOrFail()->upload_path;
+    $path = ImageCycle::firstOrFail()->upload_path;
     expect($path)->toStartWith('image_cycles/')->not->toContain('portrait');
     Storage::disk('public')->assertExists($path);
 });
@@ -44,7 +49,19 @@ it('rejects unsafe image URL protocols and allows HTTPS', function () {
 it('rejects a cached admin whose role has been revoked', function () {
     $this->admin->load('roles');
     User::findOrFail($this->admin->id)->removeRole('admin');
-    $request = App\Http\Requests\Api\StoreImageCycleRequest::create('/api/image-cycles', 'POST');
+    $request = StoreImageCycleRequest::create('/api/image-cycles', 'POST');
     $request->setUserResolver(fn () => $this->admin);
     expect($request->authorize())->toBeFalse();
+});
+
+it('stores a raster image through the native Filament upload form', function () {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    $this->actingAs($this->admin);
+    Livewire::test(CreateImageCycle::class)
+        ->fillForm(['title' => 'Native image', 'order' => 0, 'status' => 1,
+            'upload_path' => [UploadedFile::fake()->image('native.png', 100, 100)]])
+        ->call('create')->assertHasNoFormErrors();
+    $image = ImageCycle::where('title', 'Native image')->firstOrFail();
+    expect($image->upload_path)->toStartWith('image_cycles/');
+    Storage::disk('public')->assertExists($image->upload_path);
 });
