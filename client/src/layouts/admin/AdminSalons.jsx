@@ -21,19 +21,19 @@ export default function AdminSalons() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-headline text-2xl font-bold text-[#004242]">Salons</h1>
-        <span className="text-sm text-[#6f7979]">{meta.total ?? 0} total</span>
+        <h1 className="font-headline text-2xl font-bold text-ds-primary">Salons</h1>
+        <span className="text-sm text-ds-outline">{meta.total ?? 0} total</span>
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-[0.5rem] p-4">
+      <div className="bg-white rounded-lg p-4">
         <div className="relative max-w-md">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6f7979] text-base">search</span>
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ds-outline text-base">search</span>
           <input
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search name, location, owner…"
-            className="w-full bg-[#f3f4f5] border-none rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004242]/20"
+            className="w-full bg-ds-surface-container-low border-none rounded-full py-2 pl-9 pr-4 text-sm focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20"
           />
         </div>
       </div>
@@ -41,10 +41,10 @@ export default function AdminSalons() {
       {/* Grid */}
       {isLoading ? (
         <div className="flex items-center justify-center h-48">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004242]" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ds-primary" />
         </div>
       ) : salons.length === 0 ? (
-        <div className="bg-white rounded-[0.5rem] text-center py-16 text-[#6f7979]">
+        <div className="bg-white rounded-lg text-center py-16 text-ds-outline">
           <span className="material-symbols-outlined text-4xl block mb-2">store</span>
           No salons found
         </div>
@@ -52,7 +52,7 @@ export default function AdminSalons() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {salons.map(salon => (
-              <div key={salon.id} className="rounded-[0.5rem] overflow-hidden border border-[#004242]/10 bg-[linear-gradient(180deg,#ffffff_0%,#f4fbfa_100%)] shadow-[0_16px_36px_rgba(0,66,66,0.08)] transition-shadow hover:shadow-[0_20px_42px_rgba(0,66,66,0.12)]">
+              <div key={salon.id} className="rounded-lg overflow-hidden border border-ds-primary/10 bg-[linear-gradient(180deg,#ffffff_0%,#f4fbfa_100%)] shadow-[0_16px_36px_rgba(0,66,66,0.08)] transition-shadow hover:shadow-[0_20px_42px_rgba(0,66,66,0.12)]">
                 {/* Cover */}
                 <div className="h-32 bg-[linear-gradient(135deg,#004242_0%,#005b5c_58%,#1b6869_100%)] flex items-center justify-center relative overflow-hidden">
                   {salon.cover_url ? (
@@ -68,7 +68,7 @@ export default function AdminSalons() {
                     Salon
                   </div>
                   <div className="absolute bottom-3 left-3">
-                    <span className="text-[10px] bg-white/92 backdrop-blur-sm text-[#004242] px-2.5 py-1 rounded-full font-bold shadow-sm">
+                    <span className="text-[10px] bg-white/92 backdrop-blur-xs text-ds-primary px-2.5 py-1 rounded-full font-bold shadow-xs">
                       {salon.number_of_staff ?? 1} staff
                     </span>
                   </div>
@@ -83,19 +83,19 @@ export default function AdminSalons() {
                   <div className="mt-4 space-y-2">
                     {salon.location && (
                       <div className="flex items-center gap-2 text-xs text-[#285252]">
-                        <span className="material-symbols-outlined text-sm text-[#004242]">location_on</span>
+                        <span className="material-symbols-outlined text-sm text-ds-primary">location_on</span>
                         {salon.location}
                       </div>
                     )}
                     {salon.phone && (
                       <div className="flex items-center gap-2 text-xs text-[#285252]">
-                        <span className="material-symbols-outlined text-sm text-[#004242]">phone</span>
+                        <span className="material-symbols-outlined text-sm text-ds-primary">phone</span>
                         {salon.phone}
                       </div>
                     )}
                     {(salon.open_time || salon.close_time) && (
                       <div className="flex items-center gap-2 text-xs text-[#285252]">
-                        <span className="material-symbols-outlined text-sm text-[#004242]">schedule</span>
+                        <span className="material-symbols-outlined text-sm text-ds-primary">schedule</span>
                         {salon.open_time} – {salon.close_time}
                       </div>
                     )}
@@ -123,12 +123,12 @@ export default function AdminSalons() {
           {/* Pagination */}
           {meta.last_page > 1 && (
             <div className="flex items-center justify-between">
-              <p className="text-xs text-[#6f7979]">Page {meta.current_page} of {meta.last_page}</p>
+              <p className="text-xs text-ds-outline">Page {meta.current_page} of {meta.last_page}</p>
               <div className="flex gap-2">
                 <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={meta.current_page <= 1}
-                  className="px-3 py-1.5 rounded-lg bg-[#f3f4f5] text-[#3f4948] text-xs font-semibold disabled:opacity-40 hover:bg-[#e1e3e4] transition-colors">Prev</button>
+                  className="px-3 py-1.5 rounded-lg bg-ds-surface-container-low text-ds-on-surface-variant text-xs font-semibold disabled:opacity-40 hover:bg-[#e1e3e4] transition-colors">Prev</button>
                 <button onClick={() => setPage(p => Math.min(meta.last_page, p + 1))} disabled={meta.current_page >= meta.last_page}
-                  className="px-3 py-1.5 rounded-lg bg-[#004242] text-white text-xs font-semibold disabled:opacity-40 hover:bg-[#005b5c] transition-colors">Next</button>
+                  className="px-3 py-1.5 rounded-lg bg-ds-primary text-white text-xs font-semibold disabled:opacity-40 hover:bg-ds-primary-container transition-colors">Next</button>
               </div>
             </div>
           )}

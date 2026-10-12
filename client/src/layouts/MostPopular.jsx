@@ -188,13 +188,13 @@ export default function MostPopular() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 pt-20">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50/30 pt-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200">
+      <div className="bg-white/80 backdrop-blur-xs border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <div className="p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl">
+              <div className="p-3 bg-linear-to-r from-orange-500 to-red-500 rounded-2xl">
                 <FireIcon />
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold text-gray-900">
@@ -220,7 +220,7 @@ export default function MostPopular() {
                 className={`px-4 py-2 rounded-full font-medium transition-all duration-300 ${
                   timeFilter === filter.value
                     ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+                    : "bg-white text-gray-700 hover:bg-gray-50 shadow-xs"
                 }`}
               >
                 {filter.label}
@@ -231,7 +231,7 @@ export default function MostPopular() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-xs"
           >
             {categories.map((category) => (
               <option key={category} value={category}>
@@ -247,12 +247,12 @@ export default function MostPopular() {
             <Link
               key={post.id}
               to={`/post/${post.id}`}
-              className="group bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200"
+              className="group bg-white rounded-2xl shadow-xs hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${getRankColor(post.rank)} rounded-xl flex items-center justify-center text-white font-bold text-lg`}>
+                    <div className={`w-12 h-12 bg-linear-to-r ${getRankColor(post.rank)} rounded-xl flex items-center justify-center text-white font-bold text-lg`}>
                       {getRankIcon(post.rank)}
                     </div>
                     <div>
@@ -311,13 +311,13 @@ export default function MostPopular() {
 
         {/* Load More Button */}
         <div className="text-center mt-12">
-          <button className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 shadow-md">
+          <button className="px-8 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 shadow-md">
             Load More Articles
           </button>
         </div>
 
         {/* Stats Section */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
+        <div className="mt-16 bg-linear-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold mb-2">500K+</div>

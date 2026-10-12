@@ -15,7 +15,7 @@ const App = () => {
       <div className="flex flex-col min-h-screen">
         <Navbar />
         
-        <main className="flex-grow">
+        <main className="grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/salons" element={<SalonsPage />} />

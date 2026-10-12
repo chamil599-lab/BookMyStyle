@@ -171,35 +171,35 @@ const SalonDetailPage = () => {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--sand)] text-[var(--ink)]">
+      <div className="min-h-screen flex items-center justify-center bg-(--sand) text-(--ink)">
         <div className="text-center">
           <div className="relative inline-block">
-            <div className="animate-spin rounded-full h-20 w-20 border-4 border-[var(--cream)]" />
-            <div className="animate-spin rounded-full h-20 w-20 border-4 border-[var(--terra)] border-t-transparent absolute inset-0" />
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-(--cream)" />
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-(--terra) border-t-transparent absolute inset-0" />
           </div>
-          <p className="mt-6 text-[var(--muted)] font-semibold text-lg">Loading salon details...</p>
+          <p className="mt-6 text-(--muted) font-semibold text-lg">Loading salon details...</p>
         </div>
       </div>
     );
 
   if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--sand)] text-[var(--ink)]">
-        <div className="text-center bg-[var(--white)] p-10 border-2 border-[var(--cream)] max-w-md">
-          <div className="w-20 h-20 bg-[var(--cream)] flex items-center justify-center mx-auto mb-4">
-            <svg className="w-10 h-10 text-[var(--terra)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="min-h-screen flex items-center justify-center bg-(--sand) text-(--ink)">
+        <div className="text-center bg-(--white) p-10 border-2 border-(--cream) max-w-md">
+          <div className="w-20 h-20 bg-(--cream) flex items-center justify-center mx-auto mb-4">
+            <svg className="w-10 h-10 text-(--terra)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-[var(--sienna)] text-xl font-bold">{error}</p>
+          <p className="text-(--sienna) text-xl font-bold">{error}</p>
         </div>
       </div>
     );
 
   if (!salon)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--sand)] text-[var(--ink)]">
-        <p className="text-[var(--muted)] text-xl font-semibold">Salon not found</p>
+      <div className="min-h-screen flex items-center justify-center bg-(--sand) text-(--ink)">
+        <p className="text-(--muted) text-xl font-semibold">Salon not found</p>
       </div>
     );
 
@@ -220,7 +220,7 @@ const SalonDetailPage = () => {
   };
 
   return (
-    <div ref={scrollRef} className="min-h-screen bg-[var(--sand)] text-[var(--ink)]">
+    <div ref={scrollRef} className="min-h-screen bg-(--sand) text-(--ink)">
       <Helmet>
         <title>{`${salon.name} - Book Appointment | ${services.length} Services | BookMyStyle`}</title>
         <meta
@@ -240,14 +240,14 @@ const SalonDetailPage = () => {
 
       {/* ── MOBILE LAYOUT ── */}
       {galleryOpen && (
-        <div className="md:hidden fixed inset-0 z-[80] bg-black overflow-y-auto">
+        <div className="md:hidden fixed inset-0 z-80 bg-black overflow-y-auto">
           <button
             type="button"
             onClick={() => setGalleryOpen(false)}
             aria-label="Close gallery"
             className="fixed top-4 right-4 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white/95 shadow-md"
           >
-            <svg className="w-5 h-5 text-[var(--ink)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <svg className="w-5 h-5 text-(--ink)" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -278,7 +278,7 @@ const SalonDetailPage = () => {
             aria-label="Back"
             className="absolute top-4 left-4 z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white/95 shadow-md"
           >
-            <svg className="w-5 h-5 text-[var(--ink)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <svg className="w-5 h-5 text-(--ink)" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -289,22 +289,22 @@ const SalonDetailPage = () => {
               aria-label="Menu"
               className="flex items-center justify-center w-10 h-10 rounded-full bg-white/95 shadow-md"
             >
-              <svg className="w-5 h-5 text-[var(--ink)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <svg className="w-5 h-5 text-(--ink)" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <circle cx="5" cy="12" r="1.5" fill="currentColor" />
                 <circle cx="12" cy="12" r="1.5" fill="currentColor" />
                 <circle cx="19" cy="12" r="1.5" fill="currentColor" />
               </svg>
             </button>
             {mobileMenuOpen && (
-              <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-[var(--cream)] overflow-hidden">
+              <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-(--cream) overflow-hidden">
                 <button
                   type="button"
                   onClick={() => { setMobileMenuOpen(false); setGalleryOpen(true); }}
-                  className="block w-full text-left px-4 py-3 text-sm text-[var(--ink)] hover:bg-[var(--cream)]/40"
+                  className="block w-full text-left px-4 py-3 text-sm text-(--ink) hover:bg-(--cream)/40"
                 >
                   View Gallery
                 </button>
-                <button type="button" onClick={handleShare} className="block w-full text-left px-4 py-3 text-sm text-[var(--ink)] hover:bg-[var(--cream)]/40 border-t border-[var(--cream)]">
+                <button type="button" onClick={handleShare} className="block w-full text-left px-4 py-3 text-sm text-(--ink) hover:bg-(--cream)/40 border-t border-(--cream)">
                   Share
                 </button>
               </div>
@@ -316,17 +316,17 @@ const SalonDetailPage = () => {
         <div className="relative -mt-6 rounded-t-3xl bg-white px-5 pt-5 pb-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-[var(--ink)] truncate">{salon.name}</h1>
+              <h1 className="text-xl font-bold text-(--ink) truncate">{salon.name}</h1>
               <div className="mt-1.5 flex items-center gap-2 text-sm">
                 <svg className="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.366 2.446a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.366-2.446a1 1 0 00-1.176 0l-3.366 2.446c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.06 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z" />
                 </svg>
-                <span className="font-semibold text-[var(--ink)]">{rating.toFixed(1)}</span>
-                {reviewCount > 0 && <span className="text-[var(--muted)]">({reviewCount})</span>}
+                <span className="font-semibold text-(--ink)">{rating.toFixed(1)}</span>
+                {reviewCount > 0 && <span className="text-(--muted)">({reviewCount})</span>}
                 {subtitle && (
                   <>
-                    <span className="text-[var(--muted)]">·</span>
-                    <span className="text-[var(--terra)] font-medium truncate">{subtitle}</span>
+                    <span className="text-(--muted)">·</span>
+                    <span className="text-(--terra) font-medium truncate">{subtitle}</span>
                   </>
                 )}
               </div>
@@ -337,7 +337,7 @@ const SalonDetailPage = () => {
               aria-label="Favorite"
               className="shrink-0 flex items-center justify-center w-10 h-10"
             >
-              <svg className={`w-6 h-6 transition-colors ${favorited ? 'text-[var(--terra)]' : 'text-[var(--muted)]'}`} fill={favorited ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <svg className={`w-6 h-6 transition-colors ${favorited ? 'text-(--terra)' : 'text-(--muted)'}`} fill={favorited ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
               </svg>
             </button>
@@ -352,8 +352,8 @@ const SalonDetailPage = () => {
                 onClick={() => setMobileTab(tab.key)}
                 className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium transition-all border ${
                   mobileTab === tab.key
-                    ? 'bg-[var(--terra)] border-[var(--terra)] text-white shadow-[0_4px_12px_rgba(196,98,45,0.3)]'
-                    : 'bg-white border-[var(--cream)] text-[var(--ink)]'
+                    ? 'bg-(--terra) border-(--terra) text-white shadow-[0_4px_12px_rgba(196,98,45,0.3)]'
+                    : 'bg-white border-(--cream) text-(--ink)'
                 }`}
               >
                 <span className="material-symbols-outlined text-base">{tab.icon}</span>
@@ -368,31 +368,31 @@ const SalonDetailPage = () => {
           {mobileTab === 'booking' && (
             services.length > 0
               ? <BookingForm salon={salon} services={services} timeSlots={timeSlots} />
-              : <p className="text-[var(--muted)] text-center py-10">No services available for booking yet.</p>
+              : <p className="text-(--muted) text-center py-10">No services available for booking yet.</p>
           )}
 
           {mobileTab === 'about' && (
             <div className="space-y-6 pt-2">
               <div>
-                <h3 className="font-[Libre_Baskerville] text-xl italic text-[var(--ink)] mb-2">About</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">{salon.description || 'No description available.'}</p>
+                <h3 className="font-[family-name:Libre_Baskerville] text-xl italic text-(--ink) mb-2">About</h3>
+                <p className="text-sm text-(--muted) leading-relaxed">{salon.description || 'No description available.'}</p>
               </div>
               <ContactInformation salon={salon} />
               {services.length > 0 && (
                 <div>
-                  <h3 className="font-[Libre_Baskerville] text-xl italic text-[var(--ink)] mb-3">Services</h3>
+                  <h3 className="font-[family-name:Libre_Baskerville] text-xl italic text-(--ink) mb-3">Services</h3>
                   <div className="space-y-2">
                     {services.map((service) => (
-                      <div key={service.id} className="flex items-start justify-between gap-3 p-4 rounded-xl bg-[var(--cream)]/40">
+                      <div key={service.id} className="flex items-start justify-between gap-3 p-4 rounded-xl bg-(--cream)/40">
                         <div className="min-w-0">
-                          <div className="text-[10px] font-semibold tracking-widest text-[var(--terra)] uppercase mb-0.5">
+                          <div className="text-[10px] font-semibold tracking-widest text-(--terra) uppercase mb-0.5">
                             {getServiceCategoryLabel(service)}
                           </div>
-                          <h4 className="text-sm font-bold text-[var(--ink)] truncate">{service.title || service.name}</h4>
-                          <div className="text-xs text-[var(--muted)] mt-0.5">{service.duration} mins</div>
+                          <h4 className="text-sm font-bold text-(--ink) truncate">{service.title || service.name}</h4>
+                          <div className="text-xs text-(--muted) mt-0.5">{service.duration} mins</div>
                         </div>
                         {salon.show_price && (
-                          <span className="text-sm font-black text-[var(--sienna)] shrink-0">Rs. {service.price}</span>
+                          <span className="text-sm font-black text-(--sienna) shrink-0">Rs. {service.price}</span>
                         )}
                       </div>
                     ))}
@@ -424,7 +424,7 @@ const SalonDetailPage = () => {
       />
 
       {/* ── MARQUEE BAR ── */}
-      <div className="flex items-center h-11 overflow-hidden bg-[var(--terra)]">
+      <div className="flex items-center h-11 overflow-hidden bg-(--terra)">
         <div className="seren-marquee-track">
           {marqueeDouble.map((label, i) => (
             <span
@@ -441,7 +441,7 @@ const SalonDetailPage = () => {
       {/* ── MAIN CONTENT ── */}
       <section className="relative px-6 py-20 overflow-hidden md:px-12">
         {/* Ghost letter decoration */}
-        <div className="pointer-events-none absolute -top-8 right-4 select-none font-[Unbounded] text-[18rem] font-black leading-none text-transparent [-webkit-text-stroke:1px_rgba(196,98,45,0.07)] md:text-[22rem]">
+        <div className="pointer-events-none absolute -top-8 right-4 select-none font-[family-name:Unbounded] text-[18rem] font-black leading-none text-transparent [-webkit-text-stroke:1px_rgba(196,98,45,0.07)] md:text-[22rem]">
           B
         </div>
 
@@ -450,18 +450,18 @@ const SalonDetailPage = () => {
           {/* Section header */}
           <div className="grid items-end gap-10 mb-14 lg:grid-cols-2">
             <div className="scroll-animate anim-fade-in-left">
-              <div className="mb-4 inline-flex items-center gap-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra)] uppercase">
-                <span className="h-0.5 w-5 bg-[var(--terra)]" />
+              <div className="mb-4 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra) uppercase">
+                <span className="h-0.5 w-5 bg-(--terra)" />
                 Salon Profile
               </div>
-              <h2 className="font-[Unbounded] text-4xl font-extrabold leading-[0.95] tracking-tight text-[var(--ink)] md:text-6xl">
+              <h2 className="font-[family-name:Unbounded] text-4xl font-extrabold leading-[0.95] tracking-tight text-(--ink) md:text-6xl">
                 Discover
                 <br />
-                <em className="font-[Libre_Baskerville] text-[var(--terra)]">{salon.name}</em>
+                <em className="font-[family-name:Libre_Baskerville] text-(--terra)">{salon.name}</em>
               </h2>
             </div>
             <div className="scroll-animate anim-fade-in-right" style={{ animationDelay: '120ms' }}>
-              <p className="mb-4 max-w-md text-sm leading-7 text-[var(--muted)]">
+              <p className="mb-4 max-w-md text-sm leading-7 text-(--muted)">
                 {salon.description
                   ? salon.description.substring(0, 200) + (salon.description.length > 200 ? '...' : '')
                   : 'A premium beauty destination offering exceptional services and a refined experience.'}
@@ -469,7 +469,7 @@ const SalonDetailPage = () => {
               {salon.description && salon.description.length > 200 && (
                 <button
                   onClick={() => setActiveTab('overview')}
-                  className="inline-flex items-center gap-2 font-[Unbounded] text-[10px] font-semibold tracking-[0.2em] text-[var(--terra)] uppercase"
+                  className="inline-flex items-center gap-2 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.2em] text-(--terra) uppercase"
                 >
                   Read More →
                 </button>
@@ -479,17 +479,17 @@ const SalonDetailPage = () => {
 
           {/* Tabs – styled like homepage sort buttons */}
           <div
-            className="mb-0 flex gap-2 overflow-x-auto border-b-2 border-[var(--cream)] scroll-animate anim-fade-in-up"
+            className="mb-0 flex gap-2 overflow-x-auto border-b-2 border-(--cream) scroll-animate anim-fade-in-up"
             style={{ animationDelay: '80ms' }}
           >
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-shrink-0 px-5 py-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition border-b-2 -mb-0.5 ${
+                className={`shrink-0 px-5 py-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition border-b-2 -mb-0.5 ${
                   activeTab === tab.key
-                    ? 'border-[var(--terra)] text-[var(--terra)]'
-                    : 'border-transparent text-[var(--muted)] hover:text-[var(--ink)]'
+                    ? 'border-(--terra) text-(--terra)'
+                    : 'border-transparent text-(--muted) hover:text-(--ink)'
                 }`}
               >
                 {tab.label}
@@ -500,17 +500,17 @@ const SalonDetailPage = () => {
           {/* Service category filter bar – homepage sort bar style */}
           {(activeTab === 'services' || activeTab === 'overview') && categories.length > 0 && (
             <div
-              className="mb-8 flex flex-col gap-4 border-b-2 border-[var(--cream)] pb-5 pt-5 sm:flex-row sm:items-center sm:justify-between scroll-animate anim-fade-in-up"
+              className="mb-8 flex flex-col gap-4 border-b-2 border-(--cream) pb-5 pt-5 sm:flex-row sm:items-center sm:justify-between scroll-animate anim-fade-in-up"
               style={{ animationDelay: '120ms' }}
             >
-              <span className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Filter by category</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-(--muted)">Filter by category</span>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setServiceFilter('all')}
-                  className={`px-4 py-2 font-[Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition ${
+                  className={`px-4 py-2 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition ${
                     serviceFilter === 'all'
-                      ? 'bg-[var(--terra)] text-white'
-                      : 'bg-[var(--cream)] text-[var(--muted)] hover:text-[var(--terra)]'
+                      ? 'bg-(--terra) text-white'
+                      : 'bg-(--cream) text-(--muted) hover:text-(--terra)'
                   }`}
                 >
                   All ({services.length})
@@ -519,10 +519,10 @@ const SalonDetailPage = () => {
                   <button
                     key={cat}
                     onClick={() => setServiceFilter(cat)}
-                    className={`px-4 py-2 font-[Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition ${
+                    className={`px-4 py-2 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition ${
                       serviceFilter === cat
-                        ? 'bg-[var(--terra)] text-white'
-                        : 'bg-[var(--cream)] text-[var(--muted)] hover:text-[var(--terra)]'
+                        ? 'bg-(--terra) text-white'
+                        : 'bg-(--cream) text-(--muted) hover:text-(--terra)'
                     }`}
                   >
                     {cat}
@@ -539,15 +539,15 @@ const SalonDetailPage = () => {
 
               {/* Overview tab */}
               {activeTab === 'overview' && (
-                <div className="bg-[var(--white)] border-2 border-[var(--cream)] p-8 scroll-animate anim-fade-in-up">
-                  <div className="mb-4 inline-flex items-center gap-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra)] uppercase">
-                    <span className="h-0.5 w-5 bg-[var(--terra)]" />
+                <div className="bg-(--white) border-2 border-(--cream) p-8 scroll-animate anim-fade-in-up">
+                  <div className="mb-4 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra) uppercase">
+                    <span className="h-0.5 w-5 bg-(--terra)" />
                     About
                   </div>
-                  <h3 className="mb-4 font-[Libre_Baskerville] text-2xl italic text-[var(--ink)]">
+                  <h3 className="mb-4 font-[family-name:Libre_Baskerville] text-2xl italic text-(--ink)">
                     {salon.name}
                   </h3>
-                  <p className="text-[var(--muted)] leading-relaxed text-sm">
+                  <p className="text-(--muted) leading-relaxed text-sm">
                     {salon.description || 'No description available.'}
                   </p>
                 </div>
@@ -555,30 +555,30 @@ const SalonDetailPage = () => {
 
               {/* Services section – shown on both overview and services tabs */}
               {(activeTab === 'services' || activeTab === 'overview') && (
-                <div className="bg-[var(--white)] border-2 border-[var(--cream)] p-8 scroll-animate anim-fade-in-up">
+                <div className="bg-(--white) border-2 border-(--cream) p-8 scroll-animate anim-fade-in-up">
                   <div className="flex items-end justify-between mb-6">
                     <div>
-                      <div className="mb-2 inline-flex items-center gap-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra)] uppercase">
-                        <span className="h-0.5 w-5 bg-[var(--terra)]" />
+                      <div className="mb-2 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra) uppercase">
+                        <span className="h-0.5 w-5 bg-(--terra)" />
                         Services
                       </div>
-                      <h3 className="font-[Libre_Baskerville] text-2xl italic text-[var(--ink)]">
+                      <h3 className="font-[family-name:Libre_Baskerville] text-2xl italic text-(--ink)">
                         Our Offerings
                       </h3>
                     </div>
-                    <div className="font-[Unbounded] text-4xl font-black text-[var(--terra)] leading-none">
+                    <div className="font-[family-name:Unbounded] text-4xl font-black text-(--terra) leading-none">
                       {filteredServices.length}
                     </div>
                   </div>
 
                   {services.length === 0 ? (
-                    <p className="text-[var(--muted)] text-center py-10">No services available yet.</p>
+                    <p className="text-(--muted) text-center py-10">No services available yet.</p>
                   ) : filteredServices.length === 0 ? (
-                    <div className="text-center py-10 text-[var(--muted)]">
+                    <div className="text-center py-10 text-(--muted)">
                       <p>No services in this category.</p>
                       <button
                         onClick={() => setServiceFilter('all')}
-                        className="mt-2 text-[var(--sienna)] text-sm font-semibold hover:underline"
+                        className="mt-2 text-(--sienna) text-sm font-semibold hover:underline"
                       >
                         Show all services
                       </button>
@@ -588,29 +588,29 @@ const SalonDetailPage = () => {
                       {filteredServices.map((service, index) => (
                         <div
                           key={service.id}
-                          className="border-l-[3px] border-[var(--cream)] bg-[var(--sand)] p-4 transition hover:border-[var(--terra)] hover:bg-[var(--white)] scroll-animate anim-slide-in-stagger"
+                          className="border-l-[3px] border-(--cream) bg-(--sand) p-4 transition hover:border-(--terra) hover:bg-(--white) scroll-animate anim-slide-in-stagger"
                           style={{ animationDelay: `${Math.min(index, 11) * 70}ms` }}
                         >
-                          <div className="mb-1 font-[Unbounded] text-[9px] font-semibold tracking-[0.25em] text-[var(--terra)] uppercase">
+                          <div className="mb-1 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.25em] text-(--terra) uppercase">
                             {getServiceCategoryLabel(service)}
                           </div>
                           <div className="flex items-start justify-between gap-3 mb-2">
-                            <h4 className="text-[15px] font-bold text-[var(--ink)]">{service.title || service.name}</h4>
+                            <h4 className="text-[15px] font-bold text-(--ink)">{service.title || service.name}</h4>
                             {salon.show_price && (
-                              <span className="text-[15px] font-black text-[var(--sienna)] shrink-0">Rs. {service.price}</span>
+                              <span className="text-[15px] font-black text-(--sienna) shrink-0">Rs. {service.price}</span>
                             )}
                           </div>
                           {service.description && (
                             <p
-                              className="text-sm text-[var(--muted)] leading-relaxed mb-3 line-clamp-2"
+                              className="text-sm text-(--muted) leading-relaxed mb-3 line-clamp-2"
                               dangerouslySetInnerHTML={{ __html: service.description.replace(/<[^>]*>/g, '') }}
                             />
                           )}
-                          <div className="mt-3 flex items-center justify-between text-sm text-[var(--muted)] border-t border-black/5 pt-2">
+                          <div className="mt-3 flex items-center justify-between text-sm text-(--muted) border-t border-black/5 pt-2">
                             <span>{service.duration} mins</span>
                             <button
                               onClick={() => setActiveTab('booking')}
-                              className="bg-[var(--ink)] px-3 py-1 font-[Unbounded] text-[9px] font-bold tracking-[0.14em] text-white uppercase transition-colors hover:bg-[var(--terra)]"
+                              className="bg-(--ink) px-3 py-1 font-[family-name:Unbounded] text-[9px] font-bold tracking-[0.14em] text-white uppercase transition-colors hover:bg-(--terra)"
                             >
                               Book
                             </button>
@@ -624,30 +624,30 @@ const SalonDetailPage = () => {
 
               {/* Booking tab */}
               {activeTab === 'booking' && (
-                <div className="bg-[var(--white)] border-2 border-[var(--cream)] p-8 scroll-animate anim-fade-in-up">
-                  <div className="mb-2 inline-flex items-center gap-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra)] uppercase">
-                    <span className="h-0.5 w-5 bg-[var(--terra)]" />
+                <div className="bg-(--white) border-2 border-(--cream) p-8 scroll-animate anim-fade-in-up">
+                  <div className="mb-2 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra) uppercase">
+                    <span className="h-0.5 w-5 bg-(--terra)" />
                     Reservations
                   </div>
-                  <h3 className="mb-6 font-[Libre_Baskerville] text-2xl italic text-[var(--ink)]">
+                  <h3 className="mb-6 font-[family-name:Libre_Baskerville] text-2xl italic text-(--ink)">
                     Book Your Appointment
                   </h3>
                   {services.length > 0 ? (
                     <BookingForm salon={salon} services={services} timeSlots={timeSlots} />
                   ) : (
-                    <p className="text-[var(--muted)] text-center py-8">No services available for booking yet.</p>
+                    <p className="text-(--muted) text-center py-8">No services available for booking yet.</p>
                   )}
                 </div>
               )}
 
               {/* Gallery tab */}
               {activeTab === 'gallery' && (
-                <div className="bg-[var(--white)] border-2 border-[var(--cream)] p-8 scroll-animate anim-fade-in-up">
-                  <div className="mb-2 inline-flex items-center gap-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra)] uppercase">
-                    <span className="h-0.5 w-5 bg-[var(--terra)]" />
+                <div className="bg-(--white) border-2 border-(--cream) p-8 scroll-animate anim-fade-in-up">
+                  <div className="mb-2 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra) uppercase">
+                    <span className="h-0.5 w-5 bg-(--terra)" />
                     Visual Gallery
                   </div>
-                  <h3 className="mb-6 font-[Libre_Baskerville] text-2xl italic text-[var(--ink)]">
+                  <h3 className="mb-6 font-[family-name:Libre_Baskerville] text-2xl italic text-(--ink)">
                     Our Space
                   </h3>
                   <Gallery images={images} salonName={salon.name} onImageClick={setMainImage} />
@@ -666,55 +666,55 @@ const SalonDetailPage = () => {
               <div className="space-y-4">
                 {/* Book CTA card – dark header style matching homepage sidebar */}
                 {activeTab !== 'booking' && services.length > 0 && (
-                  <div className="overflow-hidden border-2 border-[var(--cream)] bg-[var(--white)] scroll-animate anim-scale-in">
-                    <div className="bg-[var(--ink)] p-6">
-                      <div className="mb-2 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra2)] uppercase">
+                  <div className="overflow-hidden border-2 border-(--cream) bg-(--white) scroll-animate anim-scale-in">
+                    <div className="bg-(--ink) p-6">
+                      <div className="mb-2 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra2) uppercase">
                         Ready to Book?
                       </div>
-                      <h3 className="font-[Libre_Baskerville] text-2xl italic text-white">
+                      <h3 className="font-[family-name:Libre_Baskerville] text-2xl italic text-white">
                         Experience the Best
                       </h3>
                     </div>
                     <div className="p-6">
-                      <p className="mb-5 text-sm text-[var(--muted)] leading-relaxed">
+                      <p className="mb-5 text-sm text-(--muted) leading-relaxed">
                         Book your next beauty appointment and experience premium care.
                       </p>
                       <div className="flex flex-col gap-2">
                         <button
                           onClick={() => setActiveTab('booking')}
-                          className="w-full bg-[var(--terra)] text-white py-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase hover:bg-[var(--sienna)] transition"
+                          className="w-full bg-(--terra) text-white py-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase hover:bg-(--sienna) transition"
                         >
                           Book Now →
                         </button>
                         <button
                           onClick={() => setActiveTab('gallery')}
-                          className="w-full border-2 border-[var(--cream)] bg-[var(--sand)] py-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.15em] text-[var(--muted)] uppercase hover:border-[var(--terra)] hover:text-[var(--terra)] transition"
+                          className="w-full border-2 border-(--cream) bg-(--sand) py-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.15em] text-(--muted) uppercase hover:border-(--terra) hover:text-(--terra) transition"
                         >
                           View Gallery
                         </button>
                       </div>
 
-                      <div className="my-5 h-0.5 bg-[var(--cream)]" />
+                      <div className="my-5 h-0.5 bg-(--cream)" />
 
                       {/* Quick stats in sidebar – matching homepage counter style */}
-                      <div className="mb-5 flex items-center gap-4 border-l-4 border-[var(--terra)] bg-[var(--cream)] px-4 py-4">
-                        <div className="font-[Unbounded] text-3xl font-black text-[var(--terra)]">
+                      <div className="mb-5 flex items-center gap-4 border-l-4 border-(--terra) bg-(--cream) px-4 py-4">
+                        <div className="font-[family-name:Unbounded] text-3xl font-black text-(--terra)">
                           {services.length}
                         </div>
                         <div>
-                          <div className="text-sm text-[var(--muted)]">Services available</div>
+                          <div className="text-sm text-(--muted)">Services available</div>
                           {rating > 0 && (
-                            <div className="text-sm text-[var(--muted)]">{rating.toFixed(1)} ★ rated</div>
+                            <div className="text-sm text-(--muted)">{rating.toFixed(1)} ★ rated</div>
                           )}
                         </div>
                       </div>
 
-                      <div className="my-5 h-0.5 bg-[var(--cream)]" />
+                      <div className="my-5 h-0.5 bg-(--cream)" />
 
-                      <div className="mb-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--muted)] uppercase">
+                      <div className="mb-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--muted) uppercase">
                         Why Book Here
                       </div>
-                      <div className="space-y-2 text-sm text-[var(--muted)]">
+                      <div className="space-y-2 text-sm text-(--muted)">
                         <div>→ Instant confirmation</div>
                         <div>→ {salon.show_price ? 'Transparent pricing' : 'Pricing on request'}</div>
                         <div>→ Verified professionals</div>

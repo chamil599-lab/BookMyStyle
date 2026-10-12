@@ -1,15 +1,15 @@
 import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa6';
 
 const ContactRow = ({ icon, label, children }) => (
-  <div className="flex items-start gap-4 px-6 py-5 border-b border-[var(--cream)] last:border-b-0 transition-colors hover:bg-[var(--sand)] group">
-    <div className="shrink-0 flex h-10 w-10 items-center justify-center bg-[var(--terra)] text-white transition-colors group-hover:bg-[var(--sienna)]">
+  <div className="flex items-start gap-4 px-6 py-5 border-b border-(--cream) last:border-b-0 transition-colors hover:bg-(--sand) group">
+    <div className="shrink-0 flex h-10 w-10 items-center justify-center bg-(--terra) text-white transition-colors group-hover:bg-(--sienna)">
       {icon}
     </div>
     <div className="min-w-0 flex-1">
-      <p className="mb-1 font-[Unbounded] text-[9px] font-semibold tracking-[0.28em] text-[var(--terra)] uppercase">
+      <p className="mb-1 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.28em] text-(--terra) uppercase">
         {label}
       </p>
-      <div className="text-[14px] font-medium text-[var(--ink)] leading-relaxed">
+      <div className="text-[14px] font-medium text-(--ink) leading-relaxed">
         {children}
       </div>
     </div>
@@ -20,21 +20,21 @@ const ContactInformation = ({ salon }) => {
   const hasSocials = salon.facebook_page || salon.instagram_page || salon.tiktok_page;
 
   return (
-    <div className="overflow-hidden border-2 border-[var(--cream)] bg-[var(--white)] shadow-[0_4px_24px_rgba(30,23,16,0.08)]">
+    <div className="overflow-hidden border-2 border-(--cream) bg-(--white) shadow-[0_4px_24px_rgba(30,23,16,0.08)]">
 
       {/* Header */}
-      <div className="bg-[var(--ink)] px-6 py-6">
-        <div className="mb-2 font-[Unbounded] text-[9px] font-semibold tracking-[0.3em] text-[var(--terra2)] uppercase">
+      <div className="bg-(--ink) px-6 py-6">
+        <div className="mb-2 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.3em] text-(--terra2) uppercase">
           Get In Touch
         </div>
-        <h3 className="font-[Libre_Baskerville] text-2xl italic text-white">
+        <h3 className="font-[family-name:Libre_Baskerville] text-2xl italic text-white">
           Contact &amp; Hours
         </h3>
-        <div className="mt-3 h-[2px] w-10 bg-[var(--terra)]" />
+        <div className="mt-3 h-[2px] w-10 bg-(--terra)" />
       </div>
 
       {/* Rows */}
-      <div className="divide-y divide-[var(--cream)]">
+      <div className="divide-y divide-(--cream)">
 
         {/* Address */}
         {salon.location && (
@@ -65,14 +65,14 @@ const ContactInformation = ({ salon }) => {
             }
           >
             <div className="flex items-center gap-3 flex-wrap">
-              <a href={`tel:${salon.phone}`} className="hover:text-[var(--terra)] transition-colors">
+              <a href={`tel:${salon.phone}`} className="hover:text-(--terra) transition-colors">
                 {salon.phone}
               </a>
               <a
                 href={`https://wa.me/${salon.phone.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 bg-[#25D366] px-3 py-1 text-[10px] font-[Unbounded] font-semibold tracking-[0.12em] text-white transition hover:opacity-90"
+                className="inline-flex items-center gap-1.5 bg-[#25D366] px-3 py-1 text-[10px] font-[family-name:Unbounded] font-semibold tracking-[0.12em] text-white transition hover:opacity-90"
               >
                 <FaWhatsapp className="w-3 h-3" />
                 WhatsApp
@@ -94,7 +94,7 @@ const ContactInformation = ({ salon }) => {
           >
             <a
               href={`mailto:${salon.email}`}
-              className="break-all hover:text-[var(--terra)] transition-colors"
+              className="break-all hover:text-(--terra) transition-colors"
             >
               {salon.email}
             </a>
@@ -114,9 +114,9 @@ const ContactInformation = ({ salon }) => {
           >
             <div className="flex items-center gap-2">
               <span>{salon.open_time}</span>
-              <span className="text-[var(--terra)] font-bold">–</span>
+              <span className="text-(--terra) font-bold">–</span>
               <span>{salon.close_time}</span>
-              <span className="ml-1 inline-flex items-center gap-1 bg-green-100 px-2 py-0.5 text-[10px] font-[Unbounded] font-semibold tracking-wide text-green-700">
+              <span className="ml-1 inline-flex items-center gap-1 bg-green-100 px-2 py-0.5 text-[10px] font-[family-name:Unbounded] font-semibold tracking-wide text-green-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
                 Open
               </span>
@@ -128,8 +128,8 @@ const ContactInformation = ({ salon }) => {
 
       {/* Social links */}
       {hasSocials && (
-        <div className="border-t-2 border-[var(--cream)] bg-[var(--sand)] px-6 py-5">
-          <p className="mb-4 font-[Unbounded] text-[9px] font-semibold tracking-[0.3em] text-[var(--muted)] uppercase">
+        <div className="border-t-2 border-(--cream) bg-(--sand) px-6 py-5">
+          <p className="mb-4 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.3em] text-(--muted) uppercase">
             Follow Us
           </p>
           <div className="flex gap-2">
@@ -139,7 +139,7 @@ const ContactInformation = ({ salon }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="flex flex-1 items-center justify-center gap-2 border-2 border-[var(--cream)] bg-[var(--white)] py-3 font-[Unbounded] text-[9px] font-semibold tracking-[0.15em] text-[var(--ink)] uppercase transition hover:bg-[#1877F2] hover:border-[#1877F2] hover:text-white"
+                className="flex flex-1 items-center justify-center gap-2 border-2 border-(--cream) bg-(--white) py-3 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.15em] text-(--ink) uppercase transition hover:bg-[#1877F2] hover:border-[#1877F2] hover:text-white"
               >
                 <FaFacebook className="w-4 h-4 text-[1rem]" />
               </a>
@@ -150,7 +150,7 @@ const ContactInformation = ({ salon }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="flex flex-1 items-center justify-center gap-2 border-2 border-[var(--cream)] bg-[var(--white)] py-3 font-[Unbounded] text-[9px] font-semibold tracking-[0.15em] text-[var(--ink)] uppercase transition hover:bg-[#E1306C] hover:border-[#E1306C] hover:text-white"
+                className="flex flex-1 items-center justify-center gap-2 border-2 border-(--cream) bg-(--white) py-3 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.15em] text-(--ink) uppercase transition hover:bg-[#E1306C] hover:border-[#E1306C] hover:text-white"
               >
                 <FaInstagram className="w-4 h-4 text-[1rem]" />
               </a>
@@ -161,7 +161,7 @@ const ContactInformation = ({ salon }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="flex flex-1 items-center justify-center gap-2 border-2 border-[var(--cream)] bg-[var(--white)] py-3 font-[Unbounded] text-[9px] font-semibold tracking-[0.15em] text-[var(--ink)] uppercase transition hover:bg-[var(--ink)] hover:border-[var(--ink)] hover:text-white"
+                className="flex flex-1 items-center justify-center gap-2 border-2 border-(--cream) bg-(--white) py-3 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.15em] text-(--ink) uppercase transition hover:bg-(--ink) hover:border-(--ink) hover:text-white"
               >
                 <FaTiktok className="w-4 h-4 text-[1rem]" />
               </a>

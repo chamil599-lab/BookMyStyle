@@ -192,13 +192,13 @@ export default function Trending() {
     : trendingPosts.filter(post => post.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 to-red-50/30 pt-20">
+    <div className="min-h-screen bg-linear-to-br from-orange-50/50 to-red-50/30 pt-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200">
+      <div className="bg-white/80 backdrop-blur-xs border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <div className="p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-lg">
+              <div className="p-3 bg-linear-to-r from-orange-500 to-red-500 rounded-2xl shadow-lg">
                 <TrendingIcon />
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold text-gray-900">
@@ -222,8 +222,8 @@ export default function Trending() {
               onClick={() => setActiveCategory(category.id)}
               className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
                 activeCategory === category.id
-                  ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg transform -translate-y-1"
-                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-sm hover:shadow-md"
+                  ? "bg-linear-to-r from-orange-500 to-red-500 text-white shadow-lg transform -translate-y-1"
+                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-xs hover:shadow-md"
               }`}
             >
               <span>{category.name}</span>
@@ -246,12 +246,12 @@ export default function Trending() {
             <Link
               key={post.id}
               to={`/post/${post.id}`}
-              className="group bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-orange-200 relative"
+              className="group bg-white rounded-2xl shadow-xs hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-orange-200 relative"
             >
               {/* Hot Badge */}
               {post.hot && (
                 <div className="absolute top-4 left-4 z-10">
-                  <div className="flex items-center space-x-1 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                  <div className="flex items-center space-x-1 bg-linear-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
                     <FireIcon className="w-3 h-3" />
                     <span>HOT</span>
                   </div>
@@ -260,7 +260,7 @@ export default function Trending() {
 
               {/* Trend Indicator */}
               <div className="absolute top-4 right-4 z-10">
-                <div className={`flex items-center space-x-1 bg-gradient-to-r ${getTrendColor(post.trend)} text-white px-3 py-1 rounded-full text-sm font-medium`}>
+                <div className={`flex items-center space-x-1 bg-linear-to-r ${getTrendColor(post.trend)} text-white px-3 py-1 rounded-full text-sm font-medium`}>
                   <TrendingUpIcon className="w-3 h-3" />
                   <span>{post.growth}</span>
                 </div>
@@ -328,7 +328,7 @@ export default function Trending() {
         </div>
 
         {/* Real-time Stats */}
-        <div className="mt-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-8 text-white">
+        <div className="mt-16 bg-linear-to-r from-orange-500 to-red-500 rounded-2xl p-8 text-white">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold mb-2">Live Trend Metrics</h2>
             <p className="text-orange-100">Updated every 5 minutes</p>
@@ -366,9 +366,9 @@ export default function Trending() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
-              <button className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
+              <button className="px-6 py-3 bg-linear-to-r from-orange-500 to-red-500 text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
                 Subscribe
               </button>
             </div>

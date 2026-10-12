@@ -32,36 +32,36 @@ const PERIOD_OPTS = [
 ];
 const STATUS_PILL = {
   pending:   'bg-[#fff3e0] text-[#e65100]',
-  approved:  'bg-[#004242]/10 text-[#004242]',
+  approved:  'bg-ds-primary/10 text-ds-primary',
   completed: 'bg-[#e8f5e9] text-[#2e7d32]',
-  rejected:  'bg-[#ffdad6] text-[#ba1a1a]',
+  rejected:  'bg-ds-error-container text-ds-error',
 };
 const STATUS_DOT = {
   pending:   'bg-[#f4a261]',
-  approved:  'bg-[#004242]',
-  completed: 'bg-[#476363]',
-  rejected:  'bg-[#ba1a1a]',
+  approved:  'bg-ds-primary',
+  completed: 'bg-ds-secondary',
+  rejected:  'bg-ds-error',
 };
 const STATUS_BAR_CFG = [
   { key: 'Pending',   bar: 'bg-[#f4a261]', dot: 'bg-[#f4a261]' },
-  { key: 'Approved',  bar: 'bg-[#004242]', dot: 'bg-[#004242]' },
-  { key: 'Completed', bar: 'bg-[#476363]', dot: 'bg-[#476363]' },
-  { key: 'Rejected',  bar: 'bg-[#ba1a1a]', dot: 'bg-[#ba1a1a]' },
+  { key: 'Approved',  bar: 'bg-ds-primary', dot: 'bg-ds-primary' },
+  { key: 'Completed', bar: 'bg-ds-secondary', dot: 'bg-ds-secondary' },
+  { key: 'Rejected',  bar: 'bg-ds-error', dot: 'bg-ds-error' },
 ];
 const SERVICE_ICONS = ['content_cut','face_retouching_natural','spa','brush','auto_fix_high'];
-const SERVICE_BG    = ['bg-[#ffdbca]','bg-[#c7e6e5]','bg-[#a8efef]/30','bg-[#e1e3e4]','bg-[#ffdad6]'];
-const SERVICE_CLR   = ['text-[#5d2e10]','text-[#476363]','text-[#004242]','text-[#3f4948]','text-[#ba1a1a]'];
+const SERVICE_BG    = ['bg-ds-tertiary-fixed','bg-ds-secondary-container','bg-ds-primary-fixed/30','bg-[#e1e3e4]','bg-ds-error-container'];
+const SERVICE_CLR   = ['text-ds-tertiary','text-ds-secondary','text-ds-primary','text-ds-on-surface-variant','text-ds-error'];
 const DASHBOARD_STAT_CARDS = [
   {
     key: 'revenue-total',
     title: 'Total Revenue',
-    titleClass: 'text-[#8bd0d1]',
+    titleClass: 'text-ds-on-primary-container',
     valueClass: 'text-white',
     Icon: HiArrowTrendingUp,
     iconWrapClass: 'bg-white/12 text-white',
     cardClass: 'border-0 bg-[linear-gradient(135deg,#004242_0%,#005b5c_58%,#1b6869_100%)]',
     orbClass: 'bg-white/6',
-    metaClass: 'text-[#8bd0d1]',
+    metaClass: 'text-ds-on-primary-container',
     getValue: (stats) => fmtShort(stats?.revenue?.total),
     getMeta: (stats) => `${fmtShort(stats?.revenue?.this_month)} this month`,
   },
@@ -133,7 +133,7 @@ function MonthCalendar({ bookingsByDate, year, month, selectedDay, onDayClick })
     <div>
       <div className="grid grid-cols-7 mb-1">
         {DAY_LABELS.map(d => (
-          <div key={d} className="text-center text-[10px] font-bold text-[#6f7979] uppercase tracking-widest py-2">{d}</div>
+          <div key={d} className="text-center text-[10px] font-bold text-ds-outline uppercase tracking-widest py-2">{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -147,29 +147,29 @@ function MonthCalendar({ bookingsByDate, year, month, selectedDay, onDayClick })
             <button
               key={dateStr}
               onClick={() => onDayClick(isSelected ? null : dateStr)}
-              className={`min-h-[76px] rounded-xl p-2 text-left flex flex-col transition-all focus:outline-none ${
-                isSelected ? 'bg-[#004242] shadow-md ring-2 ring-[#004242] ring-offset-1'
-                : isToday  ? 'bg-[#e8f5f5] ring-2 ring-[#004242]/30'
-                : dayBkgs.length > 0 ? 'bg-white hover:bg-[#f3f4f5]'
-                : 'bg-[#f8f9fa] hover:bg-[#f3f4f5]'
+              className={`min-h-[76px] rounded-xl p-2 text-left flex flex-col transition-all focus:outline-hidden ${
+                isSelected ? 'bg-ds-primary shadow-md ring-2 ring-ds-primary ring-offset-1'
+                : isToday  ? 'bg-[#e8f5f5] ring-2 ring-ds-primary/30'
+                : dayBkgs.length > 0 ? 'bg-white hover:bg-ds-surface-container-low'
+                : 'bg-[#f8f9fa] hover:bg-ds-surface-container-low'
               }`}
             >
-              <span className={`text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full mb-1 flex-shrink-0 ${
-                isSelected ? 'bg-white text-[#004242]'
-                : isToday  ? 'bg-[#004242] text-white'
+              <span className={`text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full mb-1 shrink-0 ${
+                isSelected ? 'bg-white text-ds-primary'
+                : isToday  ? 'bg-ds-primary text-white'
                 : 'text-[#191c1d]'
               }`}>{day}</span>
               {dayBkgs.length > 0 && (
                 <div className="flex-1 w-full space-y-0.5 overflow-hidden">
                   {dayBkgs.slice(0, 2).map((b, bi) => (
                     <div key={bi} className={`text-[9px] font-semibold px-1.5 py-0.5 rounded truncate leading-tight ${
-                      isSelected ? 'bg-white/20 text-white' : STATUS_PILL[b.status] ?? 'bg-[#e1e3e4] text-[#3f4948]'
+                      isSelected ? 'bg-white/20 text-white' : STATUS_PILL[b.status] ?? 'bg-[#e1e3e4] text-ds-on-surface-variant'
                     }`}>
                       {b.time?.slice(0, 5)} {b.name}
                     </div>
                   ))}
                   {dayBkgs.length > 2 && (
-                    <p className={`text-[9px] font-bold px-1.5 ${isSelected ? 'text-white/70' : 'text-[#6f7979]'}`}>
+                    <p className={`text-[9px] font-bold px-1.5 ${isSelected ? 'text-white/70' : 'text-ds-outline'}`}>
                       +{dayBkgs.length - 2} more
                     </p>
                   )}
@@ -191,29 +191,29 @@ function DayDetail({ dateStr, bookings }) {
   return (
     <div className="mt-4 border-t border-[#e1e3e4] pt-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-bold text-[#6f7979] uppercase tracking-widest">{label}</p>
-        <span className="text-xs font-bold text-[#004242] bg-[#004242]/10 px-2 py-0.5 rounded-full">
+        <p className="text-xs font-bold text-ds-outline uppercase tracking-widest">{label}</p>
+        <span className="text-xs font-bold text-ds-primary bg-ds-primary/10 px-2 py-0.5 rounded-full">
           {bookings.length} booking{bookings.length !== 1 ? 's' : ''}
         </span>
       </div>
       {bookings.length === 0 ? (
-        <p className="text-sm text-[#6f7979] text-center py-4">No bookings this day</p>
+        <p className="text-sm text-ds-outline text-center py-4">No bookings this day</p>
       ) : (
         <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
           {bookings.map(b => (
             <div key={b.id} className="flex items-start gap-3 bg-[#f8f9fa] rounded-xl px-3 py-2.5">
-              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${STATUS_DOT[b.status] ?? 'bg-[#6f7979]'}`} />
+              <div className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[b.status] ?? 'bg-ds-outline'}`} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-[#191c1d] truncate">{b.name}</p>
                 {b.email && (
-                  <p className="text-[11px] text-[#6f7979] truncate mt-1">{b.email}</p>
+                  <p className="text-[11px] text-ds-outline truncate mt-1">{b.email}</p>
                 )}
                 {b.phone && (
-                  <p className="text-[11px] text-[#6f7979] truncate">{b.phone}</p>
+                  <p className="text-[11px] text-ds-outline truncate">{b.phone}</p>
                 )}
-                <p className="text-[11px] text-[#6f7979] truncate">{b.service_name} · {b.salon_name}</p>
+                <p className="text-[11px] text-ds-outline truncate">{b.service_name} · {b.salon_name}</p>
               </div>
-              <div className="text-right flex-shrink-0">
+              <div className="text-right shrink-0">
                 <p className="text-xs font-bold text-[#191c1d]">{b.time?.slice(0, 5)}</p>
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full capitalize inline-block mt-0.5 ${STATUS_PILL[b.status] ?? ''}`}>
                   {b.status}
@@ -310,50 +310,50 @@ function AnalyticsView({ salons, salonId }) {
             className={`rounded-full px-4 py-2 text-sm font-bold tracking-wide transition-all ${
               period === o.value
                 ? 'bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] text-white shadow-[0_12px_28px_rgba(0,66,66,0.22)]'
-                : 'bg-white/70 text-[#5f6f6f] hover:bg-white hover:text-[#004242]'
+                : 'bg-white/70 text-[#5f6f6f] hover:bg-white hover:text-ds-primary'
             }`}>{o.label}</button>
         ))}
       </div>
 
       {/* ── Row 1: 4 stat cards ── */}
       {aLoading ? (
-        <div className="h-28 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004242]" /></div>
+        <div className="h-28 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ds-primary" /></div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Period revenue */}
-          <div className="bg-white p-5 rounded-[0.5rem] relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-[#004242]" />
-            <p className="text-[10px] font-bold text-[#6f7979] uppercase tracking-widest mb-1">
+          <div className="bg-white p-5 rounded-lg relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-ds-primary" />
+            <p className="text-[10px] font-bold text-ds-outline uppercase tracking-widest mb-1">
               {period === '12m' ? '12-Month' : period.toUpperCase()} Revenue
             </p>
-            <h3 className="font-headline text-2xl font-extrabold text-[#004242]">{fmtShort(analytics?.revenue?.period)}</h3>
-            <p className="mt-2 text-[11px] text-[#6f7979] font-medium">All-time: {fmtShort(analytics?.revenue?.total)}</p>
+            <h3 className="font-headline text-2xl font-extrabold text-ds-primary">{fmtShort(analytics?.revenue?.period)}</h3>
+            <p className="mt-2 text-[11px] text-ds-outline font-medium">All-time: {fmtShort(analytics?.revenue?.total)}</p>
           </div>
           {/* Today */}
-          <div className="bg-white p-5 rounded-[0.5rem]">
-            <p className="text-[10px] font-bold text-[#6f7979] uppercase tracking-widest mb-1">Today</p>
+          <div className="bg-white p-5 rounded-lg">
+            <p className="text-[10px] font-bold text-ds-outline uppercase tracking-widest mb-1">Today</p>
             <h3 className="font-headline text-2xl font-extrabold text-[#191c1d]">{fmtShort(analytics?.revenue?.today)}</h3>
-            <p className="mt-2 text-[11px] text-[#6f7979] font-medium flex items-center gap-1">
+            <p className="mt-2 text-[11px] text-ds-outline font-medium flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">today</span>Live earnings
             </p>
           </div>
           {/* Period bookings */}
-          <div className="bg-white p-5 rounded-[0.5rem]">
-            <p className="text-[10px] font-bold text-[#6f7979] uppercase tracking-widest mb-1">Period Bookings</p>
+          <div className="bg-white p-5 rounded-lg">
+            <p className="text-[10px] font-bold text-ds-outline uppercase tracking-widest mb-1">Period Bookings</p>
             <h3 className="font-headline text-2xl font-extrabold text-[#191c1d]">{bkgs.total ?? 0}</h3>
-            <p className="mt-2 text-[11px] text-[#476363] font-medium">
+            <p className="mt-2 text-[11px] text-ds-secondary font-medium">
               {bkgs.current_month ?? 0}
               {bkgs.max_per_month ? ` / ${bkgs.max_per_month}` : ''} this month
             </p>
           </div>
           {/* Avg rating */}
-          <div className="bg-white p-5 rounded-[0.5rem]">
-            <p className="text-[10px] font-bold text-[#6f7979] uppercase tracking-widest mb-1">Avg Rating</p>
+          <div className="bg-white p-5 rounded-lg">
+            <p className="text-[10px] font-bold text-ds-outline uppercase tracking-widest mb-1">Avg Rating</p>
             <h3 className="font-headline text-2xl font-extrabold text-[#191c1d] flex items-center gap-1">
               {analytics?.avg_rating?.toFixed(1) ?? '—'}
               <span className="material-symbols-outlined text-xl text-[#f4a261]">star</span>
             </h3>
-            <p className="mt-2 text-[11px] text-[#6f7979] font-medium">Across all salons</p>
+            <p className="mt-2 text-[11px] text-ds-outline font-medium">Across all salons</p>
           </div>
         </div>
       )}
@@ -361,8 +361,8 @@ function AnalyticsView({ salons, salonId }) {
       {/* ── Row 2: booking breakdown + monthly usage ── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Status bars */}
-        <div className="xl:col-span-2 bg-white p-6 rounded-[0.5rem]">
-          <h2 className="font-headline text-base font-bold mb-5">Booking Breakdown <span className="text-[#6f7979] font-normal text-sm">· {period}</span></h2>
+        <div className="xl:col-span-2 bg-white p-6 rounded-lg">
+          <h2 className="font-headline text-base font-bold mb-5">Booking Breakdown <span className="text-ds-outline font-normal text-sm">· {period}</span></h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {STATUS_BAR_CFG.map(cfg => {
               const key   = cfg.key.toLowerCase();
@@ -375,9 +375,9 @@ function AnalyticsView({ salons, salonId }) {
                       <div className={`w-2.5 h-2.5 rounded-full ${cfg.dot}`} />
                       <span className="text-sm font-semibold text-[#191c1d]">{cfg.key}</span>
                     </div>
-                    <span className="font-bold text-sm text-[#191c1d]">{count} <span className="text-[#6f7979] font-normal text-xs">({p}%)</span></span>
+                    <span className="font-bold text-sm text-[#191c1d]">{count} <span className="text-ds-outline font-normal text-xs">({p}%)</span></span>
                   </div>
-                  <div className="w-full bg-[#f3f4f5] h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-ds-surface-container-low h-2 rounded-full overflow-hidden">
                     <div className={`${cfg.bar} h-full rounded-full transition-all duration-700`} style={{ width: `${p}%` }} />
                   </div>
                 </div>
@@ -387,10 +387,10 @@ function AnalyticsView({ salons, salonId }) {
         </div>
 
         {/* Monthly usage */}
-        <div className="bg-[#004242] rounded-[0.5rem] p-6 text-white relative overflow-hidden">
+        <div className="bg-ds-primary rounded-lg p-6 text-white relative overflow-hidden">
           <div className="absolute bottom-0 right-0 w-36 h-36 rounded-full bg-white/5 translate-x-8 translate-y-8" />
           <div className="absolute top-2 right-2 w-16 h-16 rounded-full bg-white/5" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#8bd0d1] mb-1 relative z-10">This Month</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ds-on-primary-container mb-1 relative z-10">This Month</p>
           <p className="font-headline text-4xl font-extrabold text-white relative z-10">
             {bkgs.current_month ?? 0}
             {bkgs.max_per_month && <span className="text-white/50 text-xl"> / {bkgs.max_per_month}</span>}
@@ -400,7 +400,7 @@ function AnalyticsView({ salons, salonId }) {
               <div className="mt-4 w-full bg-white/20 h-2 rounded-full overflow-hidden relative z-10">
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${
-                    pct(bkgs.current_month, bkgs.max_per_month) >= 90 ? 'bg-[#ba1a1a]' : 'bg-[#8bd0d1]'
+                    pct(bkgs.current_month, bkgs.max_per_month) >= 90 ? 'bg-ds-error' : 'bg-ds-on-primary-container'
                   }`}
                   style={{ width: `${Math.min(100, pct(bkgs.current_month, bkgs.max_per_month))}%` }}
                 />
@@ -410,7 +410,7 @@ function AnalyticsView({ salons, salonId }) {
               </p>
             </>
           )}
-          <div className="mt-5 flex items-center gap-2 text-[#8bd0d1] text-xs font-bold relative z-10">
+          <div className="mt-5 flex items-center gap-2 text-ds-on-primary-container text-xs font-bold relative z-10">
             <span className="material-symbols-outlined text-sm">check_circle</span>
             {(bkgs.approved ?? 0) + (bkgs.completed ?? 0)} approved this period
           </div>
@@ -420,11 +420,11 @@ function AnalyticsView({ salons, salonId }) {
       {/* ── Row 3: charts ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Monthly rolling 12m bar */}
-        <div className="bg-white p-6 rounded-[0.5rem]">
+        <div className="bg-white p-6 rounded-lg">
           <h2 className="font-headline text-base font-bold mb-1">Monthly Revenue</h2>
-          <p className="text-sm text-[#6f7979] mb-5">Rolling last 12 months</p>
+          <p className="text-sm text-ds-outline mb-5">Rolling last 12 months</p>
           {mLoading ? (
-            <div className="h-52 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#004242]" /></div>
+            <div className="h-52 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-ds-primary" /></div>
           ) : (
             <ResponsiveContainer width="100%" height={210}>
               <BarChart data={monthlyData} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
@@ -441,13 +441,13 @@ function AnalyticsView({ salons, salonId }) {
         </div>
 
         {/* Daily/period area chart */}
-        <div className="bg-white p-6 rounded-[0.5rem]">
+        <div className="bg-white p-6 rounded-lg">
           <h2 className="font-headline text-base font-bold mb-1">
             {period === '12m' ? 'Monthly' : 'Daily'} Revenue Trend
           </h2>
-          <p className="text-sm text-[#6f7979] mb-5">Last {period}</p>
+          <p className="text-sm text-ds-outline mb-5">Last {period}</p>
           {dLoading ? (
-            <div className="h-52 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#004242]" /></div>
+            <div className="h-52 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-ds-primary" /></div>
           ) : (
             <ResponsiveContainer width="100%" height={210}>
               <AreaChart data={dailyData} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
@@ -474,13 +474,13 @@ function AnalyticsView({ salons, salonId }) {
       {/* ── Row 4: top services + profit breakdown ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Top services */}
-        <div className="bg-white rounded-[0.5rem] overflow-hidden">
+        <div className="bg-white rounded-lg overflow-hidden">
           <div className="px-6 py-5 border-b border-[#e1e3e4]/60">
             <h2 className="font-headline text-base font-bold">Top Services</h2>
-            <p className="text-sm text-[#6f7979]">By bookings · {period}</p>
+            <p className="text-sm text-ds-outline">By bookings · {period}</p>
           </div>
           {topServices.length === 0 ? (
-            <div className="text-center py-12 text-[#6f7979]">
+            <div className="text-center py-12 text-ds-outline">
               <span className="material-symbols-outlined text-3xl block mb-2">content_cut</span>
               No data for this period
             </div>
@@ -488,22 +488,22 @@ function AnalyticsView({ salons, salonId }) {
             <div>
               {topServices.map((svc, i) => (
                 <div key={i} className="px-6 py-4 flex items-center gap-4 hover:bg-[#f8f9fa] transition-colors">
-                  <span className="text-xs font-black text-[#bec8c8] w-4 text-center">{i + 1}</span>
-                  <div className={`w-10 h-10 rounded-xl ${SERVICE_BG[i % SERVICE_BG.length]} flex items-center justify-center flex-shrink-0`}>
+                  <span className="text-xs font-black text-ds-outline-variant w-4 text-center">{i + 1}</span>
+                  <div className={`w-10 h-10 rounded-xl ${SERVICE_BG[i % SERVICE_BG.length]} flex items-center justify-center shrink-0`}>
                     <span className={`material-symbols-outlined text-lg ${SERVICE_CLR[i % SERVICE_CLR.length]}`}>
                       {SERVICE_ICONS[i % SERVICE_ICONS.length]}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-[#191c1d] truncate">{svc.name}</p>
-                    <div className="mt-1 w-full bg-[#f3f4f5] h-1.5 rounded-full overflow-hidden">
-                      <div className="bg-[#004242] h-full rounded-full transition-all duration-700"
+                    <div className="mt-1 w-full bg-ds-surface-container-low h-1.5 rounded-full overflow-hidden">
+                      <div className="bg-ds-primary h-full rounded-full transition-all duration-700"
                         style={{ width: `${pct(svc.revenue, maxRev)}%` }} />
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-bold text-[#004242]">{fmtShort(svc.revenue)}</p>
-                    <p className="text-[10px] text-[#6f7979]">{svc.booking_count ?? svc.bookings} bkgs</p>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-bold text-ds-primary">{fmtShort(svc.revenue)}</p>
+                    <p className="text-[10px] text-ds-outline">{svc.booking_count ?? svc.bookings} bkgs</p>
                   </div>
                 </div>
               ))}
@@ -512,63 +512,63 @@ function AnalyticsView({ salons, salonId }) {
         </div>
 
         {/* Business snapshot */}
-        <div className="bg-white rounded-[0.5rem] p-6">
+        <div className="bg-white rounded-lg p-6">
           <h2 className="font-headline text-base font-bold mb-1">Business Snapshot</h2>
-          <p className="text-sm text-[#6f7979] mb-6">All-time performance from approved and completed bookings</p>
+          <p className="text-sm text-ds-outline mb-6">All-time performance from approved and completed bookings</p>
 
           <div className="space-y-4">
             {/* Total revenue */}
-            <div className="flex items-center justify-between py-3 border-b border-[#f3f4f5]">
+            <div className="flex items-center justify-between py-3 border-b border-ds-surface-container-low">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#004242]/8 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-base text-[#004242]">payments</span>
+                <div className="w-9 h-9 rounded-xl bg-ds-primary/8 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-base text-ds-primary">payments</span>
                 </div>
                 <div>
                   <p className="text-sm font-bold text-[#191c1d]">Total Revenue</p>
-                  <p className="text-[10px] text-[#6f7979]">Approved + completed bookings</p>
+                  <p className="text-[10px] text-ds-outline">Approved + completed bookings</p>
                 </div>
               </div>
-              <p className="font-headline text-lg font-extrabold text-[#004242]">{fmtShort(profit?.total_revenue)}</p>
+              <p className="font-headline text-lg font-extrabold text-ds-primary">{fmtShort(profit?.total_revenue)}</p>
             </div>
 
             {/* Confirmed bookings */}
-            <div className="flex items-center justify-between py-3 border-b border-[#f3f4f5]">
+            <div className="flex items-center justify-between py-3 border-b border-ds-surface-container-low">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-[#e8f5e9] flex items-center justify-center">
                   <span className="material-symbols-outlined text-base text-[#2e7d32]">event_available</span>
                 </div>
                 <div>
                   <p className="text-sm font-bold text-[#191c1d]">Confirmed Bookings</p>
-                  <p className="text-[10px] text-[#6f7979]">Approved and completed appointments</p>
+                  <p className="text-[10px] text-ds-outline">Approved and completed appointments</p>
                 </div>
               </div>
               <p className="font-headline text-lg font-extrabold text-[#2e7d32]">{profit?.confirmed_bookings ?? 0}</p>
             </div>
 
             {/* Average booking value */}
-            <div className="flex items-center justify-between py-3 border-b border-[#f3f4f5]">
+            <div className="flex items-center justify-between py-3 border-b border-ds-surface-container-low">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-[#fff3e0] flex items-center justify-center">
                   <span className="material-symbols-outlined text-base text-[#e65100]">sell</span>
                 </div>
                 <div>
                   <p className="text-sm font-bold text-[#191c1d]">Average Booking Value</p>
-                  <p className="text-[10px] text-[#6f7979]">Revenue per confirmed booking</p>
+                  <p className="text-[10px] text-ds-outline">Revenue per confirmed booking</p>
                 </div>
               </div>
               <p className="font-headline text-lg font-extrabold text-[#e65100]">{fmtShort(profit?.average_booking_value)}</p>
             </div>
           </div>
 
-          <div className="mt-5 pt-4 border-t border-[#f3f4f5]">
+          <div className="mt-5 pt-4 border-t border-ds-surface-container-low">
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#c7e6e5] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-base text-[#004242]">workspace_premium</span>
+                <div className="w-9 h-9 rounded-xl bg-ds-secondary-container flex items-center justify-center">
+                  <span className="material-symbols-outlined text-base text-ds-primary">workspace_premium</span>
                 </div>
                 <div>
                   <p className="text-sm font-bold text-[#191c1d]">Top Service</p>
-                  <p className="text-[10px] text-[#6f7979]">
+                  <p className="text-[10px] text-ds-outline">
                     {profit?.top_service
                       ? `${profit.top_service.bookings ?? 0} bookings`
                       : 'No confirmed bookings yet'}
@@ -576,10 +576,10 @@ function AnalyticsView({ salons, salonId }) {
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-headline text-base font-extrabold text-[#004242]">
+                <p className="font-headline text-base font-extrabold text-ds-primary">
                   {profit?.top_service?.name ?? 'N/A'}
                 </p>
-                <p className="text-[10px] text-[#6f7979]">
+                <p className="text-[10px] text-ds-outline">
                   {profit?.top_service ? fmtShort(profit.top_service.revenue) : 'No revenue yet'}
                 </p>
               </div>
@@ -589,43 +589,43 @@ function AnalyticsView({ salons, salonId }) {
       </div>
 
       {/* ── Row 5: profit by month ── */}
-      <div className="overflow-hidden rounded-[1rem] border border-[#d6e7e7] bg-[linear-gradient(180deg,#ffffff_0%,#fbfdfd_100%)] shadow-[0_22px_48px_rgba(25,28,29,0.08)]">
+      <div className="overflow-hidden rounded-2xl border border-[#d6e7e7] bg-[linear-gradient(180deg,#ffffff_0%,#fbfdfd_100%)] shadow-[0_22px_48px_rgba(25,28,29,0.08)]">
         <div className="relative overflow-hidden px-6 py-5 border-b border-[#e1e3e4]/60 flex flex-wrap items-center justify-between gap-3 bg-[linear-gradient(135deg,#f7fbfb_0%,#edf6f6_100%)]">
-          <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#8bd0d1]/18" />
-          <div className="absolute right-14 bottom-[-22px] h-16 w-16 rounded-full bg-[#004242]/6" />
+          <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-ds-on-primary-container/18" />
+          <div className="absolute right-14 bottom-[-22px] h-16 w-16 rounded-full bg-ds-primary/6" />
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-[#476363] shadow-[0_10px_24px_rgba(0,66,66,0.08)]">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-ds-secondary shadow-[0_10px_24px_rgba(0,66,66,0.08)]">
               <span className="material-symbols-outlined text-sm">insights</span>
               Monthly Profit
             </div>
             <h2 className="mt-3 font-headline text-lg font-bold text-[#191c1d]">Profit by Month</h2>
-            <p className="text-sm text-[#6f7979]">Revenue breakdown per salon</p>
+            <p className="text-sm text-ds-outline">Revenue breakdown per salon</p>
           </div>
-          <div className="relative z-10 flex items-center gap-2 rounded-full border border-white/70 bg-white/75 p-1 shadow-[0_12px_28px_rgba(0,66,66,0.08)] backdrop-blur">
+          <div className="relative z-10 flex items-center gap-2 rounded-full border border-white/70 bg-white/75 p-1 shadow-[0_12px_28px_rgba(0,66,66,0.08)] backdrop-blur-sm">
             <select value={profitYear} onChange={e => setProfitYear(Number(e.target.value))}
-              className="text-sm border border-[#d9e6e6] bg-white rounded-full px-4 py-2 font-semibold text-[#3f4948] focus:outline-none focus:ring-2 focus:ring-[#004242]/20">
+              className="text-sm border border-[#d9e6e6] bg-white rounded-full px-4 py-2 font-semibold text-ds-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20">
               {years.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
             <select value={profitMonth} onChange={e => setProfitMonth(Number(e.target.value))}
-              className="text-sm border border-[#d9e6e6] bg-white rounded-full px-4 py-2 font-semibold text-[#3f4948] focus:outline-none focus:ring-2 focus:ring-[#004242]/20">
+              className="text-sm border border-[#d9e6e6] bg-white rounded-full px-4 py-2 font-semibold text-ds-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20">
               {MONTH_NAMES.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
             </select>
           </div>
         </div>
 
         {pmLoading ? (
-          <div className="h-32 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#004242]" /></div>
+          <div className="h-32 flex items-center justify-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-ds-primary" /></div>
         ) : !profitMonth_data?.by_salon?.length ? (
           <div className="px-6 py-10">
             <div className="mx-auto flex max-w-xl flex-col items-center rounded-[1.25rem] border border-dashed border-[#c8d8d8] bg-[linear-gradient(180deg,#fbfdfd_0%,#f3f8f8_100%)] px-6 py-10 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] text-white shadow-[0_18px_32px_rgba(0,66,66,0.22)]">
                 <span className="material-symbols-outlined text-3xl">bar_chart</span>
               </div>
-              <p className="mt-5 text-sm font-bold uppercase tracking-[0.24em] text-[#6f7979]">
+              <p className="mt-5 text-sm font-bold uppercase tracking-[0.24em] text-ds-outline">
                 {MONTH_NAMES[profitMonth - 1]} {profitYear}
               </p>
               <h3 className="mt-2 font-headline text-xl font-bold text-[#191c1d]">No profit data yet</h3>
-              <p className="mt-2 max-w-md text-sm leading-relaxed text-[#6f7979]">
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-ds-outline">
                 There&apos;s no revenue breakdown per salon for {MONTH_NAMES[profitMonth - 1]} {profitYear} yet. Once bookings are approved or completed, this card will update automatically.
               </p>
             </div>
@@ -633,17 +633,17 @@ function AnalyticsView({ salons, salonId }) {
         ) : (
           <div>
             {/* Summary row */}
-            <div className="px-6 py-4 bg-[#004242]/4 flex items-center justify-between">
+            <div className="px-6 py-4 bg-ds-primary/4 flex items-center justify-between">
               <p className="text-sm font-bold text-[#191c1d]">
                 {MONTH_NAMES[profitMonth - 1]} {profitYear} — Total
               </p>
-              <p className="font-headline text-lg font-extrabold text-[#004242]">{fmt(profitMonth_data.total_revenue)}</p>
+              <p className="font-headline text-lg font-extrabold text-ds-primary">{fmt(profitMonth_data.total_revenue)}</p>
             </div>
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#f3f4f5]">
+                <tr className="border-b border-ds-surface-container-low">
                   {['Salon', 'Bookings', 'Revenue', 'Share'].map(h => (
-                    <th key={h} className="text-left px-6 py-3 text-[10px] font-bold text-[#6f7979] uppercase tracking-widest">{h}</th>
+                    <th key={h} className="text-left px-6 py-3 text-[10px] font-bold text-ds-outline uppercase tracking-widest">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -654,20 +654,20 @@ function AnalyticsView({ salons, salonId }) {
                     <tr key={i} className="border-b border-[#f8f9fa] hover:bg-[#f8f9fa] transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-[#004242]/10 flex items-center justify-center flex-shrink-0">
-                            <span className="material-symbols-outlined text-sm text-[#004242]">store</span>
+                          <div className="w-7 h-7 rounded-full bg-ds-primary/10 flex items-center justify-center shrink-0">
+                            <span className="material-symbols-outlined text-sm text-ds-primary">store</span>
                           </div>
                           <span className="font-semibold text-[#191c1d]">{row.name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 font-medium text-[#3f4948]">{row.bookings}</td>
-                      <td className="px-6 py-4 font-bold text-[#004242]">{fmt(row.revenue)}</td>
+                      <td className="px-6 py-4 font-medium text-ds-on-surface-variant">{row.bookings}</td>
+                      <td className="px-6 py-4 font-bold text-ds-primary">{fmt(row.revenue)}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-[#f3f4f5] h-1.5 rounded-full overflow-hidden max-w-[80px]">
-                            <div className="bg-[#004242] h-full rounded-full" style={{ width: `${share}%` }} />
+                          <div className="flex-1 bg-ds-surface-container-low h-1.5 rounded-full overflow-hidden max-w-[80px]">
+                            <div className="bg-ds-primary h-full rounded-full" style={{ width: `${share}%` }} />
                           </div>
-                          <span className="text-xs font-bold text-[#6f7979]">{share}%</span>
+                          <span className="text-xs font-bold text-ds-outline">{share}%</span>
                         </div>
                       </td>
                     </tr>
@@ -726,7 +726,7 @@ export default function OwnerDashboard() {
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#004242]" />
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-ds-primary" />
       </div>
     );
   }
@@ -759,23 +759,23 @@ export default function OwnerDashboard() {
 
       {/* ── Subscription banner ── */}
       {sub ? (
-        <div className={`rounded-[0.5rem] p-5 flex flex-wrap items-center justify-between gap-4 ${
-          sub.days_remaining <= 7 ? 'bg-[#ffdad6]' : 'bg-[#004242]/5 border border-[#004242]/10'
+        <div className={`rounded-lg p-5 flex flex-wrap items-center justify-between gap-4 ${
+          sub.days_remaining <= 7 ? 'bg-ds-error-container' : 'bg-ds-primary/5 border border-ds-primary/10'
         }`}>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#005b5c] flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined text-[#8bd0d1] text-xl">card_membership</span>
+            <div className="w-10 h-10 rounded-full bg-ds-primary-container flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-ds-on-primary-container text-xl">card_membership</span>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-[#6f7979] uppercase tracking-widest">Current Plan</p>
-              <p className="font-headline text-lg font-extrabold text-[#004242]">{sub.package_name ?? 'Unknown'}</p>
+              <p className="text-[10px] font-bold text-ds-outline uppercase tracking-widest">Current Plan</p>
+              <p className="font-headline text-lg font-extrabold text-ds-primary">{sub.package_name ?? 'Unknown'}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide ${
-              sub.status === 'active'  ? 'bg-[#004242]/10 text-[#004242]' :
-              sub.status === 'pending' ? 'bg-[#5d2e10]/10 text-[#5d2e10]' :
-              'bg-[#ba1a1a]/10 text-[#ba1a1a]'
+              sub.status === 'active'  ? 'bg-ds-primary/10 text-ds-primary' :
+              sub.status === 'pending' ? 'bg-ds-tertiary/10 text-ds-tertiary' :
+              'bg-ds-error/10 text-ds-error'
             }`}>{sub.status}</span>
             {sub.is_trial && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#f4a261]/20 text-[#8a4b15] border border-[#f4a261]/30">
@@ -784,7 +784,7 @@ export default function OwnerDashboard() {
               </span>
             )}
             {sub.status === 'active' && (
-              <span className={`text-sm font-semibold ${sub.days_remaining <= 7 ? 'text-[#ba1a1a]' : 'text-[#6f7979]'}`}>
+              <span className={`text-sm font-semibold ${sub.days_remaining <= 7 ? 'text-ds-error' : 'text-ds-outline'}`}>
                 {sub.days_remaining} day{sub.days_remaining !== 1 ? 's' : ''} left
               </span>
             )}
@@ -835,9 +835,9 @@ export default function OwnerDashboard() {
           </div>
         </div>
       ) : (
-        <div className="rounded-[0.5rem] p-5 bg-[#ffdad6] flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#ba1a1a]">warning</span>
-          <p className="text-sm text-[#ba1a1a] font-semibold">No active subscription. Please subscribe to unlock all features.</p>
+        <div className="rounded-lg p-5 bg-ds-error-container flex items-center gap-3">
+          <span className="material-symbols-outlined text-ds-error">warning</span>
+          <p className="text-sm text-ds-error font-semibold">No active subscription. Please subscribe to unlock all features.</p>
         </div>
       )}
 
@@ -892,9 +892,9 @@ export default function OwnerDashboard() {
             className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all ${
               mainTab === 'calendar'
                 ? 'bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] text-white shadow-[0_12px_28px_rgba(0,66,66,0.22)]'
-                : 'bg-white/70 text-[#5f6f6f] hover:bg-white hover:text-[#004242]'
+                : 'bg-white/70 text-[#5f6f6f] hover:bg-white hover:text-ds-primary'
             }`}>
-            <span className={`material-symbols-outlined text-[18px] ${mainTab === 'calendar' ? 'text-white' : 'text-[#476363]'}`}>calendar_month</span>
+            <span className={`material-symbols-outlined text-[18px] ${mainTab === 'calendar' ? 'text-white' : 'text-ds-secondary'}`}>calendar_month</span>
             Calendar
           </button>
         ) : (
@@ -909,9 +909,9 @@ export default function OwnerDashboard() {
             className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all ${
               mainTab === 'analytics'
                 ? 'bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] text-white shadow-[0_12px_28px_rgba(0,66,66,0.22)]'
-                : 'bg-white/70 text-[#5f6f6f] hover:bg-white hover:text-[#004242]'
+                : 'bg-white/70 text-[#5f6f6f] hover:bg-white hover:text-ds-primary'
             }`}>
-            <span className={`material-symbols-outlined text-[18px] ${mainTab === 'analytics' ? 'text-white' : 'text-[#476363]'}`}>bar_chart</span>
+            <span className={`material-symbols-outlined text-[18px] ${mainTab === 'analytics' ? 'text-white' : 'text-ds-secondary'}`}>bar_chart</span>
             Analytics
           </button>
         ) : (
@@ -925,16 +925,16 @@ export default function OwnerDashboard() {
 
       {/* ── Calendar locked gate ── */}
       {mainTab === 'calendar' && !hasCalendar && (
-        <div className="bg-white rounded-[0.5rem] p-16 text-center">
+        <div className="bg-white rounded-lg p-16 text-center">
           <div className="w-16 h-16 rounded-full bg-[#e1e3e4] flex items-center justify-center mx-auto mb-5">
-            <span className="material-symbols-outlined text-3xl text-[#6f7979]">lock</span>
+            <span className="material-symbols-outlined text-3xl text-ds-outline">lock</span>
           </div>
           <h3 className="font-headline text-xl font-bold text-[#191c1d] mb-2">Calendar Locked</h3>
-          <p className="text-sm text-[#6f7979] max-w-sm mx-auto mb-6">
+          <p className="text-sm text-ds-outline max-w-sm mx-auto mb-6">
             Upgrade your subscription plan to unlock the booking calendar view.
           </p>
           <a href="/owner/subscription"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#004242] text-white text-sm font-bold hover:bg-[#005b5c] transition-colors">
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-ds-primary text-white text-sm font-bold hover:bg-ds-primary-container transition-colors">
             <span className="material-symbols-outlined text-base">upgrade</span>
             Upgrade Plan
           </a>
@@ -946,28 +946,28 @@ export default function OwnerDashboard() {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
           {/* Calendar */}
-          <div className="xl:col-span-2 bg-white rounded-[0.5rem] p-6">
+          <div className="xl:col-span-2 bg-white rounded-lg p-6">
             <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
               <div>
                 <h2 className="font-headline text-lg font-bold text-[#191c1d]">Booking Calendar</h2>
-                <p className="text-sm text-[#6f7979]">{calMonthTotal} booking{calMonthTotal !== 1 ? 's' : ''} · {MONTH_NAMES[calMonth - 1]} {calYear}</p>
+                <p className="text-sm text-ds-outline">{calMonthTotal} booking{calMonthTotal !== 1 ? 's' : ''} · {MONTH_NAMES[calMonth - 1]} {calYear}</p>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 {salons.length > 1 && (
                   <select value={calSalonId} onChange={e => { setCalSalonId(e.target.value); setSelectedDay(null); }}
-                    className="text-xs border border-[#e1e3e4] bg-white rounded-full px-3 py-1.5 font-semibold text-[#6f7979] focus:outline-none focus:ring-2 focus:ring-[#004242]/20">
+                    className="text-xs border border-[#e1e3e4] bg-white rounded-full px-3 py-1.5 font-semibold text-ds-outline focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20">
                     <option value="">All salons</option>
                     {salons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
                 )}
-                <div className="flex items-center gap-0.5 bg-[#f3f4f5] rounded-full px-1 py-1">
-                  <button onClick={prevMonth} className="p-1 rounded-full hover:bg-white transition-colors text-[#6f7979]">
+                <div className="flex items-center gap-0.5 bg-ds-surface-container-low rounded-full px-1 py-1">
+                  <button onClick={prevMonth} className="p-1 rounded-full hover:bg-white transition-colors text-ds-outline">
                     <span className="material-symbols-outlined text-[18px]">chevron_left</span>
                   </button>
                   <span className="font-headline text-xs font-bold text-[#191c1d] px-3 min-w-[124px] text-center">
                     {MONTH_NAMES[calMonth - 1]} {calYear}
                   </span>
-                  <button onClick={nextMonth} className="p-1 rounded-full hover:bg-white transition-colors text-[#6f7979]">
+                  <button onClick={nextMonth} className="p-1 rounded-full hover:bg-white transition-colors text-ds-outline">
                     <span className="material-symbols-outlined text-[18px]">chevron_right</span>
                   </button>
                 </div>
@@ -975,16 +975,16 @@ export default function OwnerDashboard() {
             </div>
             {/* Legend */}
             <div className="flex flex-wrap items-center gap-4 mb-4">
-              {[{ label:'Pending',dot:'bg-[#f4a261]'},{label:'Approved',dot:'bg-[#004242]'},{label:'Completed',dot:'bg-[#476363]'},{label:'Rejected',dot:'bg-[#ba1a1a]'}].map(l => (
+              {[{ label:'Pending',dot:'bg-[#f4a261]'},{label:'Approved',dot:'bg-ds-primary'},{label:'Completed',dot:'bg-ds-secondary'},{label:'Rejected',dot:'bg-ds-error'}].map(l => (
                 <div key={l.label} className="flex items-center gap-1.5">
                   <div className={`w-2 h-2 rounded-full ${l.dot}`} />
-                  <span className="text-[10px] font-semibold text-[#6f7979]">{l.label}</span>
+                  <span className="text-[10px] font-semibold text-ds-outline">{l.label}</span>
                 </div>
               ))}
             </div>
             {calLoading ? (
               <div className="h-80 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004242]" />
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ds-primary" />
               </div>
             ) : (
               <>
@@ -997,7 +997,7 @@ export default function OwnerDashboard() {
           {/* Overview sidebar */}
           <div className="space-y-5">
             {/* Booking status */}
-            <div className="bg-[#f3f4f5] p-6 rounded-[0.5rem]">
+            <div className="bg-ds-surface-container-low p-6 rounded-lg">
               <h2 className="font-headline text-base font-bold mb-5">Booking Status</h2>
               <div className="space-y-4">
                 {STATUS_BAR_CFG.map(cfg => {
@@ -1020,25 +1020,25 @@ export default function OwnerDashboard() {
                   );
                 })}
               </div>
-              <div className="mt-5 pt-4 border-t border-[#bec8c8]/40 grid grid-cols-2 gap-3 text-center">
+              <div className="mt-5 pt-4 border-t border-ds-outline-variant/40 grid grid-cols-2 gap-3 text-center">
                 <div>
-                  <p className="font-headline text-xl font-extrabold text-[#004242]">{stats?.salons?.count ?? 0}</p>
-                  <p className="text-[10px] text-[#6f7979] uppercase tracking-widest font-semibold mt-0.5">Salons</p>
+                  <p className="font-headline text-xl font-extrabold text-ds-primary">{stats?.salons?.count ?? 0}</p>
+                  <p className="text-[10px] text-ds-outline uppercase tracking-widest font-semibold mt-0.5">Salons</p>
                 </div>
                 <div>
                   <p className="font-headline text-xl font-extrabold text-[#191c1d]">{stats?.bookings?.completed ?? 0}</p>
-                  <p className="text-[10px] text-[#6f7979] uppercase tracking-widest font-semibold mt-0.5">Completed</p>
+                  <p className="text-[10px] text-ds-outline uppercase tracking-widest font-semibold mt-0.5">Completed</p>
                 </div>
               </div>
             </div>
 
             {/* Salon capacity */}
-            <div className="relative bg-[#004242] rounded-[0.5rem] overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#004242] via-[#005b5c] to-[#1b6869]" />
+            <div className="relative bg-ds-primary rounded-lg overflow-hidden">
+              <div className="absolute inset-0 bg-linear-to-br from-ds-primary via-ds-primary-container to-ds-surface-tint" />
               <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full bg-white/5 translate-x-8 translate-y-8" />
               <div className="absolute top-4 right-4 w-16 h-16 rounded-full bg-white/5" />
               <div className="relative z-10 p-6">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#8bd0d1] mb-1">Salon Capacity</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-ds-on-primary-container mb-1">Salon Capacity</p>
                 <p className="font-headline text-3xl font-extrabold text-white">
                   {stats?.salons?.count ?? 0}
                   {stats?.salons?.max_allowed && <span className="text-white/50 text-lg"> / {stats.salons.max_allowed}</span>}
@@ -1048,7 +1048,7 @@ export default function OwnerDashboard() {
                     ? `${Math.max(0, stats.salons.max_allowed - (stats.salons.count ?? 0))} slot${stats.salons.max_allowed - (stats.salons.count ?? 0) !== 1 ? 's' : ''} available.`
                     : 'Manage from your subscription plan.'}
                 </p>
-                <div className="mt-4 flex items-center gap-2 text-[#8bd0d1] text-xs font-bold">
+                <div className="mt-4 flex items-center gap-2 text-ds-on-primary-container text-xs font-bold">
                   <span className="material-symbols-outlined text-sm">storefront</span>
                   {stats?.bookings?.approved ?? 0} approved bookings
                 </div>
@@ -1057,7 +1057,7 @@ export default function OwnerDashboard() {
 
             {/* Plan limits */}
             {sub?.features && (
-              <div className="bg-white rounded-[0.5rem] p-5">
+              <div className="bg-white rounded-lg p-5">
                 <h3 className="font-headline text-sm font-bold text-[#191c1d] mb-4">Plan Limits</h3>
                 <div className="space-y-3">
                   {[
@@ -1067,11 +1067,11 @@ export default function OwnerDashboard() {
                     { icon: 'calendar_month', label: 'Bookings / month', val: sub.features.max_bookings_per_month },
                   ].filter(r => r.val != null).map(row => (
                     <div key={row.label} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-[#3f4948]">
-                        <span className="material-symbols-outlined text-sm text-[#6f7979]">{row.icon}</span>
+                      <div className="flex items-center gap-2 text-ds-on-surface-variant">
+                        <span className="material-symbols-outlined text-sm text-ds-outline">{row.icon}</span>
                         <span className="text-sm">{row.label}</span>
                       </div>
-                      <span className="text-sm font-bold text-[#004242]">{row.val}</span>
+                      <span className="text-sm font-bold text-ds-primary">{row.val}</span>
                     </div>
                   ))}
                   {[
@@ -1080,11 +1080,11 @@ export default function OwnerDashboard() {
                     { icon: 'support_agent', label: 'Priority support', val: sub.features.priority_support },
                   ].map(row => (
                     <div key={row.label} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-[#3f4948]">
-                        <span className="material-symbols-outlined text-sm text-[#6f7979]">{row.icon}</span>
+                      <div className="flex items-center gap-2 text-ds-on-surface-variant">
+                        <span className="material-symbols-outlined text-sm text-ds-outline">{row.icon}</span>
                         <span className="text-sm">{row.label}</span>
                       </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${row.val ? 'bg-[#004242]/10 text-[#004242]' : 'bg-[#e1e3e4] text-[#6f7979]'}`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${row.val ? 'bg-ds-primary/10 text-ds-primary' : 'bg-[#e1e3e4] text-ds-outline'}`}>
                         {row.val ? 'Included' : 'Not included'}
                       </span>
                     </div>
@@ -1098,16 +1098,16 @@ export default function OwnerDashboard() {
 
       {/* ── Analytics view ── */}
       {mainTab === 'analytics' && !hasAnalytics && (
-        <div className="bg-white rounded-[0.5rem] p-16 text-center">
+        <div className="bg-white rounded-lg p-16 text-center">
           <div className="w-16 h-16 rounded-full bg-[#e1e3e4] flex items-center justify-center mx-auto mb-5">
-            <span className="material-symbols-outlined text-3xl text-[#6f7979]">lock</span>
+            <span className="material-symbols-outlined text-3xl text-ds-outline">lock</span>
           </div>
           <h3 className="font-headline text-xl font-bold text-[#191c1d] mb-2">Analytics Locked</h3>
-          <p className="text-sm text-[#6f7979] max-w-sm mx-auto mb-6">
+          <p className="text-sm text-ds-outline max-w-sm mx-auto mb-6">
             Upgrade your subscription plan to unlock revenue charts, daily trends, top services, profit breakdowns, and more.
           </p>
           <a href="/owner/subscription"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#004242] text-white text-sm font-bold hover:bg-[#005b5c] transition-colors">
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-ds-primary text-white text-sm font-bold hover:bg-ds-primary-container transition-colors">
             <span className="material-symbols-outlined text-base">upgrade</span>
             Upgrade Plan
           </a>

@@ -54,19 +54,19 @@ export default function FavoriteButton({ salonId }) {
   disabled={toggleFavoriteMutation.isLoading}
         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg hover:scale-110 disabled:opacity-50 ${
           isFavorited 
-            ? 'bg-[var(--terra)] hover:bg-[var(--sienna)]' 
-            : 'bg-[var(--white)] hover:bg-[var(--sand)] border-2 border-[var(--cream)]'
+            ? 'bg-(--terra) hover:bg-(--sienna)'
+            : 'bg-(--white) hover:bg-(--sand) border-2 border-(--cream)'
         }`}
         title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
       >
         {toggleFavoriteMutation.isLoading ? (
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[var(--terra)]"></div>
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-(--terra)"></div>
         ) : (
           <svg
             className={`w-6 h-6 transition-all ${
               isFavorited
                 ? 'text-white fill-current'
-                : 'text-[var(--muted)] hover:text-[var(--terra)]'
+                : 'text-(--muted) hover:text-(--terra)'
             }`}
             fill={isFavorited ? 'currentColor' : 'none'}
             stroke="currentColor"
@@ -85,25 +85,25 @@ export default function FavoriteButton({ salonId }) {
       {/* Login/Register Modal */}
       {showLoginPrompt && (
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4"
           onClick={() => setShowLoginPrompt(false)}
         >
           <div 
-            className="bg-[var(--white)] border-2 border-[var(--cream)] p-8 max-w-md w-full transform transition-all"
+            className="bg-(--white) border-2 border-(--cream) p-8 max-w-md w-full transform transition-all"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Icon */}
-            <div className="w-16 h-16 bg-[var(--cream)] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-[var(--terra)]" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-16 h-16 bg-(--cream) rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-(--terra)" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
               </svg>
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl font-bold text-center text-[var(--ink)] mb-2">
+            <h3 className="text-2xl font-bold text-center text-(--ink) mb-2">
               Save to Favorites
             </h3>
-            <p className="text-center text-[var(--muted)] mb-8">
+            <p className="text-center text-(--muted) mb-8">
               Sign in to save this salon and access it anytime from your dashboard
             </p>
 
@@ -114,7 +114,7 @@ export default function FavoriteButton({ salonId }) {
                   setShowLoginPrompt(false);
                   navigate('/login');
                 }}
-                className="w-full px-6 py-3 bg-[var(--terra)] text-white rounded-lg font-medium hover:bg-[var(--sienna)] transition-all shadow-md hover:shadow-lg"
+                className="w-full px-6 py-3 bg-(--terra) text-white rounded-lg font-medium hover:bg-(--sienna) transition-all shadow-md hover:shadow-lg"
               >
                 Sign In
               </button>
@@ -124,14 +124,14 @@ export default function FavoriteButton({ salonId }) {
                   setShowLoginPrompt(false);
                   navigate('/register');
                 }}
-                className="w-full px-6 py-3 bg-[var(--white)] text-[var(--ink)] border-2 border-[var(--cream)] rounded-lg font-medium hover:bg-[var(--sand)] transition-all"
+                className="w-full px-6 py-3 bg-(--white) text-(--ink) border-2 border-(--cream) rounded-lg font-medium hover:bg-(--sand) transition-all"
               >
                 Create Account
               </button>
 
               <button
                 onClick={() => setShowLoginPrompt(false)}
-                className="w-full px-6 py-3 text-[var(--muted)] hover:text-[var(--ink)] font-medium transition-all"
+                className="w-full px-6 py-3 text-(--muted) hover:text-(--ink) font-medium transition-all"
               >
                 Maybe Later
               </button>

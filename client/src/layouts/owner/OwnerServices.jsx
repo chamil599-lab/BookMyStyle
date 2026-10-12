@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../utils/api';
 
 const STATUS_BADGE = {
-  published:   'bg-[#004242]/10 text-[#004242]',
-  unpublished: 'bg-[#e1e3e4] text-[#6f7979]',
+  published:   'bg-ds-primary/10 text-ds-primary',
+  unpublished: 'bg-[#e1e3e4] text-ds-outline',
 };
 
 const EMPTY_SVC = {
@@ -55,15 +55,15 @@ function ServiceModal({ initial, onClose, onSaved }) {
     mutate(form);
   };
 
-  const inp = 'w-full bg-[#f3f4f5] border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-[#6f7979] focus:outline-none focus:border-[#004242]/40 focus:bg-white transition-colors';
-  const lbl = 'block text-xs font-bold text-[#6f7979] uppercase tracking-widest mb-1.5';
+  const inp = 'w-full bg-ds-surface-container-low border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-ds-outline focus:outline-hidden focus:border-ds-primary/40 focus:bg-white transition-colors';
+  const lbl = 'block text-xs font-bold text-ds-outline uppercase tracking-widest mb-1.5';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#e1e3e4]">
           <h2 className="font-headline text-lg font-bold text-[#191c1d]">{isEdit ? 'Edit Service' : 'Add New Service'}</h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-[#f3f4f5] transition-colors text-[#6f7979]">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-ds-surface-container-low transition-colors text-ds-outline">
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
@@ -71,7 +71,7 @@ function ServiceModal({ initial, onClose, onSaved }) {
         <form onSubmit={handleSubmit} className="overflow-y-auto flex-1">
           <div className="px-6 py-5 space-y-4">
             {error && (
-              <div className="bg-[#ffdad6] text-[#ba1a1a] text-sm font-medium px-4 py-3 rounded-xl border-l-4 border-[#ba1a1a]">
+              <div className="bg-ds-error-container text-ds-error text-sm font-medium px-4 py-3 rounded-xl border-l-4 border-ds-error">
                 {error}
               </div>
             )}
@@ -123,11 +123,11 @@ function ServiceModal({ initial, onClose, onSaved }) {
           </div>
 
           <div className="px-6 py-4 border-t border-[#e1e3e4] flex items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[#e1e3e4] text-sm font-semibold text-[#3f4948] hover:bg-[#f3f4f5] transition-colors">
+            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[#e1e3e4] text-sm font-semibold text-ds-on-surface-variant hover:bg-ds-surface-container-low transition-colors">
               Cancel
             </button>
             <button type="submit" disabled={isPending}
-              className="px-6 py-2.5 rounded-xl bg-[#004242] text-white text-sm font-bold hover:bg-[#005b5c] transition-colors disabled:opacity-60 flex items-center gap-2">
+              className="px-6 py-2.5 rounded-xl bg-ds-primary text-white text-sm font-bold hover:bg-ds-primary-container transition-colors disabled:opacity-60 flex items-center gap-2">
               {isPending && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               {isEdit ? 'Save Changes' : 'Create Service'}
             </button>
@@ -179,11 +179,11 @@ export default function OwnerServices() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-headline text-2xl font-bold text-[#004242]">Services</h1>
+          <h1 className="font-headline text-2xl font-bold text-ds-primary">Services</h1>
           {svcMax !== null && (
-            <p className="text-xs text-[#6f7979] mt-0.5 font-medium">
+            <p className="text-xs text-ds-outline mt-0.5 font-medium">
               {svcUsed} / {svcMax} services used
-              {atLimit && <span className="ml-2 text-[#ba1a1a] font-bold">— limit reached</span>}
+              {atLimit && <span className="ml-2 text-ds-error font-bold">— limit reached</span>}
             </p>
           )}
         </div>
@@ -193,8 +193,8 @@ export default function OwnerServices() {
           title={atLimit ? `Your plan allows a maximum of ${svcMax} service(s). Upgrade to add more.` : undefined}
           className={`flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl transition-colors ${
             atLimit
-              ? 'bg-[#e1e3e4] text-[#6f7979] cursor-not-allowed'
-              : 'bg-[#004242] text-white hover:bg-[#005b5c]'
+              ? 'bg-[#e1e3e4] text-ds-outline cursor-not-allowed'
+              : 'bg-ds-primary text-white hover:bg-ds-primary-container'
           }`}>
           <span className="material-symbols-outlined text-base">{atLimit ? 'lock' : 'add'}</span>
           Add Service
@@ -212,15 +212,15 @@ export default function OwnerServices() {
       )}
 
       {/* Filters */}
-      <div className="bg-white rounded-[0.5rem] p-4 flex flex-wrap gap-3">
+      <div className="bg-white rounded-lg p-4 flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6f7979] text-base">search</span>
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ds-outline text-base">search</span>
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search service name…"
-            className="w-full bg-[#f3f4f5] border-none rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004242]/20" />
+            className="w-full bg-ds-surface-container-low border-none rounded-full py-2 pl-9 pr-4 text-sm focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20" />
         </div>
         <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}
-          className="bg-[#f3f4f5] border-none rounded-full py-2 px-4 text-sm font-medium text-[#3f4948] focus:outline-none focus:ring-2 focus:ring-[#004242]/20">
+          className="bg-ds-surface-container-low border-none rounded-full py-2 px-4 text-sm font-medium text-ds-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20">
           <option value="">All Statuses</option>
           <option value="published">Published</option>
           <option value="unpublished">Unpublished</option>
@@ -230,15 +230,15 @@ export default function OwnerServices() {
       {/* Grid */}
       {isLoading ? (
         <div className="flex items-center justify-center h-48">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004242]" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ds-primary" />
         </div>
       ) : services.length === 0 ? (
-        <div className="bg-white rounded-[0.5rem] text-center py-16 text-[#6f7979]">
+        <div className="bg-white rounded-lg text-center py-16 text-ds-outline">
           <span className="material-symbols-outlined text-4xl block mb-2">content_cut</span>
           <p className="font-semibold">No services found</p>
           <p className="text-sm mt-1 mb-5">Create your first service to offer bookings.</p>
           <button onClick={() => setModal('create')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#004242] text-white text-sm font-bold rounded-xl hover:bg-[#005b5c] transition-colors">
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-ds-primary text-white text-sm font-bold rounded-xl hover:bg-ds-primary-container transition-colors">
             <span className="material-symbols-outlined text-base">add</span>
             Add Service
           </button>
@@ -247,30 +247,30 @@ export default function OwnerServices() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {services.map(svc => (
-              <div key={svc.id} className="relative overflow-hidden rounded-[1rem] border border-[#004242]/10 bg-[linear-gradient(180deg,#ffffff_0%,#f3fbfa_100%)] p-5 shadow-[0_18px_44px_rgba(0,66,66,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(0,66,66,0.12)]">
-                <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#8bd0d1]/15 blur-2xl" />
+              <div key={svc.id} className="relative overflow-hidden rounded-2xl border border-ds-primary/10 bg-[linear-gradient(180deg,#ffffff_0%,#f3fbfa_100%)] p-5 shadow-[0_18px_44px_rgba(0,66,66,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(0,66,66,0.12)]">
+                <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-ds-on-primary-container/15 blur-2xl" />
                 <div className="flex items-start justify-between gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[linear-gradient(135deg,#004242_0%,#0c5455_100%)] flex items-center justify-center flex-shrink-0 shadow-[0_12px_24px_rgba(0,66,66,0.18)]">
+                  <div className="w-12 h-12 rounded-2xl bg-[linear-gradient(135deg,#004242_0%,#0c5455_100%)] flex items-center justify-center shrink-0 shadow-[0_12px_24px_rgba(0,66,66,0.18)]">
                     <span className="material-symbols-outlined text-xl text-white">content_cut</span>
                   </div>
                   <div className="flex items-center gap-1.5 mt-1">
-                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold capitalize ${STATUS_BADGE[svc.status] ?? 'bg-[#e1e3e4] text-[#6f7979]'}`}>
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold capitalize ${STATUS_BADGE[svc.status] ?? 'bg-[#e1e3e4] text-ds-outline'}`}>
                       {svc.status}
                     </span>
                     <button onClick={() => setModal(svc)}
-                      className="p-1 rounded-lg text-[#6f7979] hover:bg-[#f3f4f5] hover:text-[#004242] transition-colors" title="Edit">
+                      className="p-1 rounded-lg text-ds-outline hover:bg-ds-surface-container-low hover:text-ds-primary transition-colors" title="Edit">
                       <span className="material-symbols-outlined text-base">edit</span>
                     </button>
                     {deleteId === svc.id ? (
-                      <div className="flex items-center gap-1 bg-[#ffdad6] rounded-lg px-2 py-0.5">
-                        <span className="text-xs font-semibold text-[#ba1a1a]">Delete?</span>
+                      <div className="flex items-center gap-1 bg-ds-error-container rounded-lg px-2 py-0.5">
+                        <span className="text-xs font-semibold text-ds-error">Delete?</span>
                         <button onClick={() => deleteMut.mutate(svc.id)} disabled={deleteMut.isPending}
-                          className="text-xs font-bold text-[#ba1a1a] hover:underline px-1">Yes</button>
-                        <button onClick={() => setDeleteId(null)} className="text-xs font-bold text-[#6f7979] hover:underline px-1">No</button>
+                          className="text-xs font-bold text-ds-error hover:underline px-1">Yes</button>
+                        <button onClick={() => setDeleteId(null)} className="text-xs font-bold text-ds-outline hover:underline px-1">No</button>
                       </div>
                     ) : (
                       <button onClick={() => setDeleteId(svc.id)}
-                        className="p-1 rounded-lg text-[#6f7979] hover:bg-[#ffdad6] hover:text-[#ba1a1a] transition-colors" title="Delete">
+                        className="p-1 rounded-lg text-ds-outline hover:bg-ds-error-container hover:text-ds-error transition-colors" title="Delete">
                         <span className="material-symbols-outlined text-base">delete</span>
                       </button>
                     )}
@@ -285,18 +285,18 @@ export default function OwnerServices() {
                 <div className="mt-4 space-y-2 text-sm">
                   {svc.department && (
                     <div className="flex items-center gap-2 text-[#285252]">
-                      <span className="material-symbols-outlined text-base text-[#004242]">category</span>
+                      <span className="material-symbols-outlined text-base text-ds-primary">category</span>
                       {svc.department.name}{svc.category ? ` › ${svc.category.name}` : ''}
                     </div>
                   )}
                   <div className="flex items-center gap-2 text-[#285252]">
-                    <span className="material-symbols-outlined text-base text-[#004242]">schedule</span>
+                    <span className="material-symbols-outlined text-base text-ds-primary">schedule</span>
                     {svc.duration} min
                   </div>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-[#004242]/10 flex items-center justify-between">
-                  <p className="font-headline font-extrabold text-lg text-[#004242]">
+                <div className="mt-5 pt-4 border-t border-ds-primary/10 flex items-center justify-between">
+                  <p className="font-headline font-extrabold text-lg text-ds-primary">
                     LKR {Number(svc.price ?? 0).toLocaleString()}
                   </p>
                   <div className="rounded-2xl px-3 py-2 text-right bg-[linear-gradient(135deg,#004242_0%,#0f5f60_100%)] shadow-[0_10px_24px_rgba(0,66,66,0.14)]">
@@ -310,12 +310,12 @@ export default function OwnerServices() {
 
           {meta.last_page > 1 && (
             <div className="flex items-center justify-between">
-              <p className="text-xs text-[#6f7979]">Page {meta.current_page} of {meta.last_page}</p>
+              <p className="text-xs text-ds-outline">Page {meta.current_page} of {meta.last_page}</p>
               <div className="flex gap-2">
                 <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={meta.current_page <= 1}
-                  className="px-3 py-1.5 rounded-lg bg-[#f3f4f5] text-[#3f4948] text-xs font-semibold disabled:opacity-40 hover:bg-[#e1e3e4] transition-colors">Prev</button>
+                  className="px-3 py-1.5 rounded-lg bg-ds-surface-container-low text-ds-on-surface-variant text-xs font-semibold disabled:opacity-40 hover:bg-[#e1e3e4] transition-colors">Prev</button>
                 <button onClick={() => setPage(p => Math.min(meta.last_page, p + 1))} disabled={meta.current_page >= meta.last_page}
-                  className="px-3 py-1.5 rounded-lg bg-[#004242] text-white text-xs font-semibold disabled:opacity-40 hover:bg-[#005b5c] transition-colors">Next</button>
+                  className="px-3 py-1.5 rounded-lg bg-ds-primary text-white text-xs font-semibold disabled:opacity-40 hover:bg-ds-primary-container transition-colors">Next</button>
               </div>
             </div>
           )}

@@ -44,3 +44,5 @@ Step one's tagged checkpoint deliberately makes no application behavior, authent
 Step eleven: [upload hardening and dependency audit](step-11-upload-security-audit.md). PHP dependency remediation and React major upgrades remain release gates.
 
 Step twelve: [PHP security upgrades](step-12-php-security-upgrades.md). The locked and installed PHP dependency audits now report zero advisories; retained React and host verification gates remain.
+
+Step thirteen: [retained React security upgrades](step-13-react-security-upgrades.md). Root npm, retained-client npm and installed PHP dependency audits now report zero findings; integration and host release gates remain.

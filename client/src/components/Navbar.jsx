@@ -67,7 +67,7 @@ const BrandLogo = memo(function BrandLogo({ scrolled = false, mobile = false }) 
         >
           BookMyStyle
         </span>
-        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--terra)]">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-(--terra)">
           Beauty Booking
         </span>
       </span>
@@ -83,11 +83,11 @@ const NavLink = memo(function NavLink({ item, isActive, onHero }) {
       className={`relative px-4 py-2 text-[11px] font-medium tracking-[0.16em] uppercase transition-all duration-300 group ${
         isActive
           ? onHero
-            ? "text-white bg-[var(--terra)]"
-            : "text-white bg-[var(--terra)]"
+            ? "text-white bg-(--terra)"
+            : "text-white bg-(--terra)"
           : onHero
-          ? "text-slate-200/90 hover:text-[var(--terra)]"
-          : "text-slate-200/90 hover:text-[var(--terra)]"
+          ? "text-slate-200/90 hover:text-(--terra)"
+          : "text-slate-200/90 hover:text-(--terra)"
       }`}
     >
       {item.label}
@@ -95,11 +95,11 @@ const NavLink = memo(function NavLink({ item, isActive, onHero }) {
         className={`absolute inset-0 transition-opacity duration-300 ${
           isActive
             ? onHero
-              ? "bg-[var(--terra)] opacity-20"
-              : "bg-[var(--cream)] opacity-15"
+              ? "bg-(--terra) opacity-20"
+              : "bg-(--cream) opacity-15"
             : onHero
-            ? "bg-[var(--terra)] opacity-0 group-hover:opacity-10"
-            : "bg-[var(--terra)] opacity-0 group-hover:opacity-10"
+            ? "bg-(--terra) opacity-0 group-hover:opacity-10"
+            : "bg-(--terra) opacity-0 group-hover:opacity-10"
         }`}
       />
     </Link>
@@ -163,14 +163,14 @@ const MobileNavLink = memo(function MobileNavLink({ item, isActive, onClose }) {
       onClick={onClose}
       className={`flex items-center justify-between rounded-r-2xl border-l-4 px-4 py-3.5 transition-all duration-200 ${
         isActive
-          ? "border-[var(--terra)] bg-[linear-gradient(90deg,rgba(196,98,45,0.16),rgba(247,240,230,0.95))] text-[var(--ink)] shadow-sm"
-          : "border-transparent text-[var(--ink)] hover:border-[rgba(196,98,45,0.45)] hover:bg-[var(--cream)]/80"
+          ? "border-(--terra) bg-[linear-gradient(90deg,rgba(196,98,45,0.16),rgba(247,240,230,0.95))] text-(--ink) shadow-xs"
+          : "border-transparent text-(--ink) hover:border-[rgba(196,98,45,0.45)] hover:bg-(--cream)/80"
       }`}
     >
-      <span className="font-[Unbounded] text-[11px] font-semibold tracking-[0.2em] uppercase">
+      <span className="font-[family-name:Unbounded] text-[11px] font-semibold tracking-[0.2em] uppercase">
         {item.label}
       </span>
-      {isActive && <span className="h-2 w-2 rounded-full bg-[var(--terra)]" />}
+      {isActive && <span className="h-2 w-2 rounded-full bg-(--terra)" />}
     </Link>
   );
 });
@@ -288,9 +288,9 @@ const Navbar = () => {
                 <div className="relative">
                   <button
                     onClick={toggleUserMenu}
-                    className="flex items-center px-3 py-2 space-x-2 transition-all duration-300 hover:bg-[var(--cream)]/20"
+                    className="flex items-center px-3 py-2 space-x-2 transition-all duration-300 hover:bg-(--cream)/20"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 text-sm font-medium text-white rounded-full bg-[var(--terra)]">
+                    <div className="flex items-center justify-center w-8 h-8 text-sm font-medium text-white rounded-full bg-(--terra)">
                       {userInitial}
                     </div>
                     <span className={`text-sm font-medium transition-colors duration-300 ${!scrolled ? "text-slate-200/90" : "text-slate-200/90"}`}>
@@ -357,11 +357,11 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Menu */}
       <div
-        className={`fixed inset-0 z-[60] lg:hidden ${isOpen ? "" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-60 lg:hidden ${isOpen ? "" : "pointer-events-none"}`}
       >
         {/* Backdrop */}
         <div
-          className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={closeMobileMenu}
@@ -375,7 +375,7 @@ const Navbar = () => {
           }`}
         >
           {/* Gradient Header */}
-          <div className="relative bg-[var(--terra)] px-6 pt-12 pb-8 overflow-hidden">
+          <div className="relative bg-(--terra) px-6 pt-12 pb-8 overflow-hidden">
             {/* Decorative circles */}
             <div className="absolute rounded-full -top-8 -right-8 w-36 h-36 bg-white/5" />
             <div className="absolute w-20 h-20 rounded-full top-4 -right-4 bg-white/5" />
@@ -398,7 +398,7 @@ const Navbar = () => {
             {/* User info or greeting */}
             {isAuthenticated ? (
               <div className="relative z-10 flex items-center gap-3">
-                <div className="flex items-center justify-center w-11 h-11 rounded-full bg-white/20 border-2 border-white/30 font-[Unbounded] text-sm font-bold text-white">
+                <div className="flex items-center justify-center w-11 h-11 rounded-full bg-white/20 border-2 border-white/30 font-[family-name:Unbounded] text-sm font-bold text-white">
                   {userInitial}
                 </div>
                 <div>
@@ -414,11 +414,11 @@ const Navbar = () => {
           </div>
 
           {/* Nav body */}
-          <div className="flex-1 min-h-0 flex flex-col overflow-y-auto bg-[var(--white)]">
+          <div className="flex-1 min-h-0 flex flex-col overflow-y-auto bg-(--white)">
 
             {/* Navigation Items */}
             <div className="px-4 pt-5 pb-3 space-y-1">
-              <span className="block font-[Unbounded] text-[8px] font-semibold tracking-[0.4em] text-[var(--muted)] uppercase px-2 mb-3">
+              <span className="block font-[family-name:Unbounded] text-[8px] font-semibold tracking-[0.4em] text-(--muted) uppercase px-2 mb-3">
                 Menu
               </span>
               {NAV_ITEMS.map((item) => (
@@ -442,30 +442,30 @@ const Navbar = () => {
               {isAuthenticated ? (
                 <>
                   <Link to={rolePaths.dashboard} onClick={closeMobileMenu}>
-                    <button className="w-full px-6 py-3.5 rounded-xl font-[Unbounded] text-[10px] font-bold tracking-[0.15em] text-white uppercase transition-all duration-200 bg-[var(--ink)] hover:bg-[var(--terra)] active:scale-[0.98]">
+                    <button className="w-full px-6 py-3.5 rounded-xl font-[family-name:Unbounded] text-[10px] font-bold tracking-[0.15em] text-white uppercase transition-all duration-200 bg-(--ink) hover:bg-(--terra) active:scale-[0.98]">
                       Dashboard
                     </button>
                   </Link>
                   <Link to={rolePaths.profile} onClick={closeMobileMenu}>
-                    <button className="w-full px-6 py-3.5 rounded-xl font-[Unbounded] text-[10px] font-bold tracking-[0.15em] uppercase transition-all duration-200 border border-[rgba(30,23,16,0.12)] bg-[var(--cream)]/75 text-[var(--ink)] hover:border-[var(--terra)]/35 hover:text-[var(--terra)] hover:bg-[var(--cream)] active:scale-[0.98]">
+                    <button className="w-full px-6 py-3.5 rounded-xl font-[family-name:Unbounded] text-[10px] font-bold tracking-[0.15em] uppercase transition-all duration-200 border border-[rgba(30,23,16,0.12)] bg-(--cream)/75 text-(--ink) hover:border-(--terra)/35 hover:text-(--terra) hover:bg-(--cream) active:scale-[0.98]">
                       Profile
                     </button>
                   </Link>
                   <Link to={rolePaths.bookings} onClick={closeMobileMenu}>
-                    <button className="w-full px-6 py-3.5 rounded-xl font-[Unbounded] text-[10px] font-bold tracking-[0.15em] uppercase transition-all duration-200 border border-[rgba(30,23,16,0.12)] bg-white text-[var(--ink)] hover:border-[var(--terra)]/35 hover:text-[var(--terra)] hover:bg-[var(--cream)]/60 active:scale-[0.98]">
+                    <button className="w-full px-6 py-3.5 rounded-xl font-[family-name:Unbounded] text-[10px] font-bold tracking-[0.15em] uppercase transition-all duration-200 border border-[rgba(30,23,16,0.12)] bg-white text-(--ink) hover:border-(--terra)/35 hover:text-(--terra) hover:bg-(--cream)/60 active:scale-[0.98]">
                       {rolePaths.bookingsLabel}
                     </button>
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full px-6 py-3.5 rounded-xl font-[Unbounded] text-[10px] font-bold tracking-[0.15em] uppercase transition-all duration-200 border border-[rgba(30,23,16,0.25)] text-[var(--muted)] hover:border-red-300 hover:text-red-600 hover:bg-red-50 active:scale-[0.98]"
+                    className="w-full px-6 py-3.5 rounded-xl font-[family-name:Unbounded] text-[10px] font-bold tracking-[0.15em] uppercase transition-all duration-200 border border-[rgba(30,23,16,0.25)] text-(--muted) hover:border-red-300 hover:text-red-600 hover:bg-red-50 active:scale-[0.98]"
                   >
                     Sign Out
                   </button>
                 </>
               ) : (
                 <Link to="/login" onClick={closeMobileMenu}>
-                  <button className="w-full px-6 py-3.5 rounded-xl font-[Unbounded] text-[10px] font-bold tracking-[0.15em] text-white uppercase transition-all duration-200 bg-[var(--ink)] hover:bg-[var(--terra)] active:scale-[0.98]">
+                  <button className="w-full px-6 py-3.5 rounded-xl font-[family-name:Unbounded] text-[10px] font-bold tracking-[0.15em] text-white uppercase transition-all duration-200 bg-(--ink) hover:bg-(--terra) active:scale-[0.98]">
                     Sign In
                   </button>
                 </Link>
@@ -474,14 +474,14 @@ const Navbar = () => {
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 border-t border-[rgba(196,98,45,0.12)] bg-[var(--sand)]">
+            <div className="px-5 py-3 border-t border-[rgba(196,98,45,0.12)] bg-(--sand)">
               <div className="flex items-center justify-between">
-                <p className="font-[Unbounded] text-[8px] font-semibold tracking-[0.25em] text-[var(--muted)] uppercase">
+                <p className="font-[family-name:Unbounded] text-[8px] font-semibold tracking-[0.25em] text-(--muted) uppercase">
                   © {CURRENT_YEAR} Book My Style
                 </p>
                 <div className="flex gap-1">
-                  <span className="h-0.5 w-4 rounded-full bg-[var(--terra)]/40" />
-                  <span className="h-0.5 w-2 rounded-full bg-[var(--terra)]" />
+                  <span className="h-0.5 w-4 rounded-full bg-(--terra)/40" />
+                  <span className="h-0.5 w-2 rounded-full bg-(--terra)" />
                 </div>
               </div>
             </div>

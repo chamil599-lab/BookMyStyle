@@ -99,7 +99,7 @@ export default function AdminLayout() {
                           sidebarCollapsed ? 'justify-center rounded-2xl' : 'gap-4 rounded-r-full'
                         } ${
                           isActive
-                            ? 'bg-white text-[#004242] font-semibold shadow-[0_10px_24px_rgba(0,0,0,0.18)]'
+                            ? 'bg-white text-ds-primary font-semibold shadow-[0_10px_24px_rgba(0,0,0,0.18)]'
                             : 'text-[#eefcfb] hover:text-white hover:bg-white/10'
                         }`}
                       >
@@ -118,13 +118,13 @@ export default function AdminLayout() {
         <div className="p-6 border-t border-white/10">
           <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
             <Link to="/admin/profile" title={sidebarCollapsed ? user?.name : undefined} className={`flex items-center min-w-0 group ${sidebarCollapsed ? 'justify-center' : 'gap-3 flex-1'}`}>
-              <div className="w-10 h-10 rounded-full bg-[linear-gradient(135deg,#0e7b7c_0%,#1ab8b9_100%)] flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-[0_8px_20px_rgba(14,123,124,0.45)] ring-1 ring-white/20 group-hover:ring-2 group-hover:ring-[#8bd0d1]/60 transition-all">
+              <div className="w-10 h-10 rounded-full bg-[linear-gradient(135deg,#0e7b7c_0%,#1ab8b9_100%)] flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-[0_8px_20px_rgba(14,123,124,0.45)] ring-1 ring-white/20 group-hover:ring-2 group-hover:ring-ds-on-primary-container/60 transition-all">
                 {initials}
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-white truncate group-hover:text-[#8bd0d1] transition-colors">{user?.name}</p>
-                  <p className="text-xs font-semibold tracking-wide text-[#8bd0d1]">System Admin</p>
+                  <p className="text-sm font-bold text-white truncate group-hover:text-ds-on-primary-container transition-colors">{user?.name}</p>
+                  <p className="text-xs font-semibold tracking-wide text-ds-on-primary-container">System Admin</p>
                 </div>
               )}
             </Link>
@@ -142,29 +142,29 @@ export default function AdminLayout() {
       {/* ── Main wrapper ── */}
       <main className={`flex flex-col min-h-screen bg-[linear-gradient(180deg,#eef7f6_0%,#f7fbfb_100%)] transition-all duration-300 ${sidebarCollapsed ? 'md:ml-24' : 'md:ml-72'}`}>
         {/* Top App Bar */}
-        <header className="sticky top-0 z-30 bg-[#eef7f6]/95 backdrop-blur h-16 flex justify-between items-center w-full px-6 border-b border-[#004242]/10">
+        <header className="sticky top-0 z-30 bg-[#eef7f6]/95 backdrop-blur-sm h-16 flex justify-between items-center w-full px-6 border-b border-ds-primary/10">
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => setSidebarCollapsed(v => !v)}
-              className="hidden md:flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#004242] shadow-[0_10px_25px_rgba(0,66,66,0.08)] hover:bg-[#dff4f2] transition-colors"
+              className="hidden md:flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-ds-primary shadow-[0_10px_25px_rgba(0,66,66,0.08)] hover:bg-[#dff4f2] transition-colors"
               title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <span className="material-symbols-outlined text-[20px]">
                 {sidebarCollapsed ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left'}
               </span>
             </button>
-            <h1 className="font-headline text-xl font-bold tracking-tight text-[#004242]">
+            <h1 className="font-headline text-xl font-bold tracking-tight text-ds-primary">
               BookMyStyle
             </h1>
-            <span className="text-xs bg-[#004242] text-white px-2 py-0.5 rounded-full font-semibold font-body shadow-[0_6px_18px_rgba(0,66,66,0.16)]">Admin</span>
+            <span className="text-xs bg-ds-primary text-white px-2 py-0.5 rounded-full font-semibold font-body shadow-[0_6px_18px_rgba(0,66,66,0.16)]">Admin</span>
           </div>
 
           <div className="flex-1 max-w-md mx-8 hidden sm:block">
             <div className="relative flex items-center">
-              <span className="material-symbols-outlined absolute left-3 text-[#6f7979] text-base">search</span>
+              <span className="material-symbols-outlined absolute left-3 text-ds-outline text-base">search</span>
               <input
-                className="w-full bg-white border border-[#004242]/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004242]/20 transition-all font-body"
+                className="w-full bg-white border border-ds-primary/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20 transition-all font-body"
                 placeholder="Search..."
                 type="text"
               />
@@ -178,17 +178,17 @@ export default function AdminLayout() {
               onClick={handleLogout}
               title="Logout"
               aria-label="Logout"
-              className="md:hidden p-2 text-[#004242] hover:bg-[#dff4f2] rounded-full transition-colors"
+              className="md:hidden p-2 text-ds-primary hover:bg-[#dff4f2] rounded-full transition-colors"
             >
               <span className="material-symbols-outlined text-xl">logout</span>
             </button>
             <Link to="/admin/profile" className="hidden md:flex items-center gap-2.5 group rounded-full px-2 py-1 transition-colors hover:bg-[#dff4f2]">
-              <div className="w-8 h-8 rounded-full bg-[#004242] flex items-center justify-center text-white font-bold text-xs shrink-0 group-hover:ring-2 group-hover:ring-[#004242]/30 transition-all">
+              <div className="w-8 h-8 rounded-full bg-ds-primary flex items-center justify-center text-white font-bold text-xs shrink-0 group-hover:ring-2 group-hover:ring-ds-primary/30 transition-all">
                 {initials}
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs text-[#004242] font-bold font-body">{user?.name?.split(' ')[0]}</span>
-                <span className="text-[10px] text-[#6f7979] uppercase tracking-widest font-body">Admin</span>
+                <span className="text-xs text-ds-primary font-bold font-body">{user?.name?.split(' ')[0]}</span>
+                <span className="text-[10px] text-ds-outline uppercase tracking-widest font-body">Admin</span>
               </div>
             </Link>
           </div>
@@ -201,7 +201,7 @@ export default function AdminLayout() {
       </main>
 
       {/* Bottom nav — mobile only */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-4 pb-6 pt-2 bg-[#f8f9fa]/80 backdrop-blur-xl border-t border-[#bec8c8]/20 shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+      <nav className="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-4 pb-6 pt-2 bg-[#f8f9fa]/80 backdrop-blur-xl border-t border-ds-outline-variant/20 shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
         {[
           { path: '/admin',                icon: 'home',            label: 'Home' },
           { path: '/admin/bookings',       icon: 'event_note',      label: 'Bookings' },
@@ -215,7 +215,7 @@ export default function AdminLayout() {
               key={item.path}
               to={item.path}
               className={`flex flex-col items-center justify-center p-2 px-4 text-[10px] font-medium uppercase tracking-wider transition-all rounded-xl ${
-                isActive ? 'bg-[#005b5c] text-white' : 'text-[#566060]'
+                isActive ? 'bg-ds-primary-container text-white' : 'text-[#566060]'
               }`}
             >
               <span className="material-symbols-outlined text-lg mb-1">{item.icon}</span>

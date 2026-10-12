@@ -54,14 +54,14 @@ export default function ChangePassword() {
   return (
     <div className="space-y-6">
       <div className="rounded-[1.2rem] border border-[#d7e4e3] bg-white p-6 shadow-[0_18px_42px_rgba(25,28,29,0.08)]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#6f7979]">Security</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ds-outline">Security</p>
         <h1 className="mt-2 font-headline text-3xl font-extrabold text-[#191c1d]">Change Password</h1>
-        <p className="mt-2 text-sm text-[#6f7979]">Keep your account secure with a strong password that only you know.</p>
+        <p className="mt-2 text-sm text-ds-outline">Keep your account secure with a strong password that only you know.</p>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[0.72fr_1.28fr]">
         <div className="rounded-[1.2rem] bg-[linear-gradient(135deg,#2d5252_0%,#476363_58%,#5f7e7d_100%)] p-6 text-white shadow-[0_18px_42px_rgba(45,82,82,0.18)]">
-          <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white/12">
+          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/12">
             <span className="material-symbols-outlined text-3xl text-white">lock</span>
           </div>
           <h2 className="mt-5 font-headline text-2xl font-extrabold text-white">Security Tips</h2>
@@ -73,12 +73,12 @@ export default function ChangePassword() {
         </div>
 
         <div className="max-w-2xl rounded-[1.2rem] border border-[#d7e4e3] bg-white p-6 shadow-[0_18px_42px_rgba(25,28,29,0.08)]">
-          {error && <div className="mb-4 rounded-[0.9rem] border border-[#f0b2ac] bg-[#fff1ef] p-3 text-sm text-[#ba1a1a]">{error}</div>}
+          {error && <div className="mb-4 rounded-[0.9rem] border border-[#f0b2ac] bg-[#fff1ef] p-3 text-sm text-ds-error">{error}</div>}
           {success && <div className="mb-4 rounded-[0.9rem] border border-[#b8d9c0] bg-[#edf7ef] p-3 text-sm text-[#2e7d32]">{success}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="current_password" className="mb-2 block text-sm font-semibold text-[#3f4948]">
+              <label htmlFor="current_password" className="mb-2 block text-sm font-semibold text-ds-on-surface-variant">
                 Current Password
               </label>
               <input
@@ -88,12 +88,12 @@ export default function ChangePassword() {
                 required
                 value={formData.current_password}
                 onChange={handleChange}
-                className="w-full rounded-[1rem] border border-[#d3dfdf] bg-white px-4 py-3 text-[#191c1d] outline-none transition focus:border-[#004242] focus:ring-4 focus:ring-[#004242]/10"
+                className="w-full rounded-2xl border border-[#d3dfdf] bg-white px-4 py-3 text-[#191c1d] outline-hidden transition focus:border-ds-primary focus:ring-4 focus:ring-ds-primary/10"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-[#3f4948]">
+              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-ds-on-surface-variant">
                 New Password
               </label>
               <input
@@ -103,13 +103,13 @@ export default function ChangePassword() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full rounded-[1rem] border border-[#d3dfdf] bg-white px-4 py-3 text-[#191c1d] outline-none transition focus:border-[#004242] focus:ring-4 focus:ring-[#004242]/10"
+                className="w-full rounded-2xl border border-[#d3dfdf] bg-white px-4 py-3 text-[#191c1d] outline-hidden transition focus:border-ds-primary focus:ring-4 focus:ring-ds-primary/10"
               />
-              <p className="mt-2 text-xs font-semibold text-[#6f7979]">Must be at least 8 characters</p>
+              <p className="mt-2 text-xs font-semibold text-ds-outline">Must be at least 8 characters</p>
             </div>
 
             <div>
-              <label htmlFor="password_confirmation" className="mb-2 block text-sm font-semibold text-[#3f4948]">
+              <label htmlFor="password_confirmation" className="mb-2 block text-sm font-semibold text-ds-on-surface-variant">
                 Confirm New Password
               </label>
               <input
@@ -119,7 +119,7 @@ export default function ChangePassword() {
                 required
                 value={formData.password_confirmation}
                 onChange={handleChange}
-                className="w-full rounded-[1rem] border border-[#d3dfdf] bg-white px-4 py-3 text-[#191c1d] outline-none transition focus:border-[#004242] focus:ring-4 focus:ring-[#004242]/10"
+                className="w-full rounded-2xl border border-[#d3dfdf] bg-white px-4 py-3 text-[#191c1d] outline-hidden transition focus:border-ds-primary focus:ring-4 focus:ring-ds-primary/10"
               />
             </div>
 

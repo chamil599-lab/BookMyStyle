@@ -58,7 +58,7 @@ const DealsPage = () => {
   const flashDeals = deals.filter((deal) => ['Hot Deal', 'Limited'].includes(deal.badge)).slice(0, 3);
 
   return (
-    <div ref={scrollRef} className="min-h-screen bg-[var(--sand)] text-[var(--ink)]">
+    <div ref={scrollRef} className="min-h-screen bg-(--sand) text-(--ink)">
       <Helmet>
         <title>{`BookMyStyle Deals - ${deals.length}+ Active Beauty Offers`}</title>
         <meta
@@ -78,15 +78,15 @@ const DealsPage = () => {
 
         <div className="relative z-10 mx-auto max-w-[1300px] text-center">
           <div className="mx-auto max-w-4xl">
-            <div className="mb-5 inline-flex items-center gap-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra2)] uppercase hero-animate-1">
-              <span className="h-0.5 w-5 bg-[var(--terra2)]" />
+            <div className="mb-5 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra2) uppercase hero-animate-1">
+              <span className="h-0.5 w-5 bg-(--terra2)" />
               Limited Time Offers
             </div>
 
-            <h1 className="font-[Unbounded] text-4xl font-extrabold leading-[0.95] tracking-tight text-white md:text-6xl hero-animate-2">
+            <h1 className="font-[family-name:Unbounded] text-4xl font-extrabold leading-[0.95] tracking-tight text-white md:text-6xl hero-animate-2">
               Exclusive Beauty
               <br />
-              <em className="font-[Libre_Baskerville] text-[var(--terra2)]">Deals & Offers</em>
+              <em className="font-[family-name:Libre_Baskerville] text-(--terra2)">Deals & Offers</em>
             </h1>
 
             <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/85 md:text-base hero-animate-3">
@@ -96,15 +96,15 @@ const DealsPage = () => {
             {!isLoading && (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-white hero-animate-4">
                 <div>
-                  <div className="font-[Unbounded] text-3xl font-black">40%</div>
+                  <div className="font-[family-name:Unbounded] text-3xl font-black">40%</div>
                   <div className="text-[10px] tracking-[0.2em] uppercase text-white/70">Max Discount</div>
                 </div>
                 <div>
-                  <div className="font-[Unbounded] text-3xl font-black">{deals.length}+</div>
+                  <div className="font-[family-name:Unbounded] text-3xl font-black">{deals.length}+</div>
                   <div className="text-[10px] tracking-[0.2em] uppercase text-white/70">Active Deals</div>
                 </div>
                 <div>
-                  <div className="font-[Unbounded] text-3xl font-black">50+</div>
+                  <div className="font-[family-name:Unbounded] text-3xl font-black">50+</div>
                   <div className="text-[10px] tracking-[0.2em] uppercase text-white/70">Partner Salons</div>
                 </div>
               </div>
@@ -115,30 +115,30 @@ const DealsPage = () => {
 
       {isLoading ? (
         <section className="px-6 py-24">
-          <div className="mx-auto max-w-7xl text-center text-[var(--muted)]">Loading amazing deals...</div>
+          <div className="mx-auto max-w-7xl text-center text-(--muted)">Loading amazing deals...</div>
         </section>
       ) : (
         <>
           {flashDeals.length > 0 && (
             <section className="px-6 pb-12">
-              <div className="mx-auto max-w-7xl border-2 border-[var(--cream)] bg-[var(--ink)] p-8 md:p-10 scroll-animate anim-fade-in-up">
+              <div className="mx-auto max-w-7xl border-2 border-(--cream) bg-(--ink) p-8 md:p-10 scroll-animate anim-fade-in-up">
                 <div className="mb-8 text-center">
-                  <h2 className="font-[Unbounded] text-2xl font-extrabold text-white md:text-3xl">Flash Deals - Ending Soon!</h2>
+                  <h2 className="font-[family-name:Unbounded] text-2xl font-extrabold text-white md:text-3xl">Flash Deals - Ending Soon!</h2>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                   {flashDeals.map((deal, index) => (
-                    <div key={deal.id} className="border-2 border-[var(--cream)] bg-[var(--white)] p-5 scroll-animate anim-slide-in-stagger" style={{ animationDelay: `${index * 80}ms` }}>
+                    <div key={deal.id} className="border-2 border-(--cream) bg-(--white) p-5 scroll-animate anim-slide-in-stagger" style={{ animationDelay: `${index * 80}ms` }}>
                       <div className="mb-4 flex items-start justify-between gap-3">
                         <div>
-                          <h3 className="mb-1 text-lg font-bold text-[var(--ink)]">{deal.title}</h3>
-                          <p className="text-sm text-[var(--muted)]">{deal.salon}</p>
+                          <h3 className="mb-1 text-lg font-bold text-(--ink)">{deal.title}</h3>
+                          <p className="text-sm text-(--muted)">{deal.salon}</p>
                         </div>
-                        <div className="bg-[var(--terra)] px-3 py-1 text-xs font-bold text-white">-{deal.discount}%</div>
+                        <div className="bg-(--terra) px-3 py-1 text-xs font-bold text-white">-{deal.discount}%</div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-xl font-black text-[var(--sienna)]">Rs. {Number(deal.discountedPrice || 0).toLocaleString()}</span>
-                        <span className="text-sm text-[var(--muted)] line-through">Rs. {Number(deal.originalPrice || 0).toLocaleString()}</span>
+                        <span className="text-xl font-black text-(--sienna)">Rs. {Number(deal.discountedPrice || 0).toLocaleString()}</span>
+                        <span className="text-sm text-(--muted) line-through">Rs. {Number(deal.originalPrice || 0).toLocaleString()}</span>
                       </div>
                     </div>
                   ))}
@@ -155,10 +155,10 @@ const DealsPage = () => {
                     key={category.id}
                     onClick={() => setActiveCategory(category.id)}
                     style={{ animationDelay: `${Math.min(index, 5) * 70}ms` }}
-                    className={`px-5 py-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition ${
+                    className={`px-5 py-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.15em] uppercase transition ${
                       activeCategory === category.id
-                        ? 'bg-[var(--terra)] text-white'
-                        : 'bg-[var(--cream)] text-[var(--muted)] hover:text-[var(--terra)]'
+                        ? 'bg-(--terra) text-white'
+                        : 'bg-(--cream) text-(--muted) hover:text-(--terra)'
                     } scroll-animate anim-slide-in-stagger`}
                   >
                     <span className="mr-2">{category.icon}</span>
@@ -167,8 +167,8 @@ const DealsPage = () => {
                 ))}
               </div>
 
-              <div className="mb-8 text-center text-sm text-[var(--muted)] scroll-animate anim-fade-in-up" style={{ animationDelay: '120ms' }}>
-                <span className="font-bold text-[var(--terra)]">{filteredDeals.length}</span> amazing deals available
+              <div className="mb-8 text-center text-sm text-(--muted) scroll-animate anim-fade-in-up" style={{ animationDelay: '120ms' }}>
+                <span className="font-bold text-(--terra)">{filteredDeals.length}</span> amazing deals available
               </div>
             </div>
           </section>
@@ -178,36 +178,36 @@ const DealsPage = () => {
               {filteredDeals.length > 0 ? (
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                   {filteredDeals.map((deal, index) => (
-                    <article key={deal.id} className="overflow-hidden border-2 border-[var(--cream)] bg-[var(--white)] transition hover:border-[var(--terra)] scroll-animate anim-slide-in-stagger" style={{ animationDelay: `${Math.min(index, 8) * 80}ms` }}>
+                    <article key={deal.id} className="overflow-hidden border-2 border-(--cream) bg-(--white) transition hover:border-(--terra) scroll-animate anim-slide-in-stagger" style={{ animationDelay: `${Math.min(index, 8) * 80}ms` }}>
                       <div className="relative h-56 overflow-hidden">
                         <img
                           src={deal.image}
                           alt={deal.title}
                           className="h-full w-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/55 to-transparent" />
 
-                        <div className="absolute left-4 top-4 bg-[var(--terra)] px-3 py-1 text-xs font-semibold text-white">
+                        <div className="absolute left-4 top-4 bg-(--terra) px-3 py-1 text-xs font-semibold text-white">
                           {deal.badge}
                         </div>
 
-                        <div className="absolute right-4 top-4 bg-[var(--white)] px-3 py-2 text-center">
-                          <div className="text-lg font-black text-[var(--sienna)]">{deal.discount}%</div>
-                          <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--muted)]">Off</div>
+                        <div className="absolute right-4 top-4 bg-(--white) px-3 py-2 text-center">
+                          <div className="text-lg font-black text-(--sienna)">{deal.discount}%</div>
+                          <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-(--muted)">Off</div>
                         </div>
                       </div>
 
                       <div className="p-6">
-                        <h3 className="mb-2 text-xl font-bold text-[var(--ink)]">{deal.title}</h3>
+                        <h3 className="mb-2 text-xl font-bold text-(--ink)">{deal.title}</h3>
 
-                        <div className="mb-3 text-sm text-[var(--muted)]">{deal.salon}</div>
+                        <div className="mb-3 text-sm text-(--muted)">{deal.salon}</div>
 
-                        <p className="mb-4 text-sm leading-relaxed text-[var(--muted)]">{deal.description}</p>
+                        <p className="mb-4 text-sm leading-relaxed text-(--muted)">{deal.description}</p>
 
                         {deal.features.length > 0 && (
                           <div className="mb-4 flex flex-wrap gap-2">
                             {deal.features.map((feature, index) => (
-                              <span key={index} className="bg-[var(--sand)] px-2 py-1 text-xs text-[var(--ink)]">
+                              <span key={index} className="bg-(--sand) px-2 py-1 text-xs text-(--ink)">
                                 {feature}
                               </span>
                             ))}
@@ -215,21 +215,21 @@ const DealsPage = () => {
                         )}
 
                         <div className="mb-4 flex items-end gap-3">
-                          <div className="text-2xl font-black text-[var(--sienna)]">
+                          <div className="text-2xl font-black text-(--sienna)">
                             Rs. {Number(deal.discountedPrice || 0).toLocaleString()}
                           </div>
-                          <div className="pb-1 text-sm text-[var(--muted)] line-through">
+                          <div className="pb-1 text-sm text-(--muted) line-through">
                             Rs. {Number(deal.originalPrice || 0).toLocaleString()}
                           </div>
                         </div>
 
                         {deal.validUntil && (
-                          <div className="mb-4 text-xs text-[var(--muted)]">
+                          <div className="mb-4 text-xs text-(--muted)">
                             Valid until {new Date(deal.validUntil).toLocaleDateString()}
                           </div>
                         )}
 
-                        <button className="w-full bg-[var(--terra)] py-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase hover:bg-[var(--sienna)]">
+                        <button className="w-full bg-(--terra) py-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase hover:bg-(--sienna)">
                           Coming Soon
                         </button>
                       </div>
@@ -237,12 +237,12 @@ const DealsPage = () => {
                   ))}
                 </div>
               ) : (
-                <div className="border-2 border-[var(--cream)] bg-[var(--white)] px-6 py-16 text-center scroll-animate anim-scale-in">
-                  <h3 className="mb-3 text-2xl font-bold text-[var(--ink)]">No deals found</h3>
-                  <p className="mb-6 text-[var(--muted)]">We couldn't find any deals in this category.</p>
+                <div className="border-2 border-(--cream) bg-(--white) px-6 py-16 text-center scroll-animate anim-scale-in">
+                  <h3 className="mb-3 text-2xl font-bold text-(--ink)">No deals found</h3>
+                  <p className="mb-6 text-(--muted)">We couldn't find any deals in this category.</p>
                   <button
                     onClick={() => setActiveCategory('all')}
-                    className="bg-[var(--terra)] px-8 py-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase hover:bg-[var(--sienna)]"
+                    className="bg-(--terra) px-8 py-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase hover:bg-(--sienna)"
                   >
                     View All Deals
                   </button>
@@ -252,10 +252,10 @@ const DealsPage = () => {
           </section>
 
           <section id="how-it-works" className="px-6 pb-20 scroll-mt-24">
-            <div className="mx-auto max-w-6xl border-2 border-[var(--cream)] bg-[var(--white)] p-8 md:p-12 scroll-animate anim-fade-in-up">
+            <div className="mx-auto max-w-6xl border-2 border-(--cream) bg-(--white) p-8 md:p-12 scroll-animate anim-fade-in-up">
               <div className="mb-12 text-center">
-                <h2 className="mb-3 font-[Unbounded] text-3xl font-extrabold text-[var(--ink)] md:text-4xl">How It Works</h2>
-                <p className="text-[var(--muted)]">Book your deal in three simple steps</p>
+                <h2 className="mb-3 font-[family-name:Unbounded] text-3xl font-extrabold text-(--ink) md:text-4xl">How It Works</h2>
+                <p className="text-(--muted)">Book your deal in three simple steps</p>
               </div>
 
               <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -276,12 +276,12 @@ const DealsPage = () => {
                     description: 'Visit the salon and enjoy your premium service at a discounted price',
                   },
                 ].map((item, index) => (
-                  <div key={item.step} className="border-2 border-[var(--cream)] bg-[var(--sand)] p-6 text-center scroll-animate anim-slide-in-stagger" style={{ animationDelay: `${index * 90}ms` }}>
-                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center bg-[var(--terra)] font-[Unbounded] text-lg font-black text-white">
+                  <div key={item.step} className="border-2 border-(--cream) bg-(--sand) p-6 text-center scroll-animate anim-slide-in-stagger" style={{ animationDelay: `${index * 90}ms` }}>
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center bg-(--terra) font-[family-name:Unbounded] text-lg font-black text-white">
                       {item.step}
                     </div>
-                    <h3 className="mb-2 text-xl font-bold text-[var(--ink)]">{item.title}</h3>
-                    <p className="text-sm leading-relaxed text-[var(--muted)]">{item.description}</p>
+                    <h3 className="mb-2 text-xl font-bold text-(--ink)">{item.title}</h3>
+                    <p className="text-sm leading-relaxed text-(--muted)">{item.description}</p>
                   </div>
                 ))}
               </div>
@@ -289,8 +289,8 @@ const DealsPage = () => {
           </section>
 
           <section className="px-6 pb-24">
-            <div className="mx-auto max-w-5xl border-2 border-[var(--cream)] bg-[var(--ink)] p-10 text-center md:p-14 scroll-animate anim-scale-in">
-              <h2 className="mb-3 font-[Unbounded] text-3xl font-extrabold text-white md:text-4xl">Never Miss a Deal!</h2>
+            <div className="mx-auto max-w-5xl border-2 border-(--cream) bg-(--ink) p-10 text-center md:p-14 scroll-animate anim-scale-in">
+              <h2 className="mb-3 font-[family-name:Unbounded] text-3xl font-extrabold text-white md:text-4xl">Never Miss a Deal!</h2>
               <p className="mx-auto mb-8 max-w-2xl text-white/80">
                 Subscribe to our newsletter and get exclusive deals delivered to your inbox
               </p>
@@ -298,9 +298,9 @@ const DealsPage = () => {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 bg-white px-5 py-3 text-sm text-[var(--ink)] outline-none"
+                  className="flex-1 bg-white px-5 py-3 text-sm text-(--ink) outline-hidden"
                 />
-                <button className="bg-[var(--terra)] px-6 py-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase hover:bg-[var(--sienna)]">
+                <button className="bg-(--terra) px-6 py-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase hover:bg-(--sienna)">
                   Subscribe Now
                 </button>
               </div>

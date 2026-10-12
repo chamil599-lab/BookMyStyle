@@ -21,12 +21,12 @@ export default function BookingHistory() {
       pending: 'bg-[#fff3e0] text-[#e65100]',
       approved: 'bg-[#e8f5e9] text-[#2e7d32]',
       completed: 'bg-[#e0f2f1] text-[#00695c]',
-      cancelled: 'bg-[#ffdad6] text-[#ba1a1a]',
-      rejected: 'bg-[#ffdad6] text-[#ba1a1a]',
+      cancelled: 'bg-ds-error-container text-ds-error',
+      rejected: 'bg-ds-error-container text-ds-error',
     };
 
     return (
-      <span className={`rounded-full px-3 py-1 text-xs font-bold ${classes[status] ?? 'bg-[#e1e3e4] text-[#3f4948]'}`}>
+      <span className={`rounded-full px-3 py-1 text-xs font-bold ${classes[status] ?? 'bg-[#e1e3e4] text-ds-on-surface-variant'}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
@@ -35,7 +35,7 @@ export default function BookingHistory() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-[#004242]" />
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-ds-primary" />
       </div>
     );
   }
@@ -43,18 +43,18 @@ export default function BookingHistory() {
   return (
     <div className="space-y-6">
       <div className="rounded-[1.2rem] border border-[#d7e4e3] bg-white p-6 shadow-[0_18px_42px_rgba(25,28,29,0.08)]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#6f7979]">Booking History</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ds-outline">Booking History</p>
         <h1 className="mt-2 font-headline text-3xl font-extrabold text-[#191c1d]">Past Visits & Records</h1>
-        <p className="mt-2 text-sm text-[#6f7979]">Review previous appointments, service details, and salon visits in one timeline.</p>
+        <p className="mt-2 text-sm text-ds-outline">Review previous appointments, service details, and salon visits in one timeline.</p>
       </div>
 
       {!bookings || bookings.length === 0 ? (
         <div className="rounded-[1.2rem] border border-[#d7e4e3] bg-[linear-gradient(180deg,#ffffff_0%,#f8fbfb_100%)] p-12 text-center shadow-[0_18px_42px_rgba(25,28,29,0.08)]">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-[linear-gradient(135deg,#2d5252_0%,#5f7e7d_100%)] text-white shadow-[0_18px_34px_rgba(45,82,82,0.18)]">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[linear-gradient(135deg,#2d5252_0%,#5f7e7d_100%)] text-white shadow-[0_18px_34px_rgba(45,82,82,0.18)]">
             <span className="material-symbols-outlined text-4xl">history</span>
           </div>
           <h3 className="mt-5 font-headline text-2xl font-bold text-[#191c1d]">No Booking History</h3>
-          <p className="mt-2 text-sm text-[#6f7979]">You don&apos;t have any past bookings yet.</p>
+          <p className="mt-2 text-sm text-ds-outline">You don&apos;t have any past bookings yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -70,18 +70,18 @@ export default function BookingHistory() {
                     {getStatusBadge(booking.status)}
                   </div>
 
-                  <div className="grid gap-2 text-sm text-[#6f7979] md:grid-cols-2">
+                  <div className="grid gap-2 text-sm text-ds-outline md:grid-cols-2">
                     <p className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#004242]">content_cut</span>
+                      <span className="material-symbols-outlined text-[18px] text-ds-primary">content_cut</span>
                       <span className="font-medium">{booking.service?.name || 'Service unavailable'}</span>
-                      {booking.service?.price && <span className="font-semibold text-[#004242]">LKR {booking.service.price}/=</span>}
+                      {booking.service?.price && <span className="font-semibold text-ds-primary">LKR {booking.service.price}/=</span>}
                     </p>
                     <p className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#004242]">calendar_month</span>
+                      <span className="material-symbols-outlined text-[18px] text-ds-primary">calendar_month</span>
                       <span>{format(new Date(booking.date), 'MMMM d, yyyy')}</span>
                     </p>
                     <p className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#004242]">schedule</span>
+                      <span className="material-symbols-outlined text-[18px] text-ds-primary">schedule</span>
                       <span>{booking.time}</span>
                       {booking.service?.duration && <span>&bull; {booking.service.duration} mins</span>}
                     </p>
@@ -96,11 +96,11 @@ export default function BookingHistory() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={data.meta.current_page === 1}
-                className="rounded-full border border-[#d0dddd] px-4 py-2 text-sm font-bold text-[#3f4948] transition hover:bg-[#f5f8f8] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full border border-[#d0dddd] px-4 py-2 text-sm font-bold text-ds-on-surface-variant transition hover:bg-[#f5f8f8] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-sm font-semibold text-[#6f7979]">
+              <span className="px-4 py-2 text-sm font-semibold text-ds-outline">
                 Page {data.meta.current_page} of {data.meta.last_page}
               </span>
               <button

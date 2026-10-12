@@ -15,10 +15,10 @@ const SalonsHero = ({ totalSalons = 0, averageRating = 0, searchTerm, onSearchCh
 
       {/* Overlays */}
       <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(15,10,5,0.93)_0%,rgba(15,10,5,0.70)_50%,rgba(139,58,30,0.30)_100%)]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/40" />
 
       {/* Watermark letter */}
-      <div className="pointer-events-none absolute -bottom-10 right-0 select-none font-[Unbounded] text-[clamp(12rem,22vw,20rem)] font-black leading-none text-transparent [-webkit-text-stroke:1px_rgba(196,98,45,0.10)]">
+      <div className="pointer-events-none absolute -bottom-10 right-0 select-none font-[family-name:Unbounded] text-[clamp(12rem,22vw,20rem)] font-black leading-none text-transparent [-webkit-text-stroke:1px_rgba(196,98,45,0.10)]">
         S
       </div>
 
@@ -31,20 +31,20 @@ const SalonsHero = ({ totalSalons = 0, averageRating = 0, searchTerm, onSearchCh
 
         {/* Eyebrow */}
         <div className="mb-8 flex items-center gap-3 hero-animate-1">
-          <span className="bg-[var(--terra)] px-3 py-1 font-[Unbounded] text-[9px] font-semibold tracking-[0.2em] text-white uppercase">
+          <span className="bg-(--terra) px-3 py-1 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.2em] text-white uppercase">
             Sri Lanka
           </span>
           <span className="h-px w-8 bg-white/25" />
-          <span className="font-[Unbounded] text-[10px] font-semibold tracking-[0.28em] text-white/45 uppercase">
+          <span className="font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.28em] text-white/45 uppercase">
             Browse · Discover · Book
           </span>
         </div>
 
         {/* Headline */}
-        <h1 className="font-[Unbounded] text-[clamp(3rem,8vw,6.5rem)] font-extrabold leading-[0.9] tracking-[-2px] text-white hero-animate-2">
+        <h1 className="font-[family-name:Unbounded] text-[clamp(3rem,8vw,6.5rem)] font-extrabold leading-[0.9] tracking-[-2px] text-white hero-animate-2">
           FIND YOUR
           <br />
-          <span className="font-[Libre_Baskerville] text-[0.78em] italic font-normal tracking-[-1px] text-[var(--blush)]">
+          <span className="font-[family-name:Libre_Baskerville] text-[0.78em] italic font-normal tracking-[-1px] text-(--blush)">
             perfect
           </span>
           <br />
@@ -60,14 +60,14 @@ const SalonsHero = ({ totalSalons = 0, averageRating = 0, searchTerm, onSearchCh
             <input
               type="text"
               placeholder="Salon name or location..."
-              className="w-full border-none bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
+              className="w-full border-none bg-transparent text-sm text-white placeholder:text-white/40 outline-hidden"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
             />
           </div>
           <button
             onClick={onScrollToSalons}
-            className="bg-[var(--terra)] px-6 text-white transition-colors hover:bg-[var(--sienna)] shrink-0 flex items-center justify-center"
+            className="bg-(--terra) px-6 text-white transition-colors hover:bg-(--sienna) shrink-0 flex items-center justify-center"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
@@ -78,8 +78,8 @@ const SalonsHero = ({ totalSalons = 0, averageRating = 0, searchTerm, onSearchCh
         {/* Stats */}
         <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-white/10 pt-8 hero-animate-4">
           <div className="flex items-center gap-2.5">
-            <span className="font-[Unbounded] text-2xl font-extrabold text-white leading-none">
-              {totalSalons}<span className="text-base text-[var(--terra2)]">+</span>
+            <span className="font-[family-name:Unbounded] text-2xl font-extrabold text-white leading-none">
+              {totalSalons}<span className="text-base text-(--terra2)">+</span>
             </span>
             <span className="text-[11px] tracking-[0.18em] text-white/45 uppercase">Verified Salons</span>
           </div>
@@ -89,8 +89,8 @@ const SalonsHero = ({ totalSalons = 0, averageRating = 0, searchTerm, onSearchCh
           {rating > 0 && (
             <>
               <div className="flex items-center gap-2.5">
-                <span className="font-[Unbounded] text-2xl font-extrabold text-white leading-none">
-                  {rating.toFixed(1)}<span className="text-base text-[var(--terra2)]">★</span>
+                <span className="font-[family-name:Unbounded] text-2xl font-extrabold text-white leading-none">
+                  {rating.toFixed(1)}<span className="text-base text-(--terra2)">★</span>
                 </span>
                 <span className="text-[11px] tracking-[0.18em] text-white/45 uppercase">Avg Rating</span>
               </div>
@@ -99,7 +99,7 @@ const SalonsHero = ({ totalSalons = 0, averageRating = 0, searchTerm, onSearchCh
           )}
 
           <div className="flex items-center gap-2.5">
-            <span className="font-[Unbounded] text-2xl font-extrabold text-white leading-none">Fixed</span>
+            <span className="font-[family-name:Unbounded] text-2xl font-extrabold text-white leading-none">Fixed</span>
             <span className="text-[11px] tracking-[0.18em] text-white/45 uppercase">Prices</span>
           </div>
         </div>

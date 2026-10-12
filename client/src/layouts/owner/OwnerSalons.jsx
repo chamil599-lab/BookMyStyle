@@ -98,8 +98,8 @@ function SalonModal({ initial, onClose, onSaved }) {
     }));
   };
 
-  const inp = 'w-full bg-[#f3f4f5] border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-[#6f7979] focus:outline-none focus:border-[#004242]/40 focus:bg-white transition-colors';
-  const lbl = 'block text-xs font-bold text-[#6f7979] uppercase tracking-widest mb-1.5';
+  const inp = 'w-full bg-ds-surface-container-low border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-ds-outline focus:outline-hidden focus:border-ds-primary/40 focus:bg-white transition-colors';
+  const lbl = 'block text-xs font-bold text-ds-outline uppercase tracking-widest mb-1.5';
   const coverSrc = coverPreview || initial?.cover_url || '';
   const galleryPreviewItems = [
     ...existingGallery.map((img) => ({
@@ -117,12 +117,12 @@ function SalonModal({ initial, onClose, onSaved }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#e1e3e4]">
           <h2 className="font-headline text-lg font-bold text-[#191c1d]">{isEdit ? 'Edit Salon' : 'Add New Salon'}</h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-[#f3f4f5] transition-colors text-[#6f7979]">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-ds-surface-container-low transition-colors text-ds-outline">
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
@@ -131,7 +131,7 @@ function SalonModal({ initial, onClose, onSaved }) {
         <form onSubmit={handleSubmit} className="overflow-y-auto flex-1">
           <div className="px-6 py-5 space-y-5">
             {error && (
-              <div className="bg-[#ffdad6] text-[#ba1a1a] text-sm font-medium px-4 py-3 rounded-xl border-l-4 border-[#ba1a1a]">
+              <div className="bg-ds-error-container text-ds-error text-sm font-medium px-4 py-3 rounded-xl border-l-4 border-ds-error">
                 {error}
               </div>
             )}
@@ -171,12 +171,12 @@ function SalonModal({ initial, onClose, onSaved }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <div>
                 <label className={lbl}>Cover Image</label>
-                <div className="rounded-2xl border border-dashed border-[#bec8c8] bg-[#f8f9fa] p-4">
+                <div className="rounded-2xl border border-dashed border-ds-outline-variant bg-[#f8f9fa] p-4">
                   <div className="h-40 rounded-xl overflow-hidden bg-[#e1e3e4] mb-3 flex items-center justify-center">
                     {coverSrc && !removeCover ? (
                       <img src={coverSrc} alt="Salon cover preview" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="material-symbols-outlined text-5xl text-[#6f7979]/40">image</span>
+                      <span className="material-symbols-outlined text-5xl text-ds-outline/40">image</span>
                     )}
                   </div>
                   <input
@@ -188,9 +188,9 @@ function SalonModal({ initial, onClose, onSaved }) {
                       setRemoveCover(false);
                       setCoverPreview(file ? URL.createObjectURL(file) : (initial?.cover_url ?? ''));
                     }}
-                    className="block w-full text-sm text-[#3f4948] file:mr-3 file:rounded-xl file:border-0 file:bg-[#004242] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-[#005b5c]"
+                    className="block w-full text-sm text-ds-on-surface-variant file:mr-3 file:rounded-xl file:border-0 file:bg-ds-primary file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-ds-primary-container"
                   />
-                  <p className="mt-2 text-xs text-[#6f7979]">16:9 recommended. Max 1MB. JPG, PNG, or WebP.</p>
+                  <p className="mt-2 text-xs text-ds-outline">16:9 recommended. Max 1MB. JPG, PNG, or WebP.</p>
                   {(coverSrc || initial?.cover_url) && !removeCover && (
                     <button
                       type="button"
@@ -199,7 +199,7 @@ function SalonModal({ initial, onClose, onSaved }) {
                         setCoverPreview('');
                         setRemoveCover(true);
                       }}
-                      className="mt-3 text-xs font-bold text-[#ba1a1a] hover:underline"
+                      className="mt-3 text-xs font-bold text-ds-error hover:underline"
                     >
                       Remove cover image
                     </button>
@@ -209,7 +209,7 @@ function SalonModal({ initial, onClose, onSaved }) {
 
               <div>
                 <label className={lbl}>Gallery Images</label>
-                <div className="rounded-2xl border border-dashed border-[#bec8c8] bg-[#f8f9fa] p-4">
+                <div className="rounded-2xl border border-dashed border-ds-outline-variant bg-[#f8f9fa] p-4">
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/jpg,image/webp"
@@ -219,14 +219,14 @@ function SalonModal({ initial, onClose, onSaved }) {
                       if (!files.length) return;
                       setGalleryFiles((current) => [...current, ...files].slice(0, 10));
                     }}
-                    className="block w-full text-sm text-[#3f4948] file:mr-3 file:rounded-xl file:border-0 file:bg-[#476363] file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-[#5b7877]"
+                    className="block w-full text-sm text-ds-on-surface-variant file:mr-3 file:rounded-xl file:border-0 file:bg-ds-secondary file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-[#5b7877]"
                   />
-                  <p className="mt-2 text-xs text-[#6f7979]">Up to 10 images total. Max 1MB each. JPG, PNG, or WebP.</p>
+                  <p className="mt-2 text-xs text-ds-outline">Up to 10 images total. Max 1MB each. JPG, PNG, or WebP.</p>
 
                   {galleryPreviewItems.length > 0 ? (
                     <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {galleryPreviewItems.map((img) => (
-                        <div key={img.key} className="relative rounded-xl overflow-hidden bg-[#e1e3e4] aspect-[4/3]">
+                        <div key={img.key} className="relative rounded-xl overflow-hidden bg-[#e1e3e4] aspect-4/3">
                           <img src={img.url} alt="Salon gallery preview" className="w-full h-full object-cover" />
                           <button
                             type="button"
@@ -247,7 +247,7 @@ function SalonModal({ initial, onClose, onSaved }) {
                       ))}
                     </div>
                   ) : (
-                    <div className="mt-4 rounded-xl bg-white px-4 py-6 text-center text-sm text-[#6f7979]">
+                    <div className="mt-4 rounded-xl bg-white px-4 py-6 text-center text-sm text-ds-outline">
                       No gallery images selected yet.
                     </div>
                   )}
@@ -271,8 +271,8 @@ function SalonModal({ initial, onClose, onSaved }) {
               <div className="flex flex-col justify-end pb-1">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={!!form.show_price} onChange={e => set('show_price', e.target.checked)}
-                    className="w-4 h-4 accent-[#004242]" />
-                  <span className="text-sm font-medium text-[#3f4948]">Show Prices</span>
+                    className="w-4 h-4 accent-ds-primary" />
+                  <span className="text-sm font-medium text-ds-on-surface-variant">Show Prices</span>
                 </label>
               </div>
             </div>
@@ -295,11 +295,11 @@ function SalonModal({ initial, onClose, onSaved }) {
 
           {/* Footer */}
           <div className="px-6 py-4 border-t border-[#e1e3e4] flex items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[#e1e3e4] text-sm font-semibold text-[#3f4948] hover:bg-[#f3f4f5] transition-colors">
+            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[#e1e3e4] text-sm font-semibold text-ds-on-surface-variant hover:bg-ds-surface-container-low transition-colors">
               Cancel
             </button>
             <button type="submit" disabled={isPending}
-              className="px-6 py-2.5 rounded-xl bg-[#004242] text-white text-sm font-bold hover:bg-[#005b5c] transition-colors disabled:opacity-60 flex items-center gap-2">
+              className="px-6 py-2.5 rounded-xl bg-ds-primary text-white text-sm font-bold hover:bg-ds-primary-container transition-colors disabled:opacity-60 flex items-center gap-2">
               {isPending && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               {isEdit ? 'Save Changes' : 'Create Salon'}
             </button>
@@ -340,11 +340,11 @@ export default function OwnerSalons() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-headline text-2xl font-bold text-[#004242]">My Salons</h1>
+          <h1 className="font-headline text-2xl font-bold text-ds-primary">My Salons</h1>
           {salonMax !== null && (
-            <p className="text-xs text-[#6f7979] mt-0.5 font-medium">
+            <p className="text-xs text-ds-outline mt-0.5 font-medium">
               {salonUsed} / {salonMax} salons used
-              {atLimit && <span className="ml-2 text-[#ba1a1a] font-bold">— limit reached</span>}
+              {atLimit && <span className="ml-2 text-ds-error font-bold">— limit reached</span>}
             </p>
           )}
         </div>
@@ -354,8 +354,8 @@ export default function OwnerSalons() {
           title={atLimit ? `Your plan allows a maximum of ${salonMax} salon(s). Upgrade to add more.` : undefined}
           className={`flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl transition-colors ${
             atLimit
-              ? 'bg-[#e1e3e4] text-[#6f7979] cursor-not-allowed'
-              : 'bg-[#004242] text-white hover:bg-[#005b5c]'
+              ? 'bg-[#e1e3e4] text-ds-outline cursor-not-allowed'
+              : 'bg-ds-primary text-white hover:bg-ds-primary-container'
           }`}>
           <span className="material-symbols-outlined text-base">{atLimit ? 'lock' : 'add'}</span>
           Add Salon
@@ -374,15 +374,15 @@ export default function OwnerSalons() {
 
       {isLoading ? (
         <div className="flex items-center justify-center h-48">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004242]" />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ds-primary" />
         </div>
       ) : salons.length === 0 ? (
-        <div className="bg-white rounded-[0.5rem] text-center py-16 text-[#6f7979]">
+        <div className="bg-white rounded-lg text-center py-16 text-ds-outline">
           <span className="material-symbols-outlined text-5xl block mb-3">storefront</span>
           <p className="font-semibold">No salons yet</p>
           <p className="text-sm mt-1 mb-5">Create your first salon to get started.</p>
           <button onClick={() => setModal('create')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#004242] text-white text-sm font-bold rounded-xl hover:bg-[#005b5c] transition-colors">
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-ds-primary text-white text-sm font-bold rounded-xl hover:bg-ds-primary-container transition-colors">
             <span className="material-symbols-outlined text-base">add</span>
             Add Salon
           </button>
@@ -390,7 +390,7 @@ export default function OwnerSalons() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {salons.map(salon => (
-            <div key={salon.id} className="rounded-[1rem] overflow-hidden border border-[#004242]/10 bg-[linear-gradient(180deg,#ffffff_0%,#f4fbfa_100%)] shadow-[0_18px_44px_rgba(0,66,66,0.08)]">
+            <div key={salon.id} className="rounded-2xl overflow-hidden border border-ds-primary/10 bg-[linear-gradient(180deg,#ffffff_0%,#f4fbfa_100%)] shadow-[0_18px_44px_rgba(0,66,66,0.08)]">
               {/* Cover */}
               <div className="h-44 bg-[linear-gradient(135deg,#004242_0%,#005b5c_58%,#1b6869_100%)] relative overflow-hidden">
                 {salon.cover_url ? (
@@ -408,26 +408,26 @@ export default function OwnerSalons() {
                   Salon
                 </div>
                 <div className="absolute bottom-3 left-4">
-                  <span className="text-xs bg-white/92 backdrop-blur-sm text-[#004242] px-3 py-1 rounded-full font-bold shadow-sm">
+                  <span className="text-xs bg-white/92 backdrop-blur-xs text-ds-primary px-3 py-1 rounded-full font-bold shadow-xs">
                     {salon.number_of_staff ?? 0} staff
                   </span>
                 </div>
                 {/* Action buttons */}
                 <div className="absolute top-3 right-3 flex gap-1.5">
                   <button onClick={() => setModal(salon)}
-                    className="p-1.5 rounded-lg bg-white/90 text-[#004242] hover:bg-white shadow-sm transition-colors" title="Edit">
+                    className="p-1.5 rounded-lg bg-white/90 text-ds-primary hover:bg-white shadow-xs transition-colors" title="Edit">
                     <span className="material-symbols-outlined text-base">edit</span>
                   </button>
                   {deleteId === salon.id ? (
-                    <div className="flex items-center gap-1 bg-white/95 rounded-lg px-2 py-1 shadow-sm">
-                      <span className="text-xs font-semibold text-[#ba1a1a]">Delete?</span>
+                    <div className="flex items-center gap-1 bg-white/95 rounded-lg px-2 py-1 shadow-xs">
+                      <span className="text-xs font-semibold text-ds-error">Delete?</span>
                       <button onClick={() => deleteMut.mutate(salon.id)} disabled={deleteMut.isPending}
-                        className="text-xs font-bold text-[#ba1a1a] hover:underline px-1">Yes</button>
-                      <button onClick={() => setDeleteId(null)} className="text-xs font-bold text-[#6f7979] hover:underline px-1">No</button>
+                        className="text-xs font-bold text-ds-error hover:underline px-1">Yes</button>
+                      <button onClick={() => setDeleteId(null)} className="text-xs font-bold text-ds-outline hover:underline px-1">No</button>
                     </div>
                   ) : (
                     <button onClick={() => setDeleteId(salon.id)}
-                      className="p-1.5 rounded-lg bg-white/90 text-[#ba1a1a] hover:bg-white shadow-sm transition-colors" title="Delete">
+                      className="p-1.5 rounded-lg bg-white/90 text-ds-error hover:bg-white shadow-xs transition-colors" title="Delete">
                       <span className="material-symbols-outlined text-base">delete</span>
                     </button>
                   )}
@@ -443,25 +443,25 @@ export default function OwnerSalons() {
                 <div className="mt-4 space-y-2">
                   {salon.location && (
                     <div className="flex items-center gap-2 text-sm text-[#285252]">
-                      <span className="material-symbols-outlined text-base text-[#004242]">location_on</span>
+                      <span className="material-symbols-outlined text-base text-ds-primary">location_on</span>
                       {salon.location}
                     </div>
                   )}
                   {salon.phone && (
                     <div className="flex items-center gap-2 text-sm text-[#285252]">
-                      <span className="material-symbols-outlined text-base text-[#004242]">phone</span>
+                      <span className="material-symbols-outlined text-base text-ds-primary">phone</span>
                       {salon.phone}
                     </div>
                   )}
                   {salon.email && (
                     <div className="flex items-center gap-2 text-sm text-[#285252]">
-                      <span className="material-symbols-outlined text-base text-[#004242]">mail</span>
+                      <span className="material-symbols-outlined text-base text-ds-primary">mail</span>
                       {salon.email}
                     </div>
                   )}
                   {(salon.open_time || salon.close_time) && (
                     <div className="flex items-center gap-2 text-sm text-[#285252]">
-                      <span className="material-symbols-outlined text-base text-[#004242]">schedule</span>
+                      <span className="material-symbols-outlined text-base text-ds-primary">schedule</span>
                       {salon.open_time} – {salon.close_time}
                     </div>
                   )}
@@ -471,19 +471,19 @@ export default function OwnerSalons() {
                   <div className="mt-3 flex gap-2">
                     {salon.facebook_page && (
                       <a href={salon.facebook_page} target="_blank" rel="noreferrer"
-                        className="p-2 rounded-lg bg-[#f3f4f5] text-[#3f4948] hover:bg-[#004242]/10 hover:text-[#004242] transition-colors">
+                        className="p-2 rounded-lg bg-ds-surface-container-low text-ds-on-surface-variant hover:bg-ds-primary/10 hover:text-ds-primary transition-colors">
                         <FaFacebookF className="text-[15px]" />
                       </a>
                     )}
                     {salon.instagram_page && (
                       <a href={salon.instagram_page} target="_blank" rel="noreferrer"
-                        className="p-2 rounded-lg bg-[#f3f4f5] text-[#3f4948] hover:bg-[#004242]/10 hover:text-[#004242] transition-colors">
+                        className="p-2 rounded-lg bg-ds-surface-container-low text-ds-on-surface-variant hover:bg-ds-primary/10 hover:text-ds-primary transition-colors">
                         <FaInstagram className="text-[15px]" />
                       </a>
                     )}
                     {salon.tiktok_page && (
                       <a href={salon.tiktok_page} target="_blank" rel="noreferrer"
-                        className="p-2 rounded-lg bg-[#f3f4f5] text-[#3f4948] hover:bg-[#004242]/10 hover:text-[#004242] transition-colors">
+                        className="p-2 rounded-lg bg-ds-surface-container-low text-ds-on-surface-variant hover:bg-ds-primary/10 hover:text-ds-primary transition-colors">
                         <FaTiktok className="text-[15px]" />
                       </a>
                     )}

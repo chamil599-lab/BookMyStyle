@@ -4,6 +4,8 @@ The layout below describes the original React deployment. For the staged Blade m
 
 PHP security upgrades are recorded in [step twelve](docs/migration/step-12-php-security-upgrades.md). Deploy the new composer.lock and matching published Filament assets together. Run Composer installation with lifecycle scripts suppressed, then explicitly run package discovery and Filament asset publication before building root Vite assets. Verify the production runtime with composer check-platform-reqs; dependency resolution retains PHP 8.2 compatibility, but local execution was tested on PHP 8.4. Generate an optimized production autoloader on the host. The retained React audit and host/integration checks remain release gates.
 
+The retained React security upgrade is documented in [step thirteen](docs/migration/step-13-react-security-upgrades.md). Its build now requires Node 20.19+ or 22.12+ and uses Tailwind 4; npm and PHP audits are clean at this checkpoint. Local development proxies verify TLS by default. Rebuild deployment assets with the intended production configuration; synthetic browser builds use a fake OAuth ID. The old React management APIs remain retired. Integration, browser compatibility and host verification gates still apply.
+
 This project ships **two things** that live behind one domain (`bookmystyle.limach.lk`):
 
 | Part | Source folder | What gets uploaded |

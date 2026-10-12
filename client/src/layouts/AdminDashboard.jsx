@@ -18,15 +18,15 @@ function fmtShort(n) {
 }
 
 const STATUS_CONFIG = [
-  { key: 'active',   label: 'Active',   color: 'bg-[#004242]',       dot: 'bg-[#004242]' },
-  { key: 'pending',  label: 'Pending',  color: 'bg-[#5d2e10]',       dot: 'bg-[#5d2e10]' },
-  { key: 'expired',  label: 'Expired',  color: 'bg-[#ba1a1a]',       dot: 'bg-[#ba1a1a]' },
-  { key: 'canceled', label: 'Canceled', color: 'bg-[#bec8c8]',       dot: 'bg-[#bec8c8]' },
+  { key: 'active',   label: 'Active',   color: 'bg-ds-primary',       dot: 'bg-ds-primary' },
+  { key: 'pending',  label: 'Pending',  color: 'bg-ds-tertiary',       dot: 'bg-ds-tertiary' },
+  { key: 'expired',  label: 'Expired',  color: 'bg-ds-error',       dot: 'bg-ds-error' },
+  { key: 'canceled', label: 'Canceled', color: 'bg-ds-outline-variant',       dot: 'bg-ds-outline-variant' },
 ];
 
 const PACKAGE_ICONS = ['diamond', 'star', 'workspace_premium', 'bolt', 'local_fire_department'];
-const PACKAGE_BG    = ['bg-[#ffdbca]', 'bg-[#c7e6e5]', 'bg-[#a8efef]/30', 'bg-[#e1e3e4]', 'bg-[#ffdad6]'];
-const PACKAGE_ICON_COLOR = ['text-[#5d2e10]', 'text-[#476363]', 'text-[#004242]', 'text-[#3f4948]', 'text-[#ba1a1a]'];
+const PACKAGE_BG    = ['bg-ds-tertiary-fixed', 'bg-ds-secondary-container', 'bg-ds-primary-fixed/30', 'bg-[#e1e3e4]', 'bg-ds-error-container'];
+const PACKAGE_ICON_COLOR = ['text-ds-tertiary', 'text-ds-secondary', 'text-ds-primary', 'text-ds-on-surface-variant', 'text-ds-error'];
 
 export default function AdminDashboard() {
   const [year, setYear] = useState(new Date().getFullYear());
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
   if (statsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#004242]" />
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-ds-primary" />
       </div>
     );
   }
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
       {/* ── Bento stat cards ── */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         {/* Subscription Revenue */}
-        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-[0.5rem] relative overflow-hidden">
+        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-lg relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#16a34a]" />
           <p className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Subscription Revenue</p>
           <h3 className="font-headline text-3xl font-extrabold text-white">
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Active Subscriptions */}
-        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-[0.5rem] relative">
+        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-lg relative">
           <p className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Active Subscriptions</p>
           <h3 className="font-headline text-3xl font-extrabold text-white">
             {stats?.subscriptions?.active ?? 0}
@@ -110,7 +110,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Pending Approvals */}
-        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-[0.5rem] relative">
+        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-lg relative">
           <p className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Pending Approvals</p>
           <h3 className="font-headline text-3xl font-extrabold text-white">
             {stats?.users?.pending_approval ?? 0}
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
           <div className="mt-4">
             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
               (stats?.users?.pending_approval ?? 0) > 0
-                ? 'bg-[#ba1a1a]/20 text-[#fca5a5]'
+                ? 'bg-ds-error/20 text-[#fca5a5]'
                 : 'bg-[#16a34a]/20 text-[#86efac]'
             }`}>
               {(stats?.users?.pending_approval ?? 0) > 0 ? 'Needs action' : 'All clear'}
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Total Bookings */}
-        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-[0.5rem] relative">
+        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-lg relative">
           <p className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Total Bookings</p>
           <h3 className="font-headline text-3xl font-extrabold text-white">
             {stats?.bookings?.total ?? 0}
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Site Visits */}
-        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-[0.5rem] relative">
+        <div className="bg-[#1e293b] border border-[#334155] p-6 rounded-lg relative">
           <p className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Site Visits</p>
           <h3 className="font-headline text-3xl font-extrabold text-white">
             {Number(stats?.visits?.total ?? 0).toLocaleString()}
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
         {/* Left: chart + packages */}
         <div className="lg:col-span-2 space-y-8">
           {/* Revenue chart */}
-          <div className="bg-[#1e293b] border border-[#334155] p-8 rounded-[0.5rem]">
+          <div className="bg-[#1e293b] border border-[#334155] p-8 rounded-lg">
             <div className="flex justify-between items-end mb-8">
               <div>
                 <h2 className="font-headline text-lg font-bold text-white">Booking Revenue</h2>
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
               <select
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="text-xs border border-[#334155] bg-[#0f172a] rounded-full px-3 py-1.5 font-semibold text-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#16a34a]/30"
+                className="text-xs border border-[#334155] bg-[#0f172a] rounded-full px-3 py-1.5 font-semibold text-[#cbd5e1] focus:outline-hidden focus:ring-2 focus:ring-[#16a34a]/30"
               >
                 {years.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Site visits chart */}
-          <div className="bg-[#1e293b] border border-[#334155] p-8 rounded-[0.5rem]">
+          <div className="bg-[#1e293b] border border-[#334155] p-8 rounded-lg">
             <div className="flex justify-between items-end mb-8">
               <div>
                 <h2 className="font-headline text-lg font-bold text-white">Site Visits</h2>
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
               <select
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="text-xs border border-[#334155] bg-[#0f172a] rounded-full px-3 py-1.5 font-semibold text-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#16a34a]/30"
+                className="text-xs border border-[#334155] bg-[#0f172a] rounded-full px-3 py-1.5 font-semibold text-[#cbd5e1] focus:outline-hidden focus:ring-2 focus:ring-[#16a34a]/30"
               >
                 {years.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
@@ -262,7 +262,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Top packages */}
-          <div className="bg-[#1e293b] border border-[#334155] rounded-[0.5rem] overflow-hidden">
+          <div className="bg-[#1e293b] border border-[#334155] rounded-lg overflow-hidden">
             <div className="px-6 py-5 border-b border-[#334155] flex justify-between items-center">
               <h2 className="font-headline text-lg font-bold text-white">Top Subscription Packages</h2>
             </div>
@@ -275,7 +275,7 @@ export default function AdminDashboard() {
                     key={i}
                     className="px-6 py-5 flex items-center gap-4 hover:bg-[#334155] transition-colors border-b border-[#334155] last:border-b-0"
                   >
-                    <div className={`w-14 h-14 rounded-xl ${PACKAGE_BG[i % PACKAGE_BG.length]} flex items-center justify-center flex-shrink-0`}>
+                    <div className={`w-14 h-14 rounded-xl ${PACKAGE_BG[i % PACKAGE_BG.length]} flex items-center justify-center shrink-0`}>
                       <span className={`material-symbols-outlined text-2xl ${PACKAGE_ICON_COLOR[i % PACKAGE_ICON_COLOR.length]}`}>
                         {PACKAGE_ICONS[i % PACKAGE_ICONS.length]}
                       </span>
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
                       <p className="font-bold text-white truncate">{pkg.name}</p>
                       <p className="text-xs text-[#94a3b8]">{pkg.subscriber_count} subscriber{pkg.subscriber_count !== 1 ? 's' : ''}</p>
                     </div>
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right shrink-0">
                       <p className="font-bold text-[#16a34a]">{fmtShort(pkg.revenue)}</p>
                       <p className="text-[10px] text-[#94a3b8] uppercase tracking-widest">Revenue</p>
                     </div>
@@ -298,7 +298,7 @@ export default function AdminDashboard() {
         {/* Right: subscription status + promo */}
         <div className="space-y-8">
           {/* Subscription status breakdown */}
-          <div className="bg-[#1e293b] border border-[#334155] p-8 rounded-[0.5rem] flex flex-col gap-6">
+          <div className="bg-[#1e293b] border border-[#334155] p-8 rounded-lg flex flex-col gap-6">
             <h2 className="font-headline text-lg font-bold text-white">Subscription Status</h2>
             <div className="space-y-5">
               {STATUS_CONFIG.map((cfg) => {
@@ -339,8 +339,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Booking revenue today card */}
-          <div className="relative bg-[#16a34a] rounded-[0.5rem] overflow-hidden h-56 group">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#15803d] via-[#16a34a] to-[#22c55e]" />
+          <div className="relative bg-[#16a34a] rounded-lg overflow-hidden h-56 group">
+            <div className="absolute inset-0 bg-linear-to-br from-[#15803d] via-[#16a34a] to-[#22c55e]" />
             <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full bg-white/5 translate-x-8 translate-y-8" />
             <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-white/5 -translate-y-2" />
             <div className="relative z-10 p-6 flex flex-col h-full justify-between">

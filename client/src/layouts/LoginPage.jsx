@@ -41,7 +41,7 @@ export default function LoginPage() {
         <title>Sign In — BookMyStyle</title>
       </Helmet>
 
-      <div className="min-h-screen flex bg-[var(--sand)]">
+      <div className="min-h-screen flex bg-(--sand)">
 
         {/* ── Left panel: bg image + dark overlay ── */}
         <div
@@ -53,9 +53,9 @@ export default function LoginPage() {
           }}
         >
           {/* Dark gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(30,23,16,0.90)] via-[rgba(30,23,16,0.72)] to-[rgba(196,98,45,0.40)]" />
+          <div className="absolute inset-0 bg-linear-to-br from-[rgba(30,23,16,0.90)] via-[rgba(30,23,16,0.72)] to-[rgba(196,98,45,0.40)]" />
           {/* Terra bottom accent */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--terra)]" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-(--terra)" />
 
           <div className="relative z-10 flex flex-col h-full px-12 py-12">
 
@@ -65,21 +65,21 @@ export default function LoginPage() {
                 <img src="/logo2.png" alt="BookMyStyle" className="h-10 w-10 object-contain" />
               </div>
               <div>
-                <p className="font-[Unbounded] text-xs font-bold tracking-[0.25em] text-white uppercase">Book My Style</p>
+                <p className="font-[family-name:Unbounded] text-xs font-bold tracking-[0.25em] text-white uppercase">Book My Style</p>
                 <p className="text-[10px] text-white/50 tracking-wide">Beauty Booking</p>
               </div>
             </Link>
 
             {/* Centre message */}
             <div className="flex flex-col justify-center flex-1">
-              <div className="mb-4 inline-flex items-center gap-3 font-[Unbounded] text-[9px] font-semibold tracking-[0.3em] text-[var(--terra2)] uppercase">
-                <span className="h-0.5 w-5 bg-[var(--terra2)]" />
+              <div className="mb-4 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.3em] text-(--terra2) uppercase">
+                <span className="h-0.5 w-5 bg-(--terra2)" />
                 Welcome Back
               </div>
-              <h1 className="font-[Unbounded] text-5xl xl:text-6xl font-extrabold leading-[0.95] tracking-tight text-white mb-6">
+              <h1 className="font-[family-name:Unbounded] text-5xl xl:text-6xl font-extrabold leading-[0.95] tracking-tight text-white mb-6">
                 Your style,
                 <br />
-                <em className="font-[Libre_Baskerville] text-[var(--terra2)]">your story.</em>
+                <em className="font-[family-name:Libre_Baskerville] text-(--terra2)">your story.</em>
               </h1>
               <p className="max-w-sm text-[15px] leading-relaxed text-white/60">
                 Sign in to manage your bookings, explore verified salons, and rediscover beauty — all in one place.
@@ -88,17 +88,17 @@ export default function LoginPage() {
               {/* Stats row */}
               <div className="flex items-center gap-8 mt-10">
                 <div>
-                  <div className="font-[Unbounded] text-2xl font-black text-[var(--terra2)]">50+</div>
+                  <div className="font-[family-name:Unbounded] text-2xl font-black text-(--terra2)">50+</div>
                   <div className="text-[10px] font-semibold tracking-[0.15em] text-white/50 uppercase mt-0.5">Salons</div>
                 </div>
                 <div className="w-px h-8 bg-white/15" />
                 <div>
-                  <div className="font-[Unbounded] text-2xl font-black text-[var(--terra2)]">4.8★</div>
+                  <div className="font-[family-name:Unbounded] text-2xl font-black text-(--terra2)">4.8★</div>
                   <div className="text-[10px] font-semibold tracking-[0.15em] text-white/50 uppercase mt-0.5">Avg Rating</div>
                 </div>
                 <div className="w-px h-8 bg-white/15" />
                 <div>
-                  <div className="font-[Unbounded] text-2xl font-black text-[var(--terra2)]">100%</div>
+                  <div className="font-[family-name:Unbounded] text-2xl font-black text-(--terra2)">100%</div>
                   <div className="text-[10px] font-semibold tracking-[0.15em] text-white/50 uppercase mt-0.5">Verified</div>
                 </div>
               </div>
@@ -111,45 +111,45 @@ export default function LoginPage() {
         </div>
 
         {/* ── Right panel: form ── */}
-        <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-20 bg-[var(--white)]">
+        <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-20 bg-(--white)">
 
           {/* Mobile brand */}
           <Link to="/" className="flex items-center gap-3 mb-10 lg:hidden">
             <div className="flex h-9 w-9 items-center justify-center">
               <img src="/logo2.png" alt="BookMyStyle" className="h-9 w-9 object-contain" />
             </div>
-            <p className="font-[Unbounded] text-xs font-bold tracking-[0.2em] text-[var(--ink)] uppercase">Book My Style</p>
+            <p className="font-[family-name:Unbounded] text-xs font-bold tracking-[0.2em] text-(--ink) uppercase">Book My Style</p>
           </Link>
 
           <div className="w-full max-w-md mx-auto">
 
             {/* Heading */}
             <div className="mb-10">
-              <div className="mb-3 inline-flex items-center gap-3 font-[Unbounded] text-[10px] font-semibold tracking-[0.3em] text-[var(--terra)] uppercase">
-                <span className="h-0.5 w-5 bg-[var(--terra)]" />
+              <div className="mb-3 inline-flex items-center gap-3 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.3em] text-(--terra) uppercase">
+                <span className="h-0.5 w-5 bg-(--terra)" />
                 Sign In
               </div>
-              <h2 className="font-[Libre_Baskerville] text-3xl italic text-[var(--ink)] mb-2">
+              <h2 className="font-[family-name:Libre_Baskerville] text-3xl italic text-(--ink) mb-2">
                 Welcome back
               </h2>
-              <p className="text-[14px] text-[var(--muted)] leading-relaxed">
+              <p className="text-[14px] text-(--muted) leading-relaxed">
                 Enter your credentials to access your account.
               </p>
             </div>
 
             {/* Error banner */}
             {error && (
-              <div className="mb-8 flex items-start gap-4 border-l-4 border-[var(--sienna)] bg-[var(--cream)] px-5 py-4">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-[var(--sienna)] text-white">
+              <div className="mb-8 flex items-start gap-4 border-l-4 border-(--sienna) bg-(--cream) px-5 py-4">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-(--sienna) text-white">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
                 <div>
-                  <div className="font-[Unbounded] text-[10px] font-semibold tracking-[0.25em] text-[var(--sienna)] uppercase mb-1">
+                  <div className="font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.25em] text-(--sienna) uppercase mb-1">
                     Sign In Failed
                   </div>
-                  <p className="text-[14px] text-[var(--ink)]">{error}</p>
+                  <p className="text-[14px] text-(--ink)">{error}</p>
                 </div>
               </div>
             )}
@@ -157,16 +157,16 @@ export default function LoginPage() {
             <GoogleAuthButton role="customer" onError={setError} disabled={loading} />
 
             <div className="flex items-center gap-4 my-6">
-              <div className="flex-1 h-px bg-[var(--cream)]" />
-              <span className="font-[Unbounded] text-[9px] font-semibold tracking-[0.3em] text-[var(--muted)] uppercase">or</span>
-              <div className="flex-1 h-px bg-[var(--cream)]" />
+              <div className="flex-1 h-px bg-(--cream)" />
+              <span className="font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.3em] text-(--muted) uppercase">or</span>
+              <div className="flex-1 h-px bg-(--cream)" />
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="mb-2.5 block font-[Unbounded] text-[12px] font-semibold tracking-[0.2em] text-[var(--terra)] uppercase">
+                <label htmlFor="email" className="mb-2.5 block font-[family-name:Unbounded] text-[12px] font-semibold tracking-[0.2em] text-(--terra) uppercase">
                   Email Address <span className="opacity-60">*</span>
                 </label>
                 <input
@@ -178,19 +178,19 @@ export default function LoginPage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your@email.com"
-                  className="w-full border-2 border-[var(--cream)] bg-[var(--sand)] px-5 py-4 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--terra)] transition"
+                  className="w-full border-2 border-(--cream) bg-(--sand) px-5 py-4 text-[15px] text-(--ink) placeholder:text-(--muted) outline-hidden focus:border-(--terra) transition"
                 />
               </div>
 
               {/* Password */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">
-                  <label htmlFor="password" className="font-[Unbounded] text-[12px] font-semibold tracking-[0.2em] text-[var(--terra)] uppercase">
+                  <label htmlFor="password" className="font-[family-name:Unbounded] text-[12px] font-semibold tracking-[0.2em] text-(--terra) uppercase">
                     Password <span className="opacity-60">*</span>
                   </label>
                   <Link
                     to="/forgot-password"
-                    className="font-[Unbounded] text-[10px] font-semibold tracking-[0.12em] text-[var(--muted)] uppercase hover:text-[var(--terra)] transition"
+                    className="font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.12em] text-(--muted) uppercase hover:text-(--terra) transition"
                   >
                     Forgot?
                   </Link>
@@ -205,12 +205,12 @@ export default function LoginPage() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="w-full border-2 border-[var(--cream)] bg-[var(--sand)] px-5 py-4 pr-14 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--terra)] transition"
+                    className="w-full border-2 border-(--cream) bg-(--sand) px-5 py-4 pr-14 text-[15px] text-(--ink) placeholder:text-(--muted) outline-hidden focus:border-(--terra) transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((p) => !p)}
-                    className="absolute inset-y-0 right-4 flex items-center text-[var(--muted)] hover:text-[var(--terra)] transition"
+                    className="absolute inset-y-0 right-4 flex items-center text-(--muted) hover:text-(--terra) transition"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? (
@@ -238,7 +238,7 @@ export default function LoginPage() {
                     onChange={handleChange}
                     className="sr-only peer"
                   />
-                  <div className="h-5 w-5 border-2 border-[var(--cream)] bg-[var(--sand)] peer-checked:border-[var(--terra)] peer-checked:bg-[var(--terra)] transition flex items-center justify-center">
+                  <div className="h-5 w-5 border-2 border-(--cream) bg-(--sand) peer-checked:border-(--terra) peer-checked:bg-(--terra) transition flex items-center justify-center">
                     {formData.remember && (
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -246,7 +246,7 @@ export default function LoginPage() {
                     )}
                   </div>
                 </div>
-                <span className="text-[13px] text-[var(--ink)] group-hover:text-[var(--terra)] transition">
+                <span className="text-[13px] text-(--ink) group-hover:text-(--terra) transition">
                   Remember me on this device
                 </span>
               </label>
@@ -255,7 +255,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-3 bg-[var(--terra)] py-5 px-6 font-[Unbounded] text-[11px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-[var(--sienna)] hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                className="w-full inline-flex items-center justify-center gap-3 bg-(--terra) py-5 px-6 font-[family-name:Unbounded] text-[11px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-(--sienna) hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
                 {loading ? (
                   <>
@@ -278,15 +278,15 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="flex items-center gap-4 my-8">
-              <div className="flex-1 h-px bg-[var(--cream)]" />
-              <span className="font-[Unbounded] text-[9px] font-semibold tracking-[0.3em] text-[var(--muted)] uppercase">New here?</span>
-              <div className="flex-1 h-px bg-[var(--cream)]" />
+              <div className="flex-1 h-px bg-(--cream)" />
+              <span className="font-[family-name:Unbounded] text-[9px] font-semibold tracking-[0.3em] text-(--muted) uppercase">New here?</span>
+              <div className="flex-1 h-px bg-(--cream)" />
             </div>
 
             {/* Register link */}
             <Link
               to="/register"
-              className="w-full inline-flex items-center justify-center gap-3 border-2 border-[var(--cream)] bg-[var(--sand)] py-4 px-6 font-[Unbounded] text-[11px] font-semibold tracking-[0.2em] text-[var(--ink)] uppercase transition hover:border-[var(--terra)] hover:text-[var(--terra)]"
+              className="w-full inline-flex items-center justify-center gap-3 border-2 border-(--cream) bg-(--sand) py-4 px-6 font-[family-name:Unbounded] text-[11px] font-semibold tracking-[0.2em] text-(--ink) uppercase transition hover:border-(--terra) hover:text-(--terra)"
             >
               Create an Account
             </Link>

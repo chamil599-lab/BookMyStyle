@@ -219,3 +219,28 @@ Final browser artifacts: .local/migration-baseline/auth-smoke-20261011_180554_da
 Changed PHP passes Pint. Authored files pass Git whitespace checks. A full whitespace check reports two upstream trailing-space literals in the published file-upload.js and rich-editor.js bundles; both files were verified byte-for-byte against the installed vendor bundles and retained intact.
 
 Checkpoint: migration-step-12-php-security-upgrades. Private full-history rollback bundle: .local/migration-baseline/step-12-php-security-upgrades.bundle. Restore the chosen source checkpoint, install its matching locked dependencies and rebuild/publish matching assets using the rollback runbook. No imported-data restoration is needed for this source/dependency-only stage.
+
+## Step thirteen retained React security upgrades
+
+See [step thirteen](step-13-react-security-upgrades.md) for exact versions and release gates.
+
+## Final verification
+
+| Check | Result |
+|---|---|
+| Retained React npm audit | Zero findings, down from 11 |
+| Root npm and installed Composer audits | Zero findings; Composer also reports no abandoned packages |
+| Builds | Retained React and root Laravel/Filament builds passed; existing large React chunk and empty root app chunk warnings remain |
+| Proxy security regressions | Four Node tests passed: strict default/remote TLS, explicit local exception, scheme/credential rejection and HTTPS-only remote proxies |
+| Retained React browser | 14 baseline checks; 16 final checks; zero uncaught JavaScript errors; measured layout metrics preserved and explicit display-font family verified |
+| Retained visual inspection | Before/after mobile home screenshots inspected; heading fallback correction verified |
+| PHP regression suite | 220 passed, 1,396 assertions; isolated SQLite and suppressed mail |
+| Native HTTP/Chrome | 89 successful check flags including browser runner; 50 Chrome check flags; zero uncaught JavaScript errors |
+| Imported integrity | Read-only checks unchanged: 35 tables, users 10, salons 10, services 6, bookings 10, subscriptions 5, media 6, migrations 51; no FK orphans, missing media originals/conversions or nontransactional tables |
+| Source checks | Browser harness syntax and authored-file Git whitespace checks passed |
+
+Native browser artifacts: .local/migration-baseline/auth-smoke-20261012_022023_bb4f3c/. Retained browser artifacts: react-smoke-before/ and react-smoke-after/ under the same private migration directory. The final retained fixture includes a minimal non-networking Google script interface for the fake client ID; it does not verify OAuth. Chrome request-interception cancellations during navigation are tracked separately from JavaScript errors.
+
+An initial PHP process run concurrently with the root build ended after one progress marker without a diagnostic report. The standalone rerun completed successfully; its log is step-13-php-tests-final.log. This is local verification evidence, not production performance evidence.
+
+Checkpoint: migration-step-13-react-security-upgrades. Private full-history rollback bundle: .local/migration-baseline/step-13-react-security-upgrades.bundle. Restore the selected source checkpoint and install its matching package lockfiles, rebuild root/client assets as appropriate, and follow the rollback runbook. No imported-data restoration is needed for this source/dependency stage. Unrelated pre-existing image deletions and untracked files remain outside the checkpoint.

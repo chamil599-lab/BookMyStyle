@@ -75,7 +75,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="md:rounded-[0.5rem] border border-white/10 bg-white/[0.04] p-5">
+        <div className="md:rounded-lg border border-white/10 bg-white/4 p-5">
           <h2 className="text-xs font-black uppercase tracking-[0.22em] text-[#e0b15d]">Need Help?</h2>
           <div className="mt-5 space-y-4 text-sm text-white/72">
             <p className="flex gap-3">

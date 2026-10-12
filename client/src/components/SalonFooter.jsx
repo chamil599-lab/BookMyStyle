@@ -23,14 +23,14 @@ const SalonFooter = ({ salon }) => {
   ].filter(Boolean);
 
   return (
-    <footer className="mt-16 border-t-2 border-[var(--cream)] bg-[var(--white)]">
+    <footer className="mt-16 border-t-2 border-(--cream) bg-(--white)">
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
-            <div className="mb-3 inline-flex bg-[var(--terra)] px-3 py-1 font-[Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase">
+            <div className="mb-3 inline-flex bg-(--terra) px-3 py-1 font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.2em] text-white uppercase">
               {salon.name}
             </div>
-            <p className="text-sm leading-relaxed text-[var(--muted)]">
+            <p className="text-sm leading-relaxed text-(--muted)">
               {salon.description
                 ? salon.description.replace(/<[^>]*>/g, '').substring(0, 120) + (salon.description.length > 120 ? '...' : '')
                 : 'Experience premium beauty services. Book your appointment online with ease.'}
@@ -43,7 +43,7 @@ const SalonFooter = ({ salon }) => {
                     href={social.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center border-2 border-[var(--cream)] bg-[var(--sand)] text-[var(--terra)] hover:bg-[var(--cream)]"
+                    className="flex h-9 w-9 items-center justify-center border-2 border-(--cream) bg-(--sand) text-(--terra) hover:bg-(--cream)"
                     aria-label={social.icon}
                   >
                     <i className={`fab fa-${social.icon}`} />
@@ -54,11 +54,11 @@ const SalonFooter = ({ salon }) => {
           </div>
 
           <div>
-            <h3 className="mb-3 font-[Unbounded] text-[12px] font-semibold tracking-[0.2em] text-[var(--ink)] uppercase">Quick Links</h3>
+            <h3 className="mb-3 font-[family-name:Unbounded] text-[12px] font-semibold tracking-[0.2em] text-(--ink) uppercase">Quick Links</h3>
             <ul className="space-y-2">
               {navItems.map((item) => (
                 <li key={item.path}>
-                  <Link to={item.path} className="text-sm text-[var(--muted)] hover:text-[var(--terra)]">
+                  <Link to={item.path} className="text-sm text-(--muted) hover:text-(--terra)">
                     {item.label}
                   </Link>
                 </li>
@@ -67,21 +67,21 @@ const SalonFooter = ({ salon }) => {
           </div>
 
           <div>
-            <h3 className="mb-3 font-[Unbounded] text-[12px] font-semibold tracking-[0.2em] text-[var(--ink)] uppercase">Contact</h3>
+            <h3 className="mb-3 font-[family-name:Unbounded] text-[12px] font-semibold tracking-[0.2em] text-(--ink) uppercase">Contact</h3>
             <ul className="space-y-2">
               {contactItems.map((item, index) => (
-                <li key={index} className="text-sm text-[var(--muted)]">
-                  <span className="font-semibold text-[var(--ink)]">{item.label}:</span> {item.text}
+                <li key={index} className="text-sm text-(--muted)">
+                  <span className="font-semibold text-(--ink)">{item.label}:</span> {item.text}
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t-2 border-[var(--cream)] pt-6 text-center">
-          <p className="text-xs text-[var(--muted)] md:text-sm">
+        <div className="border-t-2 border-(--cream) pt-6 text-center">
+          <p className="text-xs text-(--muted) md:text-sm">
             Copyright 2025 {salon.name}. All rights reserved. Powered by{' '}
-            <a href="https://limach.lk" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--terra)] hover:text-[var(--sienna)]">
+            <a href="https://limach.lk" target="_blank" rel="noopener noreferrer" className="font-semibold text-(--terra) hover:text-(--sienna)">
               Limach Web Solution
             </a>
           </p>

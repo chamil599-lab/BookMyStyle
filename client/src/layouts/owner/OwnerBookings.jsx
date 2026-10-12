@@ -18,10 +18,10 @@ function openWhatsApp(booking, status) {
 }
 
 const STATUS_BADGE = {
-  pending:   { cls: 'bg-[#ffdbca] text-[#5d2e10]',   icon: 'schedule' },
-  approved:  { cls: 'bg-[#004242]/10 text-[#004242]', icon: 'check_circle' },
-  completed: { cls: 'bg-[#476363]/10 text-[#476363]', icon: 'task_alt' },
-  rejected:  { cls: 'bg-[#ffdad6] text-[#ba1a1a]',   icon: 'cancel' },
+  pending:   { cls: 'bg-ds-tertiary-fixed text-ds-tertiary',   icon: 'schedule' },
+  approved:  { cls: 'bg-ds-primary/10 text-ds-primary', icon: 'check_circle' },
+  completed: { cls: 'bg-ds-secondary/10 text-ds-secondary', icon: 'task_alt' },
+  rejected:  { cls: 'bg-ds-error-container text-ds-error',   icon: 'cancel' },
 };
 
 const STATUSES = ['', 'pending', 'approved', 'completed', 'rejected'];
@@ -96,15 +96,15 @@ function BookingModal({ initial, salons, onClose, onSaved }) {
     mutate(form);
   };
 
-  const inp = 'w-full bg-[#f3f4f5] border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-[#6f7979] focus:outline-none focus:border-[#004242]/40 focus:bg-white transition-colors';
-  const lbl = 'block text-xs font-bold text-[#6f7979] uppercase tracking-widest mb-1.5';
+  const inp = 'w-full bg-ds-surface-container-low border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-ds-outline focus:outline-hidden focus:border-ds-primary/40 focus:bg-white transition-colors';
+  const lbl = 'block text-xs font-bold text-ds-outline uppercase tracking-widest mb-1.5';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#e1e3e4]">
           <h2 className="font-headline text-lg font-bold text-[#191c1d]">{isEdit ? 'Edit Booking' : 'New Booking'}</h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-[#f3f4f5] transition-colors text-[#6f7979]">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-ds-surface-container-low transition-colors text-ds-outline">
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
@@ -112,7 +112,7 @@ function BookingModal({ initial, salons, onClose, onSaved }) {
         <form onSubmit={handleSubmit} className="overflow-y-auto flex-1">
           <div className="px-6 py-5 space-y-4">
             {error && (
-              <div className="bg-[#ffdad6] text-[#ba1a1a] text-sm font-medium px-4 py-3 rounded-xl border-l-4 border-[#ba1a1a]">
+              <div className="bg-ds-error-container text-ds-error text-sm font-medium px-4 py-3 rounded-xl border-l-4 border-ds-error">
                 {error}
               </div>
             )}
@@ -171,11 +171,11 @@ function BookingModal({ initial, salons, onClose, onSaved }) {
           </div>
 
           <div className="px-6 py-4 border-t border-[#e1e3e4] flex items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[#e1e3e4] text-sm font-semibold text-[#3f4948] hover:bg-[#f3f4f5] transition-colors">
+            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[#e1e3e4] text-sm font-semibold text-ds-on-surface-variant hover:bg-ds-surface-container-low transition-colors">
               Cancel
             </button>
             <button type="submit" disabled={isPending}
-              className="px-6 py-2.5 rounded-xl bg-[#004242] text-white text-sm font-bold hover:bg-[#005b5c] transition-colors disabled:opacity-60 flex items-center gap-2">
+              className="px-6 py-2.5 rounded-xl bg-ds-primary text-white text-sm font-bold hover:bg-ds-primary-container transition-colors disabled:opacity-60 flex items-center gap-2">
               {isPending && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               {isEdit ? 'Save Changes' : 'Create Booking'}
             </button>
@@ -270,11 +270,11 @@ export default function OwnerBookings() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-headline text-2xl font-bold text-[#004242]">Bookings</h1>
+          <h1 className="font-headline text-2xl font-bold text-ds-primary">Bookings</h1>
           {bkgMax !== null && (
-            <p className="text-xs text-[#6f7979] mt-0.5 font-medium">
+            <p className="text-xs text-ds-outline mt-0.5 font-medium">
               {bkgUsed} / {bkgMax} bookings this month
-              {atLimit && <span className="ml-2 text-[#ba1a1a] font-bold">— limit reached</span>}
+              {atLimit && <span className="ml-2 text-ds-error font-bold">— limit reached</span>}
             </p>
           )}
         </div>
@@ -284,8 +284,8 @@ export default function OwnerBookings() {
           title={atLimit ? `Your plan allows ${bkgMax} booking(s) per month. Upgrade to add more.` : undefined}
           className={`flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl transition-colors ${
             atLimit
-              ? 'bg-[#e1e3e4] text-[#6f7979] cursor-not-allowed'
-              : 'bg-[#004242] text-white hover:bg-[#005b5c]'
+              ? 'bg-[#e1e3e4] text-ds-outline cursor-not-allowed'
+              : 'bg-ds-primary text-white hover:bg-ds-primary-container'
           }`}>
           <span className="material-symbols-outlined text-base">{atLimit ? 'lock' : 'add'}</span>
           New Booking
@@ -303,38 +303,38 @@ export default function OwnerBookings() {
       )}
 
       {/* Filters */}
-      <div className="bg-white rounded-[0.5rem] p-4 flex flex-wrap gap-3">
+      <div className="bg-white rounded-lg p-4 flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6f7979] text-base">search</span>
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-ds-outline text-base">search</span>
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search customer name, email…"
-            className="w-full bg-[#f3f4f5] border-none rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#004242]/20" />
+            className="w-full bg-ds-surface-container-low border-none rounded-full py-2 pl-9 pr-4 text-sm focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20" />
         </div>
         <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}
-          className="bg-[#f3f4f5] border-none rounded-full py-2 px-4 text-sm font-medium text-[#3f4948] focus:outline-none focus:ring-2 focus:ring-[#004242]/20">
+          className="bg-ds-surface-container-low border-none rounded-full py-2 px-4 text-sm font-medium text-ds-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20">
           {STATUSES.map(s => <option key={s} value={s}>{s ? s.charAt(0).toUpperCase() + s.slice(1) : 'All Statuses'}</option>)}
         </select>
         {salons.length > 1 && (
           <select value={salonId} onChange={e => { setSalonId(e.target.value); setPage(1); }}
-            className="bg-[#f3f4f5] border-none rounded-full py-2 px-4 text-sm font-medium text-[#3f4948] focus:outline-none focus:ring-2 focus:ring-[#004242]/20">
+            className="bg-ds-surface-container-low border-none rounded-full py-2 px-4 text-sm font-medium text-ds-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20">
             <option value="">All Salons</option>
             {salons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         )}
         <input type="date" value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(1); }}
-          className="bg-[#f3f4f5] border-none rounded-full py-2 px-4 text-sm text-[#3f4948] focus:outline-none focus:ring-2 focus:ring-[#004242]/20" />
+          className="bg-ds-surface-container-low border-none rounded-full py-2 px-4 text-sm text-ds-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20" />
         <input type="date" value={dateTo} onChange={e => { setDateTo(e.target.value); setPage(1); }}
-          className="bg-[#f3f4f5] border-none rounded-full py-2 px-4 text-sm text-[#3f4948] focus:outline-none focus:ring-2 focus:ring-[#004242]/20" />
+          className="bg-ds-surface-container-low border-none rounded-full py-2 px-4 text-sm text-ds-on-surface-variant focus:outline-hidden focus:ring-2 focus:ring-ds-primary/20" />
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-[0.5rem] overflow-hidden">
+      <div className="bg-white rounded-lg overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center h-48">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004242]" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ds-primary" />
           </div>
         ) : bookings.length === 0 ? (
-          <div className="text-center py-16 text-[#6f7979]">
+          <div className="text-center py-16 text-ds-outline">
             <span className="material-symbols-outlined text-4xl block mb-2">calendar_month</span>
             No bookings found
           </div>
@@ -342,35 +342,35 @@ export default function OwnerBookings() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#e1e3e4] bg-[#f3f4f5]">
+                <tr className="border-b border-[#e1e3e4] bg-ds-surface-container-low">
                   {['Customer', 'Salon', 'Service', 'Date & Time', 'Status', 'WhatsApp', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-5 py-3 text-xs font-bold text-[#6f7979] uppercase tracking-widest whitespace-nowrap">{h}</th>
+                    <th key={h} className="text-left px-5 py-3 text-xs font-bold text-ds-outline uppercase tracking-widest whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {bookings.map(b => (
-                  <tr key={b.id} className="border-b border-[#f3f4f5] hover:bg-[#f8f9fa] transition-colors">
+                  <tr key={b.id} className="border-b border-ds-surface-container-low hover:bg-[#f8f9fa] transition-colors">
                     <td className="px-5 py-4">
                       <p className="font-semibold text-[#191c1d]">{b.name}</p>
-                      <p className="text-xs text-[#6f7979]">{b.email}</p>
+                      <p className="text-xs text-ds-outline">{b.email}</p>
                       {b.phone && (
                         <a href={`https://wa.me/${b.phone.replace(/\D/g,'')}`} target="_blank" rel="noreferrer"
-                          className="text-xs text-[#6f7979] font-medium hover:text-[#3f4948] hover:underline">{b.phone}</a>
+                          className="text-xs text-ds-outline font-medium hover:text-ds-on-surface-variant hover:underline">{b.phone}</a>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-[#3f4948] whitespace-nowrap">{b.salon?.name ?? '—'}</td>
+                    <td className="px-5 py-4 text-ds-on-surface-variant whitespace-nowrap">{b.salon?.name ?? '—'}</td>
                     <td className="px-5 py-4">
-                      <p className="text-[#3f4948]">{b.service?.title ?? '—'}</p>
+                      <p className="text-ds-on-surface-variant">{b.service?.title ?? '—'}</p>
                       {b.service?.price && (
-                        <p className="text-xs text-[#6f7979]">LKR {Number(b.service.price).toLocaleString()}</p>
+                        <p className="text-xs text-ds-outline">LKR {Number(b.service.price).toLocaleString()}</p>
                       )}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap">
                       <p className="font-medium text-[#191c1d]">
                         {b.date ? new Date(b.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '—'}
                       </p>
-                      <p className="text-xs text-[#6f7979]">
+                      <p className="text-xs text-ds-outline">
                         {b.time ? (() => { const [h, m] = b.time.split(':'); const d = new Date(); d.setHours(+h, +m); return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); })() : ''}
                       </p>
                     </td>
@@ -387,7 +387,7 @@ export default function OwnerBookings() {
                           </svg>
                           Send
                         </button>
-                      ) : <span className="text-xs text-[#6f7979]">—</span>}
+                      ) : <span className="text-xs text-ds-outline">—</span>}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-1 flex-wrap">
@@ -395,37 +395,37 @@ export default function OwnerBookings() {
                         {b.status === 'pending' && (
                           <>
                             <button onClick={() => statusMut.mutate({ id: b.id, status: 'approved' })}
-                              className="p-1.5 rounded-lg bg-[#004242]/10 text-[#004242] hover:bg-[#004242]/20 transition-colors" title="Approve">
+                              className="p-1.5 rounded-lg bg-ds-primary/10 text-ds-primary hover:bg-ds-primary/20 transition-colors" title="Approve">
                               <span className="material-symbols-outlined text-base">check</span>
                             </button>
                             <button onClick={() => statusMut.mutate({ id: b.id, status: 'rejected' })}
-                              className="p-1.5 rounded-lg bg-[#ffdad6] text-[#ba1a1a] hover:bg-[#ba1a1a]/20 transition-colors" title="Reject">
+                              className="p-1.5 rounded-lg bg-ds-error-container text-ds-error hover:bg-ds-error/20 transition-colors" title="Reject">
                               <span className="material-symbols-outlined text-base">close</span>
                             </button>
                           </>
                         )}
                         {b.status === 'approved' && (
                           <button onClick={() => statusMut.mutate({ id: b.id, status: 'completed' })}
-                            className="p-1.5 rounded-lg bg-[#476363]/10 text-[#476363] hover:bg-[#476363]/20 transition-colors" title="Mark Completed">
+                            className="p-1.5 rounded-lg bg-ds-secondary/10 text-ds-secondary hover:bg-ds-secondary/20 transition-colors" title="Mark Completed">
                             <span className="material-symbols-outlined text-base">task_alt</span>
                           </button>
                         )}
                         {/* Edit */}
                         <button onClick={() => setModal(b)}
-                          className="p-1.5 rounded-lg text-[#6f7979] hover:bg-[#f3f4f5] hover:text-[#004242] transition-colors" title="Edit">
+                          className="p-1.5 rounded-lg text-ds-outline hover:bg-ds-surface-container-low hover:text-ds-primary transition-colors" title="Edit">
                           <span className="material-symbols-outlined text-base">edit</span>
                         </button>
                         {/* Delete */}
                         {deleteId === b.id ? (
-                          <div className="flex items-center gap-1 bg-[#ffdad6] rounded-lg px-2 py-1">
-                            <span className="text-xs font-semibold text-[#ba1a1a]">Delete?</span>
+                          <div className="flex items-center gap-1 bg-ds-error-container rounded-lg px-2 py-1">
+                            <span className="text-xs font-semibold text-ds-error">Delete?</span>
                             <button onClick={() => deleteMut.mutate(b.id)} disabled={deleteMut.isPending}
-                              className="text-xs font-bold text-[#ba1a1a] hover:underline px-1">Yes</button>
-                            <button onClick={() => setDeleteId(null)} className="text-xs font-bold text-[#6f7979] hover:underline px-1">No</button>
+                              className="text-xs font-bold text-ds-error hover:underline px-1">Yes</button>
+                            <button onClick={() => setDeleteId(null)} className="text-xs font-bold text-ds-outline hover:underline px-1">No</button>
                           </div>
                         ) : (
                           <button onClick={() => setDeleteId(b.id)}
-                            className="p-1.5 rounded-lg text-[#6f7979] hover:bg-[#ffdad6] hover:text-[#ba1a1a] transition-colors" title="Delete">
+                            className="p-1.5 rounded-lg text-ds-outline hover:bg-ds-error-container hover:text-ds-error transition-colors" title="Delete">
                             <span className="material-symbols-outlined text-base">delete</span>
                           </button>
                         )}
@@ -440,12 +440,12 @@ export default function OwnerBookings() {
 
         {meta.last_page > 1 && (
           <div className="flex items-center justify-between px-5 py-4 border-t border-[#e1e3e4]">
-            <p className="text-xs text-[#6f7979]">Page {meta.current_page} of {meta.last_page} · {meta.total} results</p>
+            <p className="text-xs text-ds-outline">Page {meta.current_page} of {meta.last_page} · {meta.total} results</p>
             <div className="flex gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={meta.current_page <= 1}
-                className="px-3 py-1.5 rounded-lg bg-[#f3f4f5] text-[#3f4948] text-xs font-semibold disabled:opacity-40 hover:bg-[#e1e3e4] transition-colors">Prev</button>
+                className="px-3 py-1.5 rounded-lg bg-ds-surface-container-low text-ds-on-surface-variant text-xs font-semibold disabled:opacity-40 hover:bg-[#e1e3e4] transition-colors">Prev</button>
               <button onClick={() => setPage(p => Math.min(meta.last_page, p + 1))} disabled={meta.current_page >= meta.last_page}
-                className="px-3 py-1.5 rounded-lg bg-[#004242] text-white text-xs font-semibold disabled:opacity-40 hover:bg-[#005b5c] transition-colors">Next</button>
+                className="px-3 py-1.5 rounded-lg bg-ds-primary text-white text-xs font-semibold disabled:opacity-40 hover:bg-ds-primary-container transition-colors">Next</button>
             </div>
           </div>
         )}

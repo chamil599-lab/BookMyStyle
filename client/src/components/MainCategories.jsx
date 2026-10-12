@@ -27,7 +27,7 @@ export default function MainCategories() {
                 <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" strokeWidth="2"></line>
             </svg>
-            <input type="text" placeholder="Search a post..." className="outline-none"/>
+            <input type="text" placeholder="Search a post..." className="outline-hidden"/>
         </div>
     </div>
   )

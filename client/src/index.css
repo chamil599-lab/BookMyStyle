@@ -1,8 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap')
+layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-ds-primary: #004242;
+  --color-ds-primary-container: #005b5c;
+  --color-ds-on-primary: #ffffff;
+  --color-ds-on-primary-container: #8bd0d1;
+  --color-ds-primary-fixed: #a8efef;
+  --color-ds-primary-fixed-dim: #8dd3d3;
+  --color-ds-inverse-primary: #8dd3d3;
+  --color-ds-secondary: #476363;
+  --color-ds-secondary-container: #c7e6e5;
+  --color-ds-on-secondary: #ffffff;
+  --color-ds-on-secondary-container: #4c6868;
+  --color-ds-tertiary: #5d2e10;
+  --color-ds-tertiary-container: #794425;
+  --color-ds-tertiary-fixed: #ffdbca;
+  --color-ds-on-tertiary: #ffffff;
+  --color-ds-on-tertiary-container: #feb48d;
+  --color-ds-surface: #f8f9fa;
+  --color-ds-surface-bright: #f8f9fa;
+  --color-ds-surface-dim: #d9dadb;
+  --color-ds-surface-variant: #e1e3e4;
+  --color-ds-surface-container-lowest: #ffffff;
+  --color-ds-surface-container-low: #f3f4f5;
+  --color-ds-surface-container: #edeeef;
+  --color-ds-surface-container-high: #e7e8e9;
+  --color-ds-surface-container-highest: #e1e3e4;
+  --color-ds-on-surface: #191c1d;
+  --color-ds-on-surface-variant: #3f4948;
+  --color-ds-outline: #6f7979;
+  --color-ds-outline-variant: #bec8c8;
+  --color-ds-inverse-surface: #2e3132;
+  --color-ds-inverse-on-surface: #f0f1f2;
+  --color-ds-background: #f8f9fa;
+  --color-ds-on-background: #191c1d;
+  --color-ds-error: #ba1a1a;
+  --color-ds-error-container: #ffdad6;
+  --color-ds-on-error: #ffffff;
+  --color-ds-on-error-container: #93000a;
+  --color-ds-surface-tint: #1b6869;
+
+  --font-headline: Manrope, sans-serif;
+  --font-body: Inter, sans-serif;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 :root {
   --sand: #f7f0e6;
@@ -25,10 +88,13 @@ body {
   color: var(--ink);
 }
 
-h1,
-h2,
-h3 {
-  font-family: 'Unbounded', sans-serif;
+/* Keep the original class-over-heading typography precedence with v4 layers. */
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: 'Unbounded', sans-serif;
+  }
 }
 
 /* Dashboard shell resets — applied via wrapper class */

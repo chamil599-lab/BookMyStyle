@@ -34,11 +34,11 @@ export default function UpcomingBookings() {
     const classes = {
       pending: 'bg-[#fff3e0] text-[#e65100]',
       approved: 'bg-[#e8f5e9] text-[#2e7d32]',
-      rejected: 'bg-[#ffdad6] text-[#ba1a1a]',
+      rejected: 'bg-ds-error-container text-ds-error',
     };
 
     return (
-      <span className={`rounded-full px-3 py-1 text-xs font-bold ${classes[status] ?? 'bg-[#e1e3e4] text-[#3f4948]'}`}>
+      <span className={`rounded-full px-3 py-1 text-xs font-bold ${classes[status] ?? 'bg-[#e1e3e4] text-ds-on-surface-variant'}`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
@@ -47,7 +47,7 @@ export default function UpcomingBookings() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-[#004242]" />
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-ds-primary" />
       </div>
     );
   }
@@ -55,15 +55,15 @@ export default function UpcomingBookings() {
   return (
     <div className="space-y-6">
       <div className="rounded-[1.2rem] border border-[#d7e4e3] bg-white p-6 shadow-[0_18px_42px_rgba(25,28,29,0.08)]">
-        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#6f7979]">Upcoming Appointments</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-ds-outline">Upcoming Appointments</p>
         <div className="mt-2 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="font-headline text-3xl font-extrabold text-[#191c1d]">Your Next Visits</h1>
-            <p className="mt-2 text-sm text-[#6f7979]">Stay on top of what’s booked, approved, or still waiting for confirmation.</p>
+            <p className="mt-2 text-sm text-ds-outline">Stay on top of what’s booked, approved, or still waiting for confirmation.</p>
           </div>
           <Link
             to="/salons"
-            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_14px_28px_rgba(0,66,66,0.18)] transition hover:translate-y-[-1px]"
+            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_14px_28px_rgba(0,66,66,0.18)] transition hover:-translate-y-px"
           >
             <span className="material-symbols-outlined text-[18px]">add_circle</span>
             Book Another
@@ -73,16 +73,16 @@ export default function UpcomingBookings() {
 
       {!bookings || bookings.length === 0 ? (
         <div className="rounded-[1.2rem] border border-[#d7e4e3] bg-[linear-gradient(180deg,#ffffff_0%,#f8fbfb_100%)] p-12 text-center shadow-[0_18px_42px_rgba(25,28,29,0.08)]">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] text-white shadow-[0_18px_34px_rgba(0,66,66,0.18)]">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] text-white shadow-[0_18px_34px_rgba(0,66,66,0.18)]">
             <span className="material-symbols-outlined text-4xl">calendar_month</span>
           </div>
           <h3 className="mt-5 font-headline text-2xl font-bold text-[#191c1d]">No Upcoming Appointments</h3>
-          <p className="mx-auto mt-2 max-w-md text-sm text-[#6f7979]">
+          <p className="mx-auto mt-2 max-w-md text-sm text-ds-outline">
             You don&apos;t have any scheduled appointments yet. Explore salons and lock in your next visit.
           </p>
           <Link
             to="/salons"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] px-6 py-3 text-sm font-bold text-white shadow-[0_14px_28px_rgba(0,66,66,0.18)] transition hover:translate-y-[-1px]"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#004242_0%,#0d6667_100%)] px-6 py-3 text-sm font-bold text-white shadow-[0_14px_28px_rgba(0,66,66,0.18)] transition hover:-translate-y-px"
           >
             <span className="material-symbols-outlined text-[18px]">storefront</span>
             Book an Appointment
@@ -93,7 +93,7 @@ export default function UpcomingBookings() {
           {bookings.map((booking) => (
             <div
               key={booking.id}
-              className="rounded-[1.2rem] border border-[#d7e4e3] bg-white p-6 shadow-[0_18px_42px_rgba(25,28,29,0.08)] transition hover:translate-y-[-1px]"
+              className="rounded-[1.2rem] border border-[#d7e4e3] bg-white p-6 shadow-[0_18px_42px_rgba(25,28,29,0.08)] transition hover:-translate-y-px"
             >
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex-1">
@@ -102,24 +102,24 @@ export default function UpcomingBookings() {
                     {getStatusBadge(booking.status)}
                   </div>
 
-                  <div className="grid gap-2 text-sm text-[#6f7979] md:grid-cols-2">
+                  <div className="grid gap-2 text-sm text-ds-outline md:grid-cols-2">
                     <p className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#004242]">content_cut</span>
+                      <span className="material-symbols-outlined text-[18px] text-ds-primary">content_cut</span>
                       <span className="font-medium">{booking.service?.name || 'Service unavailable'}</span>
-                      {booking.service?.price && <span className="font-semibold text-[#004242]">LKR {booking.service.price}/=</span>}
+                      {booking.service?.price && <span className="font-semibold text-ds-primary">LKR {booking.service.price}/=</span>}
                     </p>
                     <p className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#004242]">calendar_month</span>
+                      <span className="material-symbols-outlined text-[18px] text-ds-primary">calendar_month</span>
                       <span>{format(new Date(booking.date), 'MMMM d, yyyy')}</span>
                     </p>
                     <p className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#004242]">schedule</span>
+                      <span className="material-symbols-outlined text-[18px] text-ds-primary">schedule</span>
                       <span>{booking.time}</span>
                       {booking.service?.duration && <span>&bull; {booking.service.duration} mins</span>}
                     </p>
                     {booking.salon?.address && (
                       <p className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[18px] text-[#004242]">location_on</span>
+                        <span className="material-symbols-outlined text-[18px] text-ds-primary">location_on</span>
                         <span>{booking.salon.address}</span>
                       </p>
                     )}
@@ -130,7 +130,7 @@ export default function UpcomingBookings() {
                   <button
                     onClick={() => handleCancel(booking.id)}
                     disabled={cancelMutation.isPending}
-                    className="rounded-full border border-[#f0b2ac] px-4 py-2 text-sm font-bold text-[#ba1a1a] transition hover:bg-[#fff1ef] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-full border border-[#f0b2ac] px-4 py-2 text-sm font-bold text-ds-error transition hover:bg-[#fff1ef] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Booking'}
                   </button>

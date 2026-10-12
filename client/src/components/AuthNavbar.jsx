@@ -13,7 +13,7 @@ const AuthNavbar = memo(function AuthNavbar() {
   const location = useLocation();
 
   return (
-    <nav className="sticky top-0 z-50 bg-[var(--sand)] border-b border-[rgba(196,98,45,0.15)] shadow-sm py-3">
+    <nav className="sticky top-0 z-50 bg-(--sand) border-b border-[rgba(196,98,45,0.15)] shadow-xs py-3">
       <div className="max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
 
@@ -23,10 +23,10 @@ const AuthNavbar = memo(function AuthNavbar() {
               <img src="/logo2.png" alt="BookMyStyle" className="w-9 h-9 object-contain" />
             </div>
             <div className="flex flex-col">
-              <span className="font-[Unbounded] text-sm font-bold uppercase tracking-[0.12em] text-[var(--ink)]">
+              <span className="font-[family-name:Unbounded] text-sm font-bold uppercase tracking-[0.12em] text-(--ink)">
                 Book My Style
               </span>
-              <span className="text-xs text-[var(--muted)] -mt-1">Beauty Booking</span>
+              <span className="text-xs text-(--muted) -mt-1">Beauty Booking</span>
             </div>
           </Link>
 
@@ -38,8 +38,8 @@ const AuthNavbar = memo(function AuthNavbar() {
                 to={item.path}
                 className={`px-4 py-2 rounded-full text-[11px] font-medium tracking-[0.16em] uppercase transition-all duration-300 ${
                   location.pathname === item.path
-                    ? 'text-[var(--ink)] bg-[var(--cream)]'
-                    : 'text-slate-500 hover:text-[var(--terra)]'
+                    ? 'text-(--ink) bg-(--cream)'
+                    : 'text-slate-500 hover:text-(--terra)'
                 }`}
               >
                 {item.label}
@@ -53,7 +53,7 @@ const AuthNavbar = memo(function AuthNavbar() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <button className="px-5 py-2 text-[11px] font-[Unbounded] font-bold tracking-[0.15em] uppercase rounded-full bg-[var(--terra)] text-white hover:bg-[var(--sienna)] transition-all duration-300 hover:-translate-y-0.5 shadow-md">
+            <button className="px-5 py-2 text-[11px] font-[family-name:Unbounded] font-bold tracking-[0.15em] uppercase rounded-full bg-(--terra) text-white hover:bg-(--sienna) transition-all duration-300 hover:-translate-y-0.5 shadow-md">
               Book Now
             </button>
           </a>

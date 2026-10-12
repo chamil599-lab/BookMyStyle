@@ -33,7 +33,7 @@ export default function FilterSalon({ onSalonsFiltered }) {
     <div className="flex flex-col md:flex-row gap- mb-6">
       {/* Department Filter */}
       <select
-        className="p-2 border rounded"
+        className="p-2 border rounded-sm"
         value={selectedDepartment}
         onChange={(e) => setSelectedDepartment(e.target.value)}
       >

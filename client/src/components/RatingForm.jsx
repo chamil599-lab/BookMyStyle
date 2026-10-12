@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const StarIcon = ({ filled }) => (
   <svg
-    className={`w-8 h-8 transition-colors ${filled ? "text-[var(--terra)]" : "text-[var(--cream)]"}`}
+    className={`w-8 h-8 transition-colors ${filled ? "text-(--terra)" : "text-(--cream)"}`}
     viewBox="0 0 24 24"
     fill="currentColor"
   >
@@ -93,7 +93,7 @@ const RatingForm = ({ salonId, onSubmitted }) => {
   const activeRating = hoverRating || rating;
 
   if (!user) {
-    return <p className="text-[var(--ink)]">Sign in to review a salon you have booked. <Link to="/login" className="underline">Sign in</Link></p>;
+    return <p className="text-(--ink)">Sign in to review a salon you have booked. <Link to="/login" className="underline">Sign in</Link></p>;
   }
 
   return (
@@ -108,34 +108,34 @@ const RatingForm = ({ salonId, onSubmitted }) => {
             </svg>
           </div>
           <div>
-            <div className="font-[Unbounded] text-[10px] font-semibold tracking-[0.25em] text-green-700 uppercase mb-1">
+            <div className="font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.25em] text-green-700 uppercase mb-1">
               Review Submitted
             </div>
-            <p className="text-[14px] text-[var(--ink)]">{message}</p>
+            <p className="text-[14px] text-(--ink)">{message}</p>
           </div>
         </div>
       )}
 
       {/* Error banner */}
       {error && (
-        <div className="flex items-start gap-4 border-l-4 border-[var(--sienna)] bg-[var(--cream)] px-6 py-5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-[var(--sienna)] text-white">
+        <div className="flex items-start gap-4 border-l-4 border-(--sienna) bg-(--cream) px-6 py-5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-(--sienna) text-white">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
           <div>
-            <div className="font-[Unbounded] text-[10px] font-semibold tracking-[0.25em] text-[var(--sienna)] uppercase mb-1">
+            <div className="font-[family-name:Unbounded] text-[10px] font-semibold tracking-[0.25em] text-(--sienna) uppercase mb-1">
               Notice
             </div>
-            <p className="text-[14px] text-[var(--ink)]">{error}</p>
+            <p className="text-[14px] text-(--ink)">{error}</p>
           </div>
         </div>
       )}
 
       {/* Email */}
       <div>
-        <label className="mb-2.5 block font-[Unbounded] text-[12px] font-semibold tracking-[0.2em] text-[var(--terra)] uppercase">
+        <label className="mb-2.5 block font-[family-name:Unbounded] text-[12px] font-semibold tracking-[0.2em] text-(--terra) uppercase">
           Email Address <span className="opacity-60">*</span>
         </label>
         <input
@@ -143,13 +143,13 @@ const RatingForm = ({ salonId, onSubmitted }) => {
           placeholder="your@email.com"
           value={email}
           readOnly
-          className="w-full border-2 border-[var(--cream)] bg-[var(--sand)] px-5 py-4 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--terra)] transition"
+          className="w-full border-2 border-(--cream) bg-(--sand) px-5 py-4 text-[15px] text-(--ink) placeholder:text-(--muted) outline-hidden focus:border-(--terra) transition"
         />
 
         {/* Eligibility feedback */}
         {checkingEligibility && (
-          <div className="mt-2 flex items-center gap-2 text-[13px] text-[var(--muted)]">
-            <svg className="animate-spin h-4 w-4 text-[var(--terra)]" fill="none" viewBox="0 0 24 24">
+          <div className="mt-2 flex items-center gap-2 text-[13px] text-(--muted)">
+            <svg className="animate-spin h-4 w-4 text-(--terra)" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
@@ -165,7 +165,7 @@ const RatingForm = ({ salonId, onSubmitted }) => {
           </div>
         )}
         {canRate === false && !checkingEligibility && (
-          <div className="mt-2 flex items-center gap-2 text-[13px] text-[var(--sienna)] font-medium">
+          <div className="mt-2 flex items-center gap-2 text-[13px] text-(--sienna) font-medium">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -176,10 +176,10 @@ const RatingForm = ({ salonId, onSubmitted }) => {
 
       {/* Star Rating */}
       <div>
-        <label className="mb-2.5 block font-[Unbounded] text-[12px] font-semibold tracking-[0.2em] text-[var(--terra)] uppercase">
+        <label className="mb-2.5 block font-[family-name:Unbounded] text-[12px] font-semibold tracking-[0.2em] text-(--terra) uppercase">
           Your Rating <span className="opacity-60">*</span>
         </label>
-        <div className="border-2 border-[var(--cream)] bg-[var(--sand)] px-5 py-5">
+        <div className="border-2 border-(--cream) bg-(--sand) px-5 py-5">
           <div className="flex items-center gap-1 mb-3">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -189,18 +189,18 @@ const RatingForm = ({ salonId, onSubmitted }) => {
                 onMouseEnter={() => setHoverRating(n)}
                 onMouseLeave={() => setHoverRating(0)}
                 disabled={canRate === false}
-                className={`transition-transform hover:scale-110 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed`}
+                className={`transition-transform hover:scale-110 focus:outline-hidden disabled:opacity-40 disabled:cursor-not-allowed`}
                 aria-label={`Rate ${n} stars`}
               >
                 <StarIcon filled={activeRating >= n} />
               </button>
             ))}
             <div className="ml-3 flex flex-col">
-              <span className="font-[Unbounded] text-[13px] font-bold text-[var(--ink)]">
+              <span className="font-[family-name:Unbounded] text-[13px] font-bold text-(--ink)">
                 {activeRating ? RATING_LABELS[activeRating] : 'Select a rating'}
               </span>
               {activeRating > 0 && (
-                <span className="text-[11px] text-[var(--muted)]">{activeRating} / 5 stars</span>
+                <span className="text-[11px] text-(--muted)">{activeRating} / 5 stars</span>
               )}
             </div>
           </div>
@@ -209,7 +209,7 @@ const RatingForm = ({ salonId, onSubmitted }) => {
             {[1, 2, 3, 4, 5].map((n) => (
               <div
                 key={n}
-                className={`flex-1 transition-colors ${activeRating >= n ? 'bg-[var(--terra)]' : 'bg-[var(--cream)]'}`}
+                className={`flex-1 transition-colors ${activeRating >= n ? 'bg-(--terra)' : 'bg-(--cream)'}`}
               />
             ))}
           </div>
@@ -218,7 +218,7 @@ const RatingForm = ({ salonId, onSubmitted }) => {
 
       {/* Review Text */}
       <div>
-        <label className="mb-2.5 block font-[Unbounded] text-[12px] font-semibold tracking-[0.2em] text-[var(--terra)] uppercase">
+        <label className="mb-2.5 block font-[family-name:Unbounded] text-[12px] font-semibold tracking-[0.2em] text-(--terra) uppercase">
           Your Review <span className="font-normal opacity-50 normal-case tracking-normal">(Optional)</span>
         </label>
         <textarea
@@ -227,28 +227,28 @@ const RatingForm = ({ salonId, onSubmitted }) => {
           onChange={(e) => setReview(e.target.value)}
           disabled={canRate === false}
           rows={4}
-          className={`w-full border-2 border-[var(--cream)] bg-[var(--sand)] px-5 py-4 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--terra)] transition resize-none ${canRate === false ? 'opacity-40 cursor-not-allowed' : ''}`}
+          className={`w-full border-2 border-(--cream) bg-(--sand) px-5 py-4 text-[15px] text-(--ink) placeholder:text-(--muted) outline-hidden focus:border-(--terra) transition resize-none ${canRate === false ? 'opacity-40 cursor-not-allowed' : ''}`}
         />
       </div>
 
       {/* Info notice */}
-      <div className="flex items-start gap-4 border-l-4 border-[var(--terra)] bg-[var(--cream)] px-5 py-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-[var(--terra)] text-white">
+      <div className="flex items-start gap-4 border-l-4 border-(--terra) bg-(--cream) px-5 py-4">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-(--terra) text-white">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-[13px] text-[var(--ink)] leading-relaxed">
+        <p className="text-[13px] text-(--ink) leading-relaxed">
           Only customers who have <strong>completed a booking</strong> at this salon can submit a rating.
         </p>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 border-t-2 border-[var(--cream)] pt-6">
+      <div className="flex items-center gap-3 border-t-2 border-(--cream) pt-6">
         <button
           type="submit"
           disabled={loading || canRate === false || checkingEligibility}
-          className="flex-1 inline-flex items-center justify-center gap-3 bg-[var(--terra)] py-4 px-6 font-[Unbounded] text-[11px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-[var(--sienna)] hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+          className="flex-1 inline-flex items-center justify-center gap-3 bg-(--terra) py-4 px-6 font-[family-name:Unbounded] text-[11px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-(--sienna) hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0"
         >
           {loading ? (
             <>
@@ -271,7 +271,7 @@ const RatingForm = ({ salonId, onSubmitted }) => {
         <button
           type="button"
           onClick={reset}
-          className="border-2 border-[var(--cream)] bg-[var(--sand)] px-5 py-4 font-[Unbounded] text-[11px] font-semibold tracking-[0.15em] text-[var(--muted)] uppercase transition hover:border-[var(--terra)] hover:text-[var(--terra)]"
+          className="border-2 border-(--cream) bg-(--sand) px-5 py-4 font-[family-name:Unbounded] text-[11px] font-semibold tracking-[0.15em] text-(--muted) uppercase transition hover:border-(--terra) hover:text-(--terra)"
         >
           Reset
         </button>

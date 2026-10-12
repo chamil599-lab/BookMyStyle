@@ -10,7 +10,7 @@ const Rating = ({ rating, showBadge = true }) => {
         const isHalf = rating >= star - 0.5 && rating < star;
 
         return (
-          <span key={star} className="text-green-500 text-lg drop-shadow-sm">
+          <span key={star} className="text-green-500 text-lg drop-shadow-xs">
             {isFull ? (
               <i className="fas fa-star"></i>
             ) : isHalf ? (

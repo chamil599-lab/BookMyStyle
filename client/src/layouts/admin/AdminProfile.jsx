@@ -48,8 +48,8 @@ export default function AdminProfile() {
     },
   });
 
-  const inp = 'w-full bg-[#f3f4f5] border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-[#6f7979] focus:outline-none focus:border-[#004242]/40 focus:bg-white transition-colors';
-  const lbl = 'block text-xs font-bold text-[#6f7979] uppercase tracking-widest mb-1.5';
+  const inp = 'w-full bg-ds-surface-container-low border border-transparent rounded-xl px-4 py-2.5 text-sm text-[#191c1d] placeholder-ds-outline focus:outline-hidden focus:border-ds-primary/40 focus:bg-white transition-colors';
+  const lbl = 'block text-xs font-bold text-ds-outline uppercase tracking-widest mb-1.5';
 
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
@@ -59,27 +59,27 @@ export default function AdminProfile() {
     <div className="space-y-6 max-w-2xl">
 
       {/* ── Header card ── */}
-      <div className="bg-white rounded-[0.5rem] p-6 flex items-center gap-5">
-        <div className="w-16 h-16 rounded-full bg-[#005b5c] flex items-center justify-center text-white font-black text-xl flex-shrink-0">
+      <div className="bg-white rounded-lg p-6 flex items-center gap-5">
+        <div className="w-16 h-16 rounded-full bg-ds-primary-container flex items-center justify-center text-white font-black text-xl shrink-0">
           {initials}
         </div>
         <div className="min-w-0">
           <h1 className="font-headline text-xl font-bold text-[#191c1d] truncate">{user?.name}</h1>
-          <p className="text-sm text-[#6f7979]">{user?.email}</p>
+          <p className="text-sm text-ds-outline">{user?.email}</p>
           <div className="flex items-center gap-2 mt-1.5">
-            <span className="text-xs bg-[#005b5c]/10 text-[#004242] px-2 py-0.5 rounded-full font-semibold">System Admin</span>
+            <span className="text-xs bg-ds-primary-container/10 text-ds-primary px-2 py-0.5 rounded-full font-semibold">System Admin</span>
             {memberSince && (
-              <span className="text-[11px] text-[#6f7979]">Member since {memberSince}</span>
+              <span className="text-[11px] text-ds-outline">Member since {memberSince}</span>
             )}
           </div>
         </div>
       </div>
 
       {/* ── Edit profile ── */}
-      <div className="bg-white rounded-[0.5rem] overflow-hidden">
+      <div className="bg-white rounded-lg overflow-hidden">
         <div className="px-6 py-5 border-b border-[#e1e3e4]">
           <h2 className="font-headline text-base font-bold text-[#191c1d]">Account Details</h2>
-          <p className="text-sm text-[#6f7979]">Update your name and email address</p>
+          <p className="text-sm text-ds-outline">Update your name and email address</p>
         </div>
         <form
           onSubmit={e => { e.preventDefault(); profileMut.mutate(form); }}
@@ -89,7 +89,7 @@ export default function AdminProfile() {
             <div className={`px-4 py-3 rounded-xl text-sm font-medium border-l-4 ${
               profileMsg.type === 'success'
                 ? 'bg-[#e8f5e9] text-[#2e7d32] border-[#2e7d32]'
-                : 'bg-[#ffdad6] text-[#ba1a1a] border-[#ba1a1a]'
+                : 'bg-ds-error-container text-ds-error border-ds-error'
             }`}>{profileMsg.text}</div>
           )}
 
@@ -119,7 +119,7 @@ export default function AdminProfile() {
             <button
               type="submit"
               disabled={profileMut.isPending}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#004242] text-white text-sm font-bold rounded-xl hover:bg-[#005b5c] transition-colors disabled:opacity-60"
+              className="flex items-center gap-2 px-6 py-2.5 bg-ds-primary text-white text-sm font-bold rounded-xl hover:bg-ds-primary-container transition-colors disabled:opacity-60"
             >
               {profileMut.isPending && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               Save Changes
@@ -129,10 +129,10 @@ export default function AdminProfile() {
       </div>
 
       {/* ── Change password ── */}
-      <div className="bg-white rounded-[0.5rem] overflow-hidden">
+      <div className="bg-white rounded-lg overflow-hidden">
         <div className="px-6 py-5 border-b border-[#e1e3e4]">
           <h2 className="font-headline text-base font-bold text-[#191c1d]">Change Password</h2>
-          <p className="text-sm text-[#6f7979]">Use a strong password of at least 8 characters</p>
+          <p className="text-sm text-ds-outline">Use a strong password of at least 8 characters</p>
         </div>
         <form
           onSubmit={e => { e.preventDefault(); pwMut.mutate(pw); }}
@@ -142,7 +142,7 @@ export default function AdminProfile() {
             <div className={`px-4 py-3 rounded-xl text-sm font-medium border-l-4 ${
               pwMsg.type === 'success'
                 ? 'bg-[#e8f5e9] text-[#2e7d32] border-[#2e7d32]'
-                : 'bg-[#ffdad6] text-[#ba1a1a] border-[#ba1a1a]'
+                : 'bg-ds-error-container text-ds-error border-ds-error'
             }`}>{pwMsg.text}</div>
           )}
 
@@ -185,7 +185,7 @@ export default function AdminProfile() {
             <button
               type="submit"
               disabled={pwMut.isPending}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#191c1d] text-white text-sm font-bold rounded-xl hover:bg-[#3f4948] transition-colors disabled:opacity-60"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#191c1d] text-white text-sm font-bold rounded-xl hover:bg-ds-on-surface-variant transition-colors disabled:opacity-60"
             >
               {pwMut.isPending && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
               Update Password

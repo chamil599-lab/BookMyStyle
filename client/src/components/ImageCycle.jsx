@@ -137,16 +137,16 @@ const HeroImageCarousel = () => {
         </div>
 
         {/* Layered Background Cards */}
-        <div className="absolute inset-4 bg-gradient-to-br from-yellow-200 via-amber-100 to-yellow-100 rounded-[3rem] transform rotate-6 opacity-35 
+        <div className="absolute inset-4 bg-linear-to-br from-yellow-200 via-amber-100 to-yellow-100 rounded-[3rem] transform rotate-6 opacity-35
                       transition-transform duration-500 group-hover:rotate-12 shadow-2xl"></div>
-        <div className="absolute inset-2 bg-gradient-to-br from-yellow-100 via-white to-amber-50 rounded-[3rem] transform rotate-3 
+        <div className="absolute inset-2 bg-linear-to-br from-yellow-100 via-white to-amber-50 rounded-[3rem] transform rotate-3
                       transition-transform duration-500 group-hover:rotate-6 shadow-xl"></div>
         
         {/* Main Image Container */}
-        <div className="relative p-8 border shadow-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[2.5rem] backdrop-blur-sm border-yellow-200/20 overflow-hidden">
+        <div className="relative p-8 border shadow-2xl bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[2.5rem] backdrop-blur-xs border-yellow-200/20 overflow-hidden">
           
           {/* Shimmer Effect */}
-          <div className="absolute inset-0 transition-transform duration-1000 -translate-x-full pointer-events-none group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+          <div className="absolute inset-0 transition-transform duration-1000 -translate-x-full pointer-events-none group-hover:translate-x-full bg-linear-to-r from-transparent via-white/30 to-transparent"></div>
           
           {/* Image Display Area */}
           <div className="relative h-[450px] flex items-center justify-center overflow-hidden rounded-3xl">
@@ -202,7 +202,7 @@ const HeroImageCarousel = () => {
                         rounded-2xl p-6 shadow-xl border border-yellow-200/20 
                         transition-all duration-500 transform hover:scale-105 z-50">
             <div className="text-center">
-              <h3 className="mb-2 text-2xl font-bold text-transparent bg-gradient-to-r from-yellow-300 to-amber-300 bg-clip-text">
+              <h3 className="mb-2 text-2xl font-bold text-transparent bg-linear-to-r from-yellow-300 to-amber-300 bg-clip-text">
                 {images[currentIndex].title}
               </h3>
               <p className="text-sm font-medium text-slate-300">
@@ -235,12 +235,12 @@ const HeroImageCarousel = () => {
           </button>
 
           {/* Gradient Overlays */}
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-yellow-900/[0.08] via-transparent to-transparent rounded-3xl"></div>
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/10 via-transparent to-transparent rounded-3xl"></div>
+          <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-yellow-900/8 via-transparent to-transparent rounded-3xl"></div>
+          <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-white/10 via-transparent to-transparent rounded-3xl"></div>
         </div>
 
         {/* Enhanced Dots Indicator 
-        <div className="absolute z-50 flex items-center gap-2 px-4 py-2 transform -translate-x-1/2 border rounded-full shadow-lg -bottom-0 left-1/2 bg-white/80 backdrop-blur-md border-green-100/50">
+        <div className="absolute z-50 flex items-center gap-2 px-4 py-2 transform -translate-x-1/2 border rounded-full shadow-lg bottom-0 left-1/2 bg-white/80 backdrop-blur-md border-green-100/50">
           {images.map((_, index) => (
             <button
               key={index}
@@ -248,7 +248,7 @@ const HeroImageCarousel = () => {
               disabled={isAnimating}
               className={`transition-all duration-500 rounded-full
                 ${index === currentIndex 
-                  ? 'bg-gradient-to-r from-green-600 to-green-500 w-8 h-2.5 shadow-md' 
+                  ? 'bg-linear-to-r from-green-600 to-green-500 w-8 h-2.5 shadow-md'
                   : 'bg-green-200 hover:bg-green-300 w-2.5 h-2.5 hover:w-4'
                 }
                 disabled:cursor-not-allowed
