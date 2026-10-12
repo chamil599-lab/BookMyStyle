@@ -8,10 +8,12 @@ use App\Http\Controllers\Api\PublicContentController;
 use App\Http\Controllers\Api\PublicSalonController;
 use App\Http\Controllers\Api\SalonRatingController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\RetiredManagementController;
+use App\Http\Middleware\PrivateAccountResponse;
 use Illuminate\Support\Facades\Route;
 
 // Management has moved to Filament. Retired endpoints never replay mutations.
-Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:sanctum', 'verified', 'role:admin', 'throttle:60,1'])->prefix('admin')->group(function () {
+Route::middleware([PrivateAccountResponse::class, 'auth:sanctum', 'verified', 'role:admin', 'throttle:60,1'])->prefix('admin')->group(function () {
     foreach ([
         ['get', '/dashboard/stats', 'filament.admin.pages.dashboard'],
         ['get', '/dashboard/revenue-chart', 'filament.admin.pages.dashboard'],
@@ -39,12 +41,12 @@ Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:san
         ['put', '/departments/{id}', 'filament.admin.resources.departments.index'],
         ['delete', '/departments/{id}', 'filament.admin.resources.departments.index'],
     ] as [$method, $path, $destination]) {
-        Route::$method($path, \App\Http\Controllers\RetiredManagementController::class)
+        Route::$method($path, RetiredManagementController::class)
             ->defaults('native_route', $destination)->whereNumber(['id', 'package']);
     }
 });
 
-Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:sanctum', 'verified', 'role:owner', 'approved', 'throttle:60,1'])->prefix('owner')->group(function () {
+Route::middleware([PrivateAccountResponse::class, 'auth:sanctum', 'verified', 'role:owner', 'approved', 'throttle:60,1'])->prefix('owner')->group(function () {
     foreach ([
         ['get', '/dashboard/stats', 'filament.admin.pages.owner-dashboard'],
         ['get', '/dashboard/revenue-chart', 'filament.admin.pages.owner-dashboard'],
@@ -78,12 +80,12 @@ Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:san
         ['post', '/subscription/subscribe/{package}', 'filament.admin.resources.user-subscriptions.index'],
         ['get', '/subscription/history', 'filament.admin.resources.user-subscriptions.index'],
     ] as [$method, $path, $destination]) {
-        Route::$method($path, \App\Http\Controllers\RetiredManagementController::class)
+        Route::$method($path, RetiredManagementController::class)
             ->defaults('native_route', $destination)->whereNumber(['id', 'package']);
     }
 });
 
-Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth:sanctum'])->group(function () {
+Route::middleware([PrivateAccountResponse::class, 'auth:sanctum'])->group(function () {
     Route::patch('/bookings/{id}/status', [BookingController::class, 'updateStatus'])
         ->middleware(['verified', 'role:admin|owner', 'approved', 'subscription.active', 'throttle:20,1']);
     Route::get('/salons/{salonId}/bookings', [BookingController::class, 'getSalonBookings'])
@@ -136,7 +138,7 @@ Route::get('/dealspages', [PublicContentController::class, 'dealsPages']);
 Route::get('/image-cycles', [PublicContentController::class, 'imageCycles']);
 Route::get('/team-members', [PublicContentController::class, 'teamMembers']);
 
-Route::prefix('auth')->group(function () {
+Route::middleware(PrivateAccountResponse::class)->prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth-public');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth-login');
     Route::post('/google', [AuthController::class, 'googleAuth'])->middleware('throttle:auth-public');

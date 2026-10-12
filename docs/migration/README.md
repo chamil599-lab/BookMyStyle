@@ -46,3 +46,5 @@ Step eleven: [upload hardening and dependency audit](step-11-upload-security-aud
 Step twelve: [PHP security upgrades](step-12-php-security-upgrades.md). The locked and installed PHP dependency audits now report zero advisories; retained React and host verification gates remain.
 
 Step thirteen: [retained React security upgrades](step-13-react-security-upgrades.md). Root npm, retained-client npm and installed PHP dependency audits now report zero findings; integration and host release gates remain.
+
+Step fourteen: [production readiness](step-14-deployment-readiness.md). Read-only preflight and native deployment runbook added; actual host and integration release gates remain unverified.

@@ -1,276 +1,43 @@
-# BookMyStyle — cPanel Deployment Guide
+# Blade and Filament deployment on cPanel
 
-The layout below describes the original React deployment. For the staged Blade migration, follow [step-five deployment notes](docs/migration/step-5-public-blade.md), [step-six customer cutover notes](docs/migration/step-6-customer-blade.md), [step-seven Filament management notes](docs/migration/step-7-filament-management.md), [step-eight reporting/action notes](docs/migration/step-8-filament-reporting.md), [step-nine notification/calendar notes](docs/migration/step-9-notifications-calendar.md), and [step-ten route retirement/renewal notes](docs/migration/step-10-legacy-route-retirement.md): Laravel now owns public/auth/customer routes and core admin/owner bookmark redirects. Root Vite assets are required; the old React rewrite and static SEO files must not overwrite the new arrangement. Root builds now also include the pinned management chart script. The 56 duplicate admin/owner APIs now return 410; coordinate this breaking contract change with frontend and external consumers before release. Public/customer/auth APIs and the generic booking compatibility endpoints remain. Remaining integration/visual parity and release security checks still need validation.
+Laravel now serves the public site, authentication and customer pages through Blade/Livewire, and owner/admin management through Filament. The retained React client is a migration reference. Do not copy client/dist into the live document root or install SPA fallback rewrites: those would replace native routes.
 
-PHP security upgrades are recorded in [step twelve](docs/migration/step-12-php-security-upgrades.md). Deploy the new composer.lock and matching published Filament assets together. Run Composer installation with lifecycle scripts suppressed, then explicitly run package discovery and Filament asset publication before building root Vite assets. Verify the production runtime with composer check-platform-reqs; dependency resolution retains PHP 8.2 compatibility, but local execution was tested on PHP 8.4. Generate an optimized production autoloader on the host. The retained React audit and host/integration checks remain release gates.
+This is a release runbook, not confirmation that production is ready. No deployment or imported-database migration has been performed. See docs/migration/step-14-deployment-readiness.md and docs/migration/rollback.md.
 
-The retained React security upgrade is documented in [step thirteen](docs/migration/step-13-react-security-upgrades.md). Its build now requires Node 20.19+ or 22.12+ and uses Tailwind 4; npm and PHP audits are clean at this checkpoint. Local development proxies verify TLS by default. Rebuild deployment assets with the intended production configuration; synthetic browser builds use a fake OAuth ID. The old React management APIs remain retired. Integration, browser compatibility and host verification gates still apply.
+## 1. Prepare an isolated release
 
-This project ships **two things** that live behind one domain (`bookmystyle.limach.lk`):
+Use the approved source checkpoint and matching composer.lock/package-lock.json. Build in an isolated directory or CI environment, never over the active application. Preserve the existing APP_KEY; rotating it can invalidate encrypted data and sessions. Keep credentials, backups, .local, development tools and the retained client outside the web root and release artifact.
 
-| Part | Source folder | What gets uploaded |
-| --- | --- | --- |
-| Laravel 12 API + Filament admin | repo root | the whole project (minus `node_modules` / `client`) |
-| React SPA (Vite) | `client/` | only the built `client/dist/` contents |
+Validate the host's actual PHP version/extensions with composer check-platform-reqs --no-dev. The project declares PHP 8.2+, while local verification used PHP 8.4.26; the actual host and optimized autoloader remain unverified. Required extensions must satisfy the complete lockfile, including image processing and MySQL.
 
-Both are served from the **same document root** (`public_html/`) — the `.htaccess` in [client/public/.htaccess](client/public/.htaccess) routes `/api/*` to Laravel and everything else to the React SPA.
+In the isolated release, install locked dependencies with composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts. Review lifecycle scripts before running package:discover and filament:assets explicitly. Run npm ci and npm run build at the project root. Root public/build is required. No production React build is required for the native routes.
 
----
+## 2. Configure the server privately
 
-## 1. Pre-deploy: verify locally
+Point the domain document root to the release's public directory; keep app, vendor, .env and storage outside it. If cPanel cannot select this document root, resolve the host layout before release rather than uploading the whole project to public_html. Retain public/.htaccess and Laravel's index.php routing. Only storage and bootstrap/cache need application write permissions; avoid world-writable permissions.
 
-```powershell
-# 1a. Laravel — install prod deps, run checks
-composer install --no-dev --optimize-autoloader
-php artisan route:list                # should list 234 routes (no `test`/`test-email`)
-php artisan config:show app           # confirm env values
+Set APP_ENV=production, APP_DEBUG=false, APP_URL to the real HTTPS domain and FRONTEND_URL to that same native site. Set SESSION_SECURE_COOKIE=true, SESSION_HTTP_ONLY=true, SESSION_SAME_SITE=lax and leave SESSION_DOMAIN unset for a host-only cookie unless a reviewed subdomain requirement exists. Preserve the existing encryption key and configure the actual MySQL database privately.
 
-# 1b. React — build a fresh production bundle
-cd client
-npm ci
-npm run build                         # outputs to client/dist/
-```
+Use persistent session/cache stores whose tables or services already exist. Configure a real mail transport, sender authentication and delivery monitoring. An SMTP setting alone does not prove delivery. Configure queue workers and supervised restarts if using asynchronous jobs; inspect the application's actual scheduling requirements before installing cron. Restrict TRUSTED_PROXIES to actual proxy IPs/CIDRs, or leave empty for direct hosting. Never trust every proxy.
 
-Confirm `client/dist/index.html` references the new hashed `assets/*.js` and `assets/*.css`.
+For the same-origin Blade site, CORS_ALLOWED_ORIGINS may be empty. If a retained external API client is needed, list only reviewed HTTPS origins explicitly. Production no longer defaults to local development origins. Wildcard methods/headers do not grant access without an allowed origin.
 
----
+Remove public/hot. Do not publish public/index.html, .env, SQL dumps, archives or project manifests. Expose only public media through the intended storage link. Configure the web server to disable all script execution within uploads, including symlink/alias targets; application validation and Apache rewrite rules alone do not prove server enforcement.
 
-## 2. cPanel — one-time setup
+## 3. Check the release before switching traffic
 
-1. **Create a MySQL database + user** in cPanel → MySQL Databases. Grant ALL privileges. Note the prefixed name (e.g. `cpuser_bookmystyle`).
-2. **Set PHP version to 8.2+** (8.3 recommended) in cPanel → MultiPHP Manager. Required extensions: `bcmath`, `ctype`, `curl`, `dom`, `fileinfo`, `gd` (Intervention/Image), `mbstring`, `openssl`, `pdo_mysql`, `tokenizer`, `xml`, `zip`.
-3. **Point the domain** `bookmystyle.limach.lk` to `public_html/` (or a subdir if it's an addon domain).
+Run php scripts/migration/check-deployment.php, then php scripts/migration/check-deployment.php --strict against the host release's effective configuration. The script reads configuration/files only and prints fixed check identifiers and statuses, never secrets. Default mode exits zero when a report is produced; strict mode exits one for failed automated prerequisites, two for initialization failure. Even a strict success leaves release_ready=false because external/manual gates remain unverified. It does not inspect the database, confirm the actual web-server document root, send mail or contact integrations.
 
----
+Run the read-only migration status command privately. Two pending index migrations remain on the imported local database. Validate those changes and backup restoration on an isolated copy before obtaining release approval for any real database migration. Never run migrate:fresh or seed against imported or production data.
 
-## 3. Upload layout
+On the isolated release with final environment settings, verify config:cache, route:cache and view:cache; inspect failures before switching traffic. Avoid dumping config:show app because it includes the encryption key. Avoid optimize:clear as a routine step: it also clears the configured application cache. Use targeted config:clear, route:clear and view:clear when necessary. Test the actual cached release, not only an uncached development checkout.
 
-Recommended layout (keeps Laravel internals **outside** the web root):
+Confirm HTTPS redirects, real Google OAuth callbacks, email verification/password reset delivery, manual payment request and approval behavior, owner subscription renewal/change behavior, role isolation, uploads and storage permissions. OnePay selection currently records a request; it does not prove automatic payment processing. Run production browser and load checks with controlled accounts. Confirm backup/rollback timing and restoration before approval.
 
-```
-/home/<cpanel-user>/
-├── bookmystyle/              ← Laravel app (NOT under public_html)
-│   ├── app/
-│   ├── bootstrap/
-│   ├── config/
-│   ├── database/
-│   ├── routes/
-│   ├── storage/
-│   ├── vendor/               ← composer install --no-dev --optimize-autoloader
-│   └── .env                  ← copy from .env.production.example, fill in secrets
-└── public_html/              ← document root
-    ├── index.php             ← from bookmystyle/public/index.php, edit paths (see below)
-    ├── .htaccess             ← from client/public/.htaccess (SPA + /api rewrite)
-    ├── assets/               ← from client/dist/assets/
-    ├── logo2.png, favicon.ico, robots.txt, sitemap.xml, etc.
-    └── storage/              ← symlink → ../bookmystyle/storage/app/public
-```
+## 4. Approved release and rollback
 
-### 3a. Patch `public_html/index.php`
+Only after explicit release approval: back up the database/uploads and current source/assets/environment securely; switch the release/document root atomically where supported; restart workers; verify guest, customer, owner and admin routes and monitor errors. Any approved migration must have a separately reviewed recovery plan.
 
-Open it and adjust the require paths so they look outside `public_html`:
+For source-only failure, switch back to the previous complete release with matching dependencies/assets and clear/rebuild its configuration as needed. Do not restore an old database over new customer transactions without a reviewed recovery decision. Maintain the existing APP_KEY across releases.
 
-```php
-require __DIR__.'/../bookmystyle/vendor/autoload.php';
-$app = require_once __DIR__.'/../bookmystyle/bootstrap/app.php';
-```
-
-(Optional: also override `Application` paths if you want assets/storage to resolve from the new location — see Laravel docs "Shared Hosting".)
-
-### 3b. Create the storage symlink
-
-In cPanel → Terminal (or SSH):
-
-```bash
-cd ~/public_html
-ln -s ../bookmystyle/storage/app/public storage
-```
-
-If symlinks are disabled, instead upload `bookmystyle/storage/app/public/*` directly into `public_html/storage/` and re-upload after each new salon image (or move uploads to S3).
-
----
-
-## 4. Environment file
-
-Copy [.env.production.example](.env.production.example) → `bookmystyle/.env` and fill in:
-
-| Key | Value |
-| --- | --- |
-| `APP_KEY` | run `php artisan key:generate --show` locally, paste output |
-| `APP_DEBUG` | **must be `false`** |
-| `APP_URL` | `https://bookmystyle.limach.lk` |
-| `DB_*` | cPanel MySQL credentials |
-| `MAIL_*` | cPanel SMTP (or Mailtrap / SES) |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | from Google Cloud Console — **add `https://bookmystyle.limach.lk` as Authorized JS origin & redirect URI** |
-| `SESSION_DOMAIN` | `.bookmystyle.limach.lk` |
-| `SESSION_SECURE_COOKIE` | `true` (HTTPS only) |
-
-Also set `client/.env.production` before running `npm run build`:
-
-```
-VITE_API_BASE_URL=/api
-VITE_SITE_URL=https://bookmystyle.limach.lk
-VITE_GOOGLE_CLIENT_ID=<same as backend>
-VITE_GOOGLE_MAPS_API_KEY=<restricted key>
-```
-
----
-
-## 5. Post-deploy commands (cPanel Terminal / SSH)
-
-```bash
-cd ~/bookmystyle
-
-php artisan migrate --force
-php artisan db:seed --force          # only if seeding production data
-php artisan shield:install --fresh   # if using Filament Shield permissions
-php artisan storage:link             # if you put public/ at a non-default location
-
-# Cache for performance — re-run after any .env or code change
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan event:cache
-php artisan optimize
-
-# Verify
-curl -I https://bookmystyle.limach.lk/up      # health endpoint → 200
-curl https://bookmystyle.limach.lk/api/salons # should return JSON
-```
-
-If you can't run a queue worker, keep `QUEUE_CONNECTION=sync` (already the case for most outbound mail in this app uses `Mail::to(...)->send(...)` directly).
-
-If you **can** run a worker (cPanel → Cron Jobs), add:
-
-```cron
-* * * * * cd /home/<user>/bookmystyle && php artisan schedule:run >> /dev/null 2>&1
-```
-
----
-
-## 6. Permissions
-
-```bash
-cd ~/bookmystyle
-chmod -R 775 storage bootstrap/cache
-# cPanel usually runs PHP as your user, so 755 is also fine; never 777.
-```
-
----
-
-## 7. Smoke test checklist
-
-- [ ] `https://bookmystyle.limach.lk/` loads the React app (no 404 on `/assets/...`)
-- [ ] `https://bookmystyle.limach.lk/salons` (SPA route) refreshes correctly — `.htaccess` is doing its job
-- [ ] `https://bookmystyle.limach.lk/api/salons` returns JSON
-- [ ] `https://bookmystyle.limach.lk/admin` (Filament) loads its login
-- [ ] `https://bookmystyle.limach.lk/sitemap.xml` and `/robots.txt` resolve
-- [ ] Google login works (Authorized origins/redirects updated)
-- [ ] Booking confirmation email arrives
-- [ ] `storage/logs/laravel.log` shows no errors
-
----
-
-## 8. What was fixed in the audit
-
-| Item | Before | After |
-| --- | --- | --- |
-| Debug `Route::get('/test-email/{id}', ...)` in `routes/web.php` | exposed in prod | **removed** |
-| Debug `Route::get('/test', ...)` in `routes/api.php` | exposed in prod | **removed** |
-| `client/src/App.jsx` | imported `./pages/*` files that don't exist (dead code) | **deleted** |
-| `.env.production.example` | missing | **added** with safe prod defaults |
-| `client/.env.example` | only 2 vars, no comments | **expanded** with all required vars + comments |
-| `sitemap.xml` | no `<lastmod>` | **added** `<lastmod>` to every entry |
-| `robots.txt` | missed `/api/`, `/subscription/` | **added** disallows |
-| `index.html` | no canonical, no JSON-LD, no theme-color, no preconnect | **added** canonical, WebSite + Organization JSON-LD, theme-color, preconnect for fonts, apple-touch-icon |
-| `dist/index.html` and `dist/{sitemap.xml,robots.txt}` | out of date | **regenerated** to match source |
-| Google Search Console verification | no placeholder | added `<meta name="google-site-verification">` slot in `index.html` (replace token before deploy) |
-
-Everything in `app/` PHP-lints clean (`php -l`), 234 routes resolve, Laravel boots without errors.
-
----
-
-## 9. Google Search Console setup
-
-After the site is live and reachable at `https://bookmystyle.limach.lk`:
-
-### 9a. Verify ownership (do **one** of the four)
-
-1. Go to https://search.google.com/search-console → **Add Property**.
-2. Choose a property type:
-
-   | Type | When | What you do |
-   | --- | --- | --- |
-   | **Domain** (preferred) | covers `*.limach.lk` + http/https/www | add a TXT record at your DNS host (`google-site-verification=...`) |
-   | **URL prefix** | covers only `https://bookmystyle.limach.lk/` | use one of the methods below |
-
-#### Method A — HTML meta tag (already wired up)
-
-[client/index.html](client/index.html) and [client/dist/index.html](client/dist/index.html) already contain a placeholder:
-
-```html
-<meta name="google-site-verification" content="REPLACE_WITH_GSC_TOKEN" />
-```
-
-1. In Search Console, pick **HTML tag** verification → copy the value of `content="..."`.
-2. Replace `REPLACE_WITH_GSC_TOKEN` in **both** files (or just `client/index.html` and re-run `npm run build`).
-3. Re-deploy `client/dist/` → click **Verify** in Search Console.
-
-#### Method B — HTML file upload (no rebuild required)
-
-1. In Search Console, pick **HTML file** verification → download `googleXXXXXXXXX.html`.
-2. Upload it to `public_html/` on cPanel (same level as `index.html` / `index.php`).
-3. Confirm it loads at `https://bookmystyle.limach.lk/googleXXXXXXXXX.html`.
-4. Click **Verify**.
-
-#### Method C — DNS TXT record (best for "Domain" property)
-
-1. In Search Console choose **Domain** property → it gives you a `google-site-verification=...` token.
-2. In your DNS provider (where `limach.lk` is hosted), add:
-
-   ```
-   Type:  TXT
-   Host:  bookmystyle      (or @ for the apex)
-   Value: google-site-verification=THE_TOKEN
-   TTL:   3600
-   ```
-
-3. Wait 5–30 min for propagation (`nslookup -type=TXT bookmystyle.limach.lk`), then click **Verify**.
-
-### 9b. Submit the sitemap
-
-Once verified:
-
-1. Search Console → left sidebar → **Sitemaps**.
-2. Enter `sitemap.xml` → **Submit**. Status should become **Success** within a day with 9 discovered URLs.
-
-### 9c. Request indexing of key pages
-
-For each high-value URL (`/`, `/salons`, `/services`, `/deals`, `/about`):
-
-1. Paste the full URL into the top search bar.
-2. Click **Request indexing**. (Limited to ~10/day per property.)
-
-### 9d. Connect Bing Webmaster (1-minute bonus)
-
-Bing Webmaster Tools at https://www.bing.com/webmasters lets you **import** a verified Google Search Console property — no extra DNS / file needed. Submit the same sitemap there too.
-
-### 9e. After deploy: things to watch in Search Console
-
-| Report | What to look for |
-| --- | --- |
-| **Coverage / Pages** | Should show 9 indexed within ~1 week. Errors here usually mean robots.txt is blocking. |
-| **Mobile Usability** | The Tailwind layout should pass; flag any "Clickable elements too close" issues. |
-| **Core Web Vitals** | LCP/CLS/INP scores. Fonts loaded via cdnjs + Google Fonts can hurt LCP — already mitigated with `preconnect` in `index.html`. |
-| **Sitemap → Discovered URLs** | If salons are dynamic, see the follow-up below to make sitemap include them. |
-
-> **SPA caveat:** Googlebot now renders JavaScript, but per-route titles/descriptions from `react-helmet-async` are injected *after* render. The site's structure (canonical URLs in `<head>` via Helmet + a baseline `<title>` in `index.html`) handles this correctly, but expect crawl + index for SPA routes to take 1–2 weeks longer than for static HTML.
-
----
-
-## 10. Known follow-ups (not blockers)
-
-- Sitemap is static. If you want it to include each salon detail page (`/salon/{id}`), add a small Artisan command that queries published salons and rewrites `public/sitemap.xml` nightly via the cron above.
-- `APP_DEBUG=true` is set in the **local** `.env` — that's fine for dev, just make sure the **server** `.env` has `APP_DEBUG=false`.
-- `MAIL_PASSWORD` and `GOOGLE_CLIENT_SECRET` are currently committed in `.env`. After deploy, **rotate** both and add `.env` to `.gitignore` if not already.
-- Filament panel is at `/admin` and is disallowed in robots — confirmed correct.
+Laravel guidance: https://laravel.com/docs/12.x/deployment. Project-specific remaining gates are tracked in the migration documents.

@@ -244,3 +244,14 @@ Native browser artifacts: .local/migration-baseline/auth-smoke-20261012_022023_b
 An initial PHP process run concurrently with the root build ended after one progress marker without a diagnostic report. The standalone rerun completed successfully; its log is step-13-php-tests-final.log. This is local verification evidence, not production performance evidence.
 
 Checkpoint: migration-step-13-react-security-upgrades. Private full-history rollback bundle: .local/migration-baseline/step-13-react-security-upgrades.bundle. Restore the selected source checkpoint and install its matching package lockfiles, rebuild root/client assets as appropriate, and follow the rollback runbook. No imported-data restoration is needed for this source/dependency stage. Unrelated pre-existing image deletions and untracked files remain outside the checkpoint.
+
+## Step fourteen production readiness
+
+- Final full PHP suite: 227 passed, 1,424 assertions; SQLite isolated and mail suppressed. Private log: .local/migration-baseline/step-14-php-tests.log.
+- Seven new regressions cover readiness/manual-gate separation, secret-free failures, missing assets, wildcard origins/proxies, API identity/login response privacy and actual production/local CORS configuration.
+- Default preflight reports successfully. Strict local preflight exits 1 as expected: production environment, debug mode, application URL and CORS origins fail production prerequisites. Report values are withheld; private output: step-14-readiness.json.
+- Private-path config:cache, route:cache and view:cache passed with in-memory SQLite and suppressed mail. The first cache command used a Windows absolute override that Laravel prefixed with the project path; the corrected relative override passed. The final read-only preflight also works against private cached configuration. Cached configuration files may contain secrets and remain inside ignored .local; never publish them.
+- PHP style and authored Git whitespace checks passed. No frontend rendering or dependency changes in this stage; builds/browser evidence remains from step thirteen.
+- No imported database writes, migrations or seeds, and no production environment changes/deployment. Two pending index migrations and all host/integration gates remain open. Preflight does not query the database or approve release.
+
+Checkpoint: migration-step-14-deployment-readiness. Private full-history rollback bundle: .local/migration-baseline/step-14-deployment-readiness.bundle. Rollback source/configuration defaults using the matching checkpoint and release assets; no database restoration is required for this stage. Unrelated image deletions and untracked local files are excluded.
