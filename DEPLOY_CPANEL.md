@@ -41,3 +41,7 @@ Only after explicit release approval: back up the database/uploads and current s
 For source-only failure, switch back to the previous complete release with matching dependencies/assets and clear/rebuild its configuration as needed. Do not restore an old database over new customer transactions without a reviewed recovery decision. Maintain the existing APP_KEY across releases.
 
 Laravel guidance: https://laravel.com/docs/12.x/deployment. Project-specific remaining gates are tracked in the migration documents.
+
+## Local index rehearsal evidence
+
+See docs/migration/step-15-index-rehearsal.md: final isolated migration/rollback/reapplication and record preservation checks passed. Six composite indexes are added on the imported schema, with its existing site-visit index preserved. A transient source-index incident was restored with explicit user approval and is documented. Both source migration entries remain pending; production backup/restore, lock-duration validation and migration approval are still required.

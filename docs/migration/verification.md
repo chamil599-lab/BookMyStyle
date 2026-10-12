@@ -255,3 +255,15 @@ Checkpoint: migration-step-13-react-security-upgrades. Private full-history roll
 - No imported database writes, migrations or seeds, and no production environment changes/deployment. Two pending index migrations and all host/integration gates remain open. Preflight does not query the database or approve release.
 
 Checkpoint: migration-step-14-deployment-readiness. Private full-history rollback bundle: .local/migration-baseline/step-14-deployment-readiness.bundle. Rollback source/configuration defaults using the matching checkpoint and release assets; no database restoration is required for this stage. Unrelated image deletions and untracked local files are excluded.
+
+## Step fifteen index rehearsal
+
+- Final full PHP suite: 232 passed, 1,447 assertions (77.60 seconds), SQLite isolated and mail suppressed. Private log: .local/migration-baseline/step-15-php-tests-final.log. Five focused regressions passed separately (23 assertions).
+- Final isolated MySQL artifact: .local/migration-baseline/index-check-20261012_185926_3198ce/. Fresh backup matched source schemas and all table record fingerprints before migration; 35 tables checked. Six composite index definitions verified; existing site-visit occurred_at index preserved.
+- Business records, columns, foreign keys and original indexes preserved; repeat migrate made no changes; rollback matched the exact pre-migration snapshot; reapplication matched the first result; final source snapshot unchanged. Private report: step-15-final-rehearsal.json.
+- Temporary MySQL credential option files remaining across rehearsal/backup directories: zero. PHP style and authored Git whitespace checks passed. No frontend/dependency changes; browser/build evidence remains from step thirteen.
+- Initial clone configuration inherited the source connection name, causing seven source index additions while migration entries were written to the copy. Automatic approval review rejected source repair; the user explicitly approved restoring the original seven-index state. Exact index definitions and record fingerprints were checked, those indexes were removed and the original schema/history/data verified. Repair report: step-15-source-repair.json. This stage must not be described as having performed no source DDL.
+- Older backup mismatch, Windows path normalization and replication dump settings were also corrected. The final helper strips inherited connection names, validates copy routing and blocks writes on the source Laravel connection. It refuses executable source database objects and unsafe dump statements.
+- Source migration history remains 51 entries with the two index migrations pending. No production deployment occurred. Host/load/lock-duration checks and actual migration/release approval remain open.
+
+Checkpoint: migration-step-15-index-rehearsal. Private full-history rollback bundle: .local/migration-baseline/step-15-index-rehearsal.bundle. The source schema was already restored under explicit user approval; do not restore old data or rerun down migrations against the source to revert this source-code stage. Unrelated image deletions and local untracked files remain excluded.

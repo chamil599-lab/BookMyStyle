@@ -42,3 +42,7 @@ Before cutover, capture a deployment-specific full database backup, uploaded fil
 If cutover fails, pause writes/workers and switch routing/assets/code to the last verified release. Keep compatible additive schema changes in place when possible. If database restore is necessary, reconcile post-backup bookings/payments before restoring; a blind restore would lose new transactions. Restore matching upload files, preserve APP_KEY, clear/rebuild caches, restart workers, and verify login, public pages, booking access, and subscription recovery before reopening writes.
 
 Avoid down-migrating or restoring a database just to revert frontend rendering. During the migration, keep changes backward-compatible and retire endpoints only after parity and authorization gates pass.
+
+## Index rehearsal safety
+
+Use scripts/migration/verify-index-migrations.php for the local drill described in step-15-index-rehearsal.md. It creates a new target, strips inherited Laravel connection names and blocks writes through its original source connection. Preserve the existing site-visits occurred_at index. The final source migration history remains at 51 entries with both index migrations pending. The rehearsal suffered a transient source-index incident that was explicitly approved for repair and fully restored; see the stage document and private repair evidence. Rehearsal success does not authorize production DDL.

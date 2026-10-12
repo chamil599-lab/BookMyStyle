@@ -18,7 +18,7 @@ return new class extends Migration
             $table->index(['status', 'ends_at'], 'user_subs_status_ends_idx');
         });
 
-        if (Schema::hasTable('site_visits')) {
+        if (Schema::hasTable('site_visits') && ! Schema::hasIndex('site_visits', ['occurred_at'])) {
             Schema::table('site_visits', function (Blueprint $table) {
                 $table->index('occurred_at', 'site_visits_occurred_at_idx');
             });
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->dropIndex('user_subs_status_ends_idx');
         });
 
-        if (Schema::hasTable('site_visits')) {
+        if (Schema::hasTable('site_visits') && Schema::hasIndex('site_visits', 'site_visits_occurred_at_idx')) {
             Schema::table('site_visits', function (Blueprint $table) {
                 $table->dropIndex('site_visits_occurred_at_idx');
             });

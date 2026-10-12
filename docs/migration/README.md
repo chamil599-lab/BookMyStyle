@@ -48,3 +48,5 @@ Step twelve: [PHP security upgrades](step-12-php-security-upgrades.md). The lock
 Step thirteen: [retained React security upgrades](step-13-react-security-upgrades.md). Root npm, retained-client npm and installed PHP dependency audits now report zero findings; integration and host release gates remain.
 
 Step fourteen: [production readiness](step-14-deployment-readiness.md). Read-only preflight and native deployment runbook added; actual host and integration release gates remain unverified.
+
+Step fifteen: [isolated index rehearsal](step-15-index-rehearsal.md). Final migration/rollback/reapplication and source integrity checks passed; the transient source-index incident and explicitly approved repair are documented. Real release approval remains pending.
