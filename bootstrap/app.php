@@ -1,9 +1,19 @@
 <?php
 
+use App\Http\Middleware\AcceptBearerTokenHeader;
+use App\Http\Middleware\CheckSubscription;
+use App\Http\Middleware\ConfiguredTrustProxies;
+use App\Http\Middleware\EnsureSubscriptionActive;
+use App\Http\Middleware\EnsureUserIsApproved;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\Request;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,23 +23,23 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [\Illuminate\Session\Middleware\AuthenticateSession::class]);
+        $middleware->web(append: [AuthenticateSession::class]);
         $middleware->replace(
-            \Illuminate\Http\Middleware\TrustProxies::class,
-            \App\Http\Middleware\ConfiguredTrustProxies::class
+            TrustProxies::class,
+            ConfiguredTrustProxies::class
         );
 
         $middleware->alias([
-            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'approved' => \App\Http\Middleware\EnsureUserIsApproved::class,
-            'subscription' => \App\Http\Middleware\CheckSubscription::class,
-            'subscription.active' => \App\Http\Middleware\EnsureSubscriptionActive::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'approved' => EnsureUserIsApproved::class,
+            'subscription' => CheckSubscription::class,
+            'subscription.active' => EnsureSubscriptionActive::class,
         ]);
 
         $middleware->api(prepend: [
-            \App\Http\Middleware\AcceptBearerTokenHeader::class,
+            AcceptBearerTokenHeader::class,
         ]);
 
         $middleware->redirectGuestsTo(function (Request $request) {
@@ -45,5 +55,13 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Authentication failures are rendered outside route middleware.
+        $exceptions->respond(function ($response, Throwable $exception, Request $request) {
+            if ($request->is('api/auth/*')) {
+                $response->headers->set('Cache-Control', 'private, no-store');
+                $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+            }
+
+            return $response;
+        });
     })->create();

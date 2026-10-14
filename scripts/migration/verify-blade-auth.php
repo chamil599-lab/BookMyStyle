@@ -1,11 +1,25 @@
 <?php
 
 // Real HTTP/Livewire smoke check. All records, sessions, cache and mail are isolated.
+use App\Models\Booking;
+use App\Models\Category;
+use App\Models\DealsPage;
+use App\Models\Department;
+use App\Models\FavoriteSalon;
+use App\Models\Salon;
+use App\Models\Service;
+use App\Models\ServicePage;
+use App\Models\SubscriptionPackage;
 use App\Models\User;
+use App\Models\UserSubscription;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Exception\ConnectException;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 $root = dirname(__DIR__, 2);
@@ -24,6 +38,27 @@ if (! file_exists($database)) {
 }
 $port = (int) (getenv('BMS_AUTH_SMOKE_PORT') ?: random_int(18000, 22000));
 $url = 'http://127.0.0.1:'.$port;
+$cachedRelease = getenv('BMS_AUTH_SMOKE_CACHED') === '1';
+if ($cachedRelease) {
+    $relativeDirectory = '.local/migration-baseline/'.basename($directory);
+    $values = [
+        'APP_CONFIG_CACHE' => $relativeDirectory.'/config.php',
+        'APP_ROUTES_CACHE' => $relativeDirectory.'/routes.php',
+        'VIEW_COMPILED_PATH' => $directory.'/views',
+        'APP_ENV' => 'local', 'APP_DEBUG' => 'false', 'APP_URL' => $url,
+        'DB_CONNECTION' => 'sqlite', 'DB_DATABASE' => $database,
+        'SESSION_DRIVER' => 'database', 'SESSION_SECURE_COOKIE' => 'false',
+        'CACHE_STORE' => 'database', 'MAIL_MAILER' => 'array', 'QUEUE_CONNECTION' => 'sync',
+        'GOOGLE_CLIENT_ID' => '(null)', 'GOOGLE_CLIENT_SECRET' => '(null)',
+    ];
+    if (! is_dir($directory.'/views')) {
+        mkdir($directory.'/views', 0700);
+    }
+    foreach ($values as $name => $value) {
+        putenv($name.'='.$value);
+        $_ENV[$name] = $_SERVER[$name] = $value;
+    }
+}
 $app = require $root.'/bootstrap/app.php';
 $app->afterBootstrapping(LoadConfiguration::class, function ($app) use ($database, $url) {
     $app['config']->set(['app.env' => 'local', 'app.url' => $url, 'app.debug' => false,
@@ -40,7 +75,15 @@ if (PHP_SAPI === 'cli-server') {
     if ($file && str_starts_with($file, realpath($root.'/public').DIRECTORY_SEPARATOR) && is_file($file) && pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
         return false;
     }
-    $app->handleRequest(Illuminate\Http\Request::capture());
+    $kernel = $app->make(Kernel::class);
+    $request = Request::capture();
+    $response = $kernel->handle($request);
+    if ($cachedRelease) {
+        $response->headers->set('X-Migration-Config-Cached', $app->configurationIsCached() ? 'yes' : 'no');
+        $response->headers->set('X-Migration-Routes-Cached', $app->routesAreCached() ? 'yes' : 'no');
+    }
+    $response->send();
+    $kernel->terminate($request, $response);
 
     return;
 }
@@ -62,29 +105,29 @@ Role::findOrCreate('admin', 'web');
 $adminPassword = bin2hex(random_bytes(16));
 $admin = User::factory()->create(['email' => 'admin-smoke@example.test', 'password' => $adminPassword]);
 $admin->assignRole('admin');
-$salon = \App\Models\Salon::create(['name' => 'Amber Studio', 'owner_name' => 'Fixture Owner', 'location' => 'Kandy',
+$salon = Salon::create(['name' => 'Amber Studio', 'owner_name' => 'Fixture Owner', 'location' => 'Kandy',
     'description' => 'Your new style starts here.', 'created_by' => $owner->id, 'updated_by' => $owner->id,
     'show_price' => true, 'number_of_staff' => 1, 'open_time' => '09:00', 'close_time' => '17:00']);
-$department = \App\Models\Department::create(['name' => 'Hair', 'slug' => 'hair', 'is_active' => true]);
-$category = \App\Models\Category::create(['name' => 'Cuts', 'department_id' => $department->id]);
-$service = \App\Models\Service::create(['title' => 'Signature cut', 'slug' => 'signature-cut', 'description' => 'A fresh cut.',
+$department = Department::create(['name' => 'Hair', 'slug' => 'hair', 'is_active' => true]);
+$category = Category::create(['name' => 'Cuts', 'department_id' => $department->id]);
+$service = Service::create(['title' => 'Signature cut', 'slug' => 'signature-cut', 'description' => 'A fresh cut.',
     'created_by' => $owner->id, 'updated_by' => $owner->id, 'department_id' => $department->id, 'category_id' => $category->id,
     'price' => 2500, 'duration' => 60, 'status' => 'published']);
-$package = \App\Models\SubscriptionPackage::create(['name' => 'Fixture', 'slug' => 'fixture', 'price' => 100, 'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5, 'analytics' => true, 'calendar' => true]);
-\App\Models\UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id, 'amount_paid' => 100, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth()]);
-\App\Models\ServicePage::create(['title' => 'Signature beauty', 'status' => 'published', 'description' => 'Care for your style.', 'price' => 2500, 'duration' => 60]);
-\App\Models\DealsPage::create(['title' => 'A little extra', 'status' => 1, 'original_price' => 2500, 'discounted_price' => 2000, 'salon' => $salon->name]);
+$package = SubscriptionPackage::create(['name' => 'Fixture', 'slug' => 'fixture', 'price' => 100, 'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5, 'analytics' => true, 'calendar' => true]);
+UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id, 'amount_paid' => 100, 'status' => 'active', 'starts_at' => now()->subDay(), 'ends_at' => now()->addMonth()]);
+ServicePage::create(['title' => 'Signature beauty', 'status' => 'published', 'description' => 'Care for your style.', 'price' => 2500, 'duration' => 60]);
+DealsPage::create(['title' => 'A little extra', 'status' => 1, 'original_price' => 2500, 'discounted_price' => 2000, 'salon' => $salon->name]);
 $bookingData = ['user_id' => $user->id, 'salon_id' => $salon->id, 'service_id' => $service->id,
     'name' => $user->name, 'email' => $user->email, 'phone' => '0700000000', 'date' => today()->addDays(2)->format('Y-m-d'), 'time' => '10:00', 'status' => 'approved'];
-$customerBooking = \App\Models\Booking::create($bookingData);
-\App\Models\Booking::create(array_merge($bookingData, ['date' => today()->subDay()->format('Y-m-d'), 'status' => 'completed']));
+$customerBooking = Booking::create($bookingData);
+Booking::create(array_merge($bookingData, ['date' => today()->subDay()->format('Y-m-d'), 'status' => 'completed']));
 $otherCustomer = User::factory()->create();
-$foreignBooking = \App\Models\Booking::create(array_merge($bookingData, ['user_id' => $otherCustomer->id]));
-\App\Models\FavoriteSalon::create(['user_id' => $user->id, 'salon_id' => $salon->id]);
-$user->notifications()->create(['id' => (string) \Illuminate\Support\Str::uuid(), 'type' => 'fixture',
+$foreignBooking = Booking::create(array_merge($bookingData, ['user_id' => $otherCustomer->id]));
+FavoriteSalon::create(['user_id' => $user->id, 'salon_id' => $salon->id]);
+$user->notifications()->create(['id' => (string) Str::uuid(), 'type' => 'fixture',
     'data' => ['title' => 'Booking approved', 'message' => 'Your appointment at Amber Studio was approved.']]);
 foreach ([$owner, $admin] as $recipient) {
-    $recipient->notifications()->create(['id' => (string) \Illuminate\Support\Str::uuid(), 'type' => 'fixture',
+    $recipient->notifications()->create(['id' => (string) Str::uuid(), 'type' => 'fixture',
         'data' => ['title' => 'Management appointment update', 'message' => 'A fixture booking needs review.']]);
 }
 $fixtureFile = $directory.'/customer-fixture.json';
@@ -92,6 +135,13 @@ file_put_contents($fixtureFile, json_encode(['email' => $user->email, 'password'
     'bookingId' => $customerBooking->id, 'packageId' => $package->id, 'owner' => ['email' => $owner->email, 'password' => $ownerPassword],
     'admin' => ['email' => $admin->email, 'password' => $adminPassword]], JSON_THROW_ON_ERROR));
 $log = $directory.'/server.log';
+if ($cachedRelease) {
+    foreach (['config:cache', 'route:cache', 'view:cache'] as $command) {
+        if (Artisan::call($command) !== 0) {
+            throw new RuntimeException('Isolated release cache generation failed.');
+        }
+    }
+}
 $environment = array_merge(getenv(), ['BMS_AUTH_SMOKE_DIRECTORY' => $directory, 'BMS_AUTH_SMOKE_PORT' => (string) $port]);
 $process = proc_open([PHP_BINARY, '-d', 'memory_limit=512M', '-S', '127.0.0.1:'.$port, '-t', $root.'/public', __FILE__],
     [0 => ['pipe', 'r'], 1 => ['file', $log, 'a'], 2 => ['file', $log, 'a']], $pipes, $root, $environment);
@@ -113,7 +163,7 @@ try {
         try {
             $response = $client->get('/login');
             break;
-        } catch (GuzzleHttp\Exception\ConnectException $exception) {
+        } catch (ConnectException $exception) {
             if (microtime(true) > $deadline) {
                 throw $exception;
             }
@@ -123,7 +173,15 @@ try {
     $html = (string) $response->getBody();
     file_put_contents($directory.'/login.html', $html);
     $expect($response->getStatusCode() === 200 && str_contains($html, 'Sign in to BookMyStyle'), 'login_html');
+    if ($cachedRelease) {
+        $expect($response->getHeaderLine('X-Migration-Config-Cached') === 'yes', 'http_uses_cached_configuration');
+        $expect($response->getHeaderLine('X-Migration-Routes-Cached') === 'yes', 'http_uses_cached_routes');
+        $expect(count(glob($directory.'/views/*.php')) > 0, 'compiled_views_present');
+    }
     $expect(str_contains($response->getHeaderLine('Set-Cookie'), 'httponly') && str_contains($response->getHeaderLine('Set-Cookie'), 'samesite=lax'), 'http_only_same_site_cookie');
+    $identity = $client->get('/api/auth/me', ['headers' => ['Accept' => 'application/json']]);
+    $expect($identity->getStatusCode() === 401, 'guest_api_identity_requires_authentication');
+    $expect(str_contains($identity->getHeaderLine('Cache-Control'), 'no-store') && $identity->getHeaderLine('X-Robots-Tag') === 'noindex, nofollow', 'guest_api_identity_private');
     $expect(str_contains($html, '/livewire/livewire'), 'livewire_script');
     preg_match('/name="csrf-token" content="([^"]+)"/', $html, $csrf);
     preg_match('/wire:snapshot="([^"]+)"/', $html, $snapshot);

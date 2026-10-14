@@ -3,6 +3,12 @@
 use App\Models\User;
 use Laravel\Sanctum\Sanctum;
 
+it('prevents caching unauthorized API identity responses', function () {
+    $response = $this->getJson('/api/auth/me')->assertUnauthorized();
+    expect($response->headers->get('Cache-Control'))->toContain('private', 'no-store');
+    $response->assertHeader('X-Robots-Tag', 'noindex, nofollow');
+});
+
 it('prevents caching authenticated API identity responses', function () {
     Sanctum::actingAs(User::factory()->create());
     $response = $this->getJson('/api/auth/me')->assertSuccessful();

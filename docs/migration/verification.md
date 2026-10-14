@@ -267,3 +267,16 @@ Checkpoint: migration-step-14-deployment-readiness. Private full-history rollbac
 - Source migration history remains 51 entries with the two index migrations pending. No production deployment occurred. Host/load/lock-duration checks and actual migration/release approval remain open.
 
 Checkpoint: migration-step-15-index-rehearsal. Private full-history rollback bundle: .local/migration-baseline/step-15-index-rehearsal.bundle. The source schema was already restored under explicit user approval; do not restore old data or rerun down migrations against the source to revert this source-code stage. Unrelated image deletions and local untracked files remain excluded.
+
+## Step sixteen cached native release and staging tools
+
+- Final cached native fixture: .local/migration-baseline/auth-smoke-20261014_015658_ea9065/. All 94 HTTP/check flags passed, including actual cached configuration/routes, compiled views and unauthorized API identity privacy. Chrome: 50 flags passed, zero uncaught JavaScript errors. Synthetic SQLite accounts and suppressed mail; no source MySQL migrations or writes.
+- The Oct 12 cached rerun was interrupted before producing its final report. The Oct 14 rerun completed successfully; authoritative fixture summary.json and browser-summary.json are UTF-8. Shell-redirection logs may be UTF-16 on Windows and are not the authoritative JSON artifacts.
+- Node tests: ten passed (six staging probe regressions plus four retained development proxy regressions), using synthetic responses only. Syntax checks passed for both new Node files.
+- Targeted real Laravel auth response tests: three passed, fifteen assertions, on isolated SQLite. A previously failing unauthorized response skipped middleware headers; the exception response callback now preserves private/no-store and noindex/nofollow headers on api/auth/* failures.
+- PHP style and authored Git whitespace checks passed. No frontend/dependency changes require new asset builds in this stage; cached native browser coverage verifies the existing root/Filament assets.
+- Live staging URL/access details remain unsupplied. No live host probe, real OAuth login, external mail delivery, payment submission or production deployment is claimed. The prepared host checker always leaves release_ready=false and manual host/integration gates open. The obsolete second React deployment guide now points to the native runbook.
+
+Final full PHP suite: 233 passed, 1,452 assertions (104.31 seconds); isolated SQLite with suppressed mail. Private log: .local/migration-baseline/step-16-php-tests-final.log.
+
+Checkpoint: migration-step-16-cached-staging-checks. Private full-history rollback bundle: .local/migration-baseline/step-16-cached-staging-checks.bundle. Revert the source checkpoint to undo the exception header change and test tools; no imported-database rollback is required for this stage. Unrelated image deletions and untracked local files are excluded.

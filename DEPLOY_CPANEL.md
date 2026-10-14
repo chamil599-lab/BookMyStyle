@@ -45,3 +45,7 @@ Laravel guidance: https://laravel.com/docs/12.x/deployment. Project-specific rem
 ## Local index rehearsal evidence
 
 See docs/migration/step-15-index-rehearsal.md: final isolated migration/rollback/reapplication and record preservation checks passed. Six composite indexes are added on the imported schema, with its existing site-visit index preserved. A transient source-index incident was restored with explicit user approval and is documented. Both source migration entries remain pending; production backup/restore, lock-duration validation and migration approval are still required.
+
+## Staging inspection
+
+Run node scripts/migration/verify-staging-host.mjs with the approved staging HTTPS origin for public GET/OPTIONS checks; see docs/migration/step-16-staging-verification.md for limits and exit codes. The checker follows no redirects and sends no credentials or messages. Live integrations and host configuration still require separate verification.

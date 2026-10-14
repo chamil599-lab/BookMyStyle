@@ -50,3 +50,5 @@ Step thirteen: [retained React security upgrades](step-13-react-security-upgrade
 Step fourteen: [production readiness](step-14-deployment-readiness.md). Read-only preflight and native deployment runbook added; actual host and integration release gates remain unverified.
 
 Step fifteen: [isolated index rehearsal](step-15-index-rehearsal.md). Final migration/rollback/reapplication and source integrity checks passed; the transient source-index incident and explicitly approved repair are documented. Real release approval remains pending.
+
+Step sixteen: [cached native release and staging tools](step-16-staging-verification.md). Local cached verification and the read-only host checker are prepared; live staging details/integration verification remain pending.
