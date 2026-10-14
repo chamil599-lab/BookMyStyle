@@ -64,3 +64,5 @@ Step twenty: [native pages with imported data](step-20-imported-pages.md). Seven
 Step twenty-one: [browser journeys with imported records](step-21-imported-browser.md). Real Chrome login/logout for all ten copied identities passed 156 checks, with 50 private screenshots and no uncaught JavaScript errors. Source records remained unchanged; asset parity, real integrations and staging remain open.
 
 Step twenty-two: [public image fallbacks](step-22-image-fallbacks.md). Shared Blade image rendering uses a local placeholder for invalid or failed sources, including failures before Alpine initialization. Stored URLs and unrelated image deletions remain unchanged.
+
+Step twenty-three: [public release file inspection](step-23-public-release-files.md). Read-only preflight detects nested metadata, backups/keys and unexpected server scripts, rejects unknown symlinks and keeps host/manual gates open. Symlink fixtures require a capable host.

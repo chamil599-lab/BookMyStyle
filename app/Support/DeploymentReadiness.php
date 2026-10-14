@@ -43,6 +43,9 @@ final class DeploymentReadiness
         $check('no_vite_development_marker', ! file_exists($publicPath.'/hot'));
         $check('no_react_index_override', ! file_exists($publicPath.'/index.html'));
         $check('no_public_project_secrets', ! file_exists($publicPath.'/.env') && ! file_exists($publicPath.'/composer.json') && ! file_exists($publicPath.'/composer.lock'));
+        foreach ((new PublicReleaseFiles)->inspect($publicPath) as $id => $passed) {
+            $check($id, $passed);
+        }
         $manifest = is_file($publicPath.'/build/manifest.json') ? json_decode(file_get_contents($publicPath.'/build/manifest.json'), true) : null;
         $assetsValid = is_array($manifest) && isset($manifest['resources/css/app.css'], $manifest['resources/js/app.js']);
         foreach (is_array($manifest) ? $manifest : [] as $entry) {

@@ -345,3 +345,13 @@ Checkpoint: migration-step-21-imported-browser. Private full-history rollback bu
 - Original photograph completeness, every image/video path, visual parity, real integrations and live host verification remain separate gates. This fallback recovers from failures without restoring missing images.
 
 Checkpoint: migration-step-22-image-fallbacks. Private full-history rollback bundle: .local/migration-baseline/step-22-image-fallbacks.bundle. Revert source/asset changes without restoring the imported database. Other workspace changes remain excluded.
+
+## Step twenty-three public release file inspection
+
+- Read-only preflight now inspects nested public directory metadata for known environment/repository filenames, backups/database/archive/log/key extensions and server-script filenames, including compound extensions. Only root index.php is exempted. Unknown symlinks are rejected without traversal; the conventional storage/app/public link is eligible for inspection. Scan failures/limits block automated readiness; filenames/contents/errors are not reported.
+- Focused readiness/file tests: 15 passed, 35 assertions, one explicit skip (0.44 seconds). Windows denied directory symlink creation; the symlink fixture requires verification on a capable release host. Private log: .local/migration-baseline/step-23-readiness-tests-final.log.
+- Full PHP suite: 272 passed, 1,602 assertions, one skipped (95.03 seconds). Private log: .local/migration-baseline/step-23-php-tests.log. PHP style and authored Git whitespace checks passed.
+- Actual local preflight: all five new public-file statuses pass. Private sanitized report: .local/migration-baseline/step-23-readiness.json. Existing development environment prerequisites still fail; release_ready remains false. No source environment settings, assets or dependencies changed.
+- No imported database access/migration, actual mail, external probe or deployment occurred. Tests used isolated fixtures. This filename denylist does not find disguised content, prove server document-root/execution rules or resolve custom host symlink layouts. Host and integration gates remain open.
+
+Checkpoint: migration-step-23-public-release-files. Private full-history rollback bundle: .local/migration-baseline/step-23-public-release-files.bundle. Revert source/tests/docs without restoring imported records; unrelated image deletions/local files remain excluded.
