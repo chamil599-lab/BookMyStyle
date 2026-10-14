@@ -1,15 +1,17 @@
 <x-storefront.layout :title="$title">
-    <section class="shell py-14 md:py-20">
+    <section class="shell py-14 md:py-20 public-content-page">
+        <div class="public-page-intro">
         <p class="eyebrow mb-5">{{ $mode === 'deals' ? 'A little more beauty' : 'The service collection' }}</p>
         <h1 class="section-title max-w-3xl mb-6">{{ $title }}</h1>
         <p class="muted text-sm leading-7 max-w-xl mb-10">{{ $mode === 'deals' ? 'Explore salon offers and their terms. Confirm availability and pricing with the salon before booking.' : 'From everyday essentials to your big day, discover the services that make you feel your best.' }}</p>
+        </div>
         <form method="GET" action="{{ route($mode) }}" class="flex flex-wrap gap-4 items-end mb-10">
             <div><label class="label" for="category">Category</label><select id="category" name="category" class="field"><option value="">All categories</option>@foreach($categories as $category)<option value="{{ $category }}" @selected(request('category') === $category)>{{ $category }}</option>@endforeach</select></div>
             <button type="submit" class="button">Apply filter</button><a href="{{ route($mode) }}" class="text-sm text-[var(--terra)] py-3">Reset</a>
         </form>
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse($items as $item)
-                <article class="panel overflow-hidden">
+                <article class="panel overflow-hidden public-editorial-card">
                     @if($image = \App\Support\PublicUrl::image($item->image ?: $item->src_url))<x-storefront.image :src="$image" alt="{{ $item->title }}" loading="lazy" width="600" height="400" class="w-full aspect-[3/2] object-cover" />@endif
                     <div class="p-6">
                         <p class="eyebrow mb-3">{{ $mode === 'deals' ? $item->category : $item->category_name }}</p><h2 class="text-lg mb-4">{{ $item->title }}</h2><p class="muted text-sm leading-7 mb-5 whitespace-pre-line">{{ $item->description }}</p>

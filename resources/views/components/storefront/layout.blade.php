@@ -21,7 +21,7 @@
     @vite('resources/css/storefront.css')
     @livewireStyles
 </head>
-<body @class(['home-luxury' => request()->routeIs('home'), 'salon-detail' => request()->routeIs('salon.show')])>
+<body @class(['home-luxury' => request()->routeIs('home'), 'salon-detail' => request()->routeIs('salon.show'), 'public-luxury' => request()->routeIs('salons', 'trending', 'popular', 'services', 'deals', 'about', 'privacy', 'terms')])>
 <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 button">Skip to content</a>
 <header class="sticky top-0 z-40 bg-[#1e1710] text-[#fff3e5]" x-data="{ open: false }">
     <div class="shell flex min-h-20 items-center justify-between gap-4">

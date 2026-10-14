@@ -3,10 +3,12 @@
         @include('storefront.home-hero')
     @endif
     <section id="salons-section" class="shell py-14 md:py-20">
-        <p class="eyebrow mb-5">Our collection</p>
+        @if($mode !== 'home')<div class="public-page-intro">@endif
+        <p class="eyebrow mb-5">{{ match ($mode) { 'trending' => 'THE CURRENT EDIT', 'popular' => 'CUSTOMER FAVOURITES', default => 'OUR COLLECTION' } }}</p>
         <h{{ $mode === 'home' ? '2' : '1' }} class="section-title mb-5">{{ $mode === 'home' ? 'Explore our salons' : $title }}</h{{ $mode === 'home' ? '2' : '1' }}>
         <p class="muted text-sm leading-7 mb-10 max-w-xl">@if($mode === 'trending') Ranked by approved and completed bookings created in the last 30 days, then customer rating. @elseif($mode === 'popular') Ranked by all-time approved and completed bookings, then customer rating. @else Find your beauty destination. Search by name or location, filter by department, and choose your next appointment. @endif</p>
-        <form method="GET" action="{{ route($mode) }}#salons-section" class="panel p-5 grid gap-4 md:grid-cols-[2fr_1fr_1fr_auto] mb-8 items-end">
+        @if($mode !== 'home')</div>@endif
+        <form method="GET" action="{{ route($mode) }}#salons-section" class="panel p-5 grid gap-4 md:grid-cols-[2fr_1fr_1fr_auto] mb-8 items-end {{ in_array($mode, ['popular', 'trending']) ? 'directory-ranked' : '' }}">
             <div><label class="label" for="search">Search salons</label><input id="search" name="q" type="search" maxlength="100" value="{{ $filters['q'] ?? '' }}" placeholder="Name or location" class="field"></div>
             <div><label class="label" for="department">Department</label><select id="department" name="department_id" class="field"><option value="">All departments</option>@foreach($departments as $department)<option value="{{ $department->id }}" @selected(($filters['department_id'] ?? '') == $department->id)>{{ $department->name }}</option>@endforeach</select></div>
             @if(!in_array($mode, ['popular', 'trending']))

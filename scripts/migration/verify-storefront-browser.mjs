@@ -92,6 +92,20 @@ try {
         await until("location.pathname === '/salons' && new URLSearchParams(location.search).get('q') === 'nonexistent-luxury-fixture' && document.body.textContent.includes('No salons found')", 'luxury salon discovery');
         checks.luxury_discovery_search = true;
     }
+    for (const route of ['/salons', '/trending', '/popular', '/services', '/deals', '/about', '/privacy-policy', '/terms-and-condition']) {
+        const label = route.slice(1);
+        await viewport(1440, 1000); await navigate(route);
+        expect(await evaluate("document.body.classList.contains('public-luxury')"), label + '_luxury_theme');
+        await screenshot('desktop-' + label);
+        await viewport(390, 844);
+        await screenshot('mobile-' + label);
+        await viewport(320, 780);
+        expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), label + '_small_mobile_no_overflow');
+        await evaluate("document.documentElement.classList.add('dark')");
+        expect(await evaluate("getComputedStyle(document.body).backgroundColor === 'rgb(11, 11, 11)'"), label + '_dark_black_background');
+        await screenshot('dark-' + label);
+        await evaluate("document.documentElement.classList.remove('dark')");
+    }
     await viewport(1440, 1000); await navigate('/salon/1'); await screenshot('desktop-salon');
     if (await evaluate("document.body.classList.contains('salon-detail')")) {
         await screenshot('desktop-salon-full', true);

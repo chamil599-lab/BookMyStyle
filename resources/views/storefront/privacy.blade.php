@@ -145,7 +145,7 @@
             <div class="text-center">
               <p class="text-[var(--muted)] mb-4">Have questions about our privacy practices?</p>
               <a href="mailto:info@bookmystyle.limach.lk">
-                <button class="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition">
+                <button class="button">
                   Contact Us
                 </button>
               </a>
