@@ -58,3 +58,5 @@ Step seventeen: [opt-in maintenance operations](step-17-maintenance-operations.m
 Step eighteen: [retained API token lifecycle](step-18-api-token-lifecycle.md). Finite issuance/legacy age limits, safe logout and password revocation are verified; deployment must refresh config cache and older API users may need to log in again.
 
 Step nineteen: [account deletion authorization/cleanup](step-19-account-deletion.md). Fresh authorization and shared transactional cleanup cover native/Filament deletion paths; linked salon/subscription histories are protected and booking retention wording is accurate.
+
+Step twenty: [native pages with imported data](step-20-imported-pages.md). Seventy-four GET checks passed on a fresh MySQL copy, including expected owner access gates; source record fingerprints matched. Authentication was injected, so actual login and staging remain separate gates.

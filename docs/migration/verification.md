@@ -313,3 +313,13 @@ Checkpoint: migration-step-18-api-token-lifecycle. Private full-history rollback
 - No real account deletion, imported-data mutation/migration, actual mail delivery or deployment occurred. Live staging, host and integration release gates remain pending.
 
 Checkpoint: migration-step-19-account-deletion. Private full-history rollback bundle: .local/migration-baseline/step-19-account-deletion.bundle. No imported-database restore is needed for this source stage; do not restore old personal data/credentials to undo source changes. Private fixtures and unrelated image deletions remain excluded.
+
+## Step twenty imported-data native pages
+
+- Fresh isolated MySQL backup/restore, both pending index migrations, no-op second migration, rollback and reapplication passed. Source connection routing and read-only application guard were verified; all-table source record fingerprints matched before/after the successful run.
+- Native GET checks: 74 passed, four public salon detail pages, all ten imported accounts (two administrators, five owners, two customers, one other). Eleven owner access gates matched expectations. All ten stored password formats were bcrypt; no actual password login was attempted.
+- Initial checker assumptions were corrected: the panel root redirects to the admin dashboard, inactive owner subscriptions forbid bookings, and denied Livewire mounts require redirect state reset between in-process requests. These were harness changes; application authorization was preserved.
+- Full PHP suite: 261 passed, 1,580 assertions (87.26 seconds). Private log: .local/migration-baseline/step-20-php-tests.log. Script syntax/style and authored Git whitespace checks passed.
+- Private successful report: .local/migration-baseline/imported-pages-20261014_130239_0da1d7/summary.json. Authentication is injected; browser execution, real login/OAuth, delivery/payment integrations, visual parity and actual host verification remain separate gates. No source migrations, account mutations, external delivery or deployment occurred.
+
+Checkpoint: migration-step-20-imported-pages. Private full-history rollback bundle: .local/migration-baseline/step-20-imported-pages.bundle. No source database restore is needed to revert these scripts/docs. Isolated copies/backups and failed artifacts remain private and retained; unrelated workspace changes are excluded.

@@ -198,7 +198,7 @@ try {
     unset($up['migrations'], $reapplied['migrations']);
     $assert($reapplied === $up, 'Reapplication differs from first migration.');
     $assert($snapshot($source) === $before, 'Source changed during rehearsal.');
-    $report = ['status' => 'passed', 'tables_verified' => count($before), 'migrations_verified' => 2, 'indexes_verified' => array_sum(array_map('count', $expected)),
+    $report = ['status' => 'passed', 'artifact_directory' => basename($directory), 'tables_verified' => count($before), 'migrations_verified' => 2, 'indexes_verified' => array_sum(array_map('count', $expected)),
         'backup_matches_source' => true, 'rows_preserved' => true, 'columns_and_foreign_keys_preserved' => true,
         'second_migrate_noop' => true, 'rollback_restores_baseline' => true, 'reapply_verified' => true, 'source_unchanged' => true,
         'scope' => 'Local isolated copy only; no production deployment or source migration'];
