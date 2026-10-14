@@ -10,11 +10,16 @@ class UserManagementPolicy extends AdminOnlyPolicy
 {
     public function update(User $user, Model $record): bool
     {
-        return ManagementAccess::admin($user) && ! $record->hasRole('admin');
+        $record = $record->fresh();
+
+        return $record !== null && ManagementAccess::admin($user) && ! $record->hasRole('admin');
     }
 
     public function delete(User $user, Model $record): bool
     {
-        return ManagementAccess::admin($user) && ! $record->hasRole('admin') && $user->id !== $record->id;
+        $record = $record->fresh();
+
+        return $record !== null && ManagementAccess::admin($user) && ! $record->hasRole('admin') && $user->id !== $record->id
+            && ! $record->salons()->exists() && ! $record->subscriptions()->exists();
     }
 }

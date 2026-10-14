@@ -3,6 +3,8 @@
 namespace App\Filament\Admin\Resources\Users\Tables;
 
 use App\RolesEnum;
+use App\Services\AccountDeletion;
+use App\Services\UserModeration;
 use Filament\Actions\Action as ActionsAction;
 use Filament\Actions\ActionGroup as ActionsActionGroup;
 use Filament\Actions\BulkActionGroup as ActionsBulkActionGroup;
@@ -16,6 +18,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Validation\ValidationException;
 
 class UsersTable
 {
@@ -75,7 +79,7 @@ class UsersTable
                         ])
                         ->action(function ($record, array $data) {
                             $role = $data['role'] ?? 'owner';
-                            app(\App\Services\UserModeration::class)->approve(auth()->user(), $record, $role);
+                            app(UserModeration::class)->approve(auth()->user(), $record, $role);
 
                             Notification::make()
                                 ->title('User approved successfully')
@@ -90,7 +94,7 @@ class UsersTable
                         ->color('danger')
                         ->visible(fn ($record) => ! $record->is_approved && ! $record->hasRole(RolesEnum::ADMIN->value))
                         ->action(function ($record) {
-                            app(\App\Services\UserModeration::class)->reject(auth()->user(), $record);
+                            app(UserModeration::class)->reject(auth()->user(), $record);
 
                             Notification::make()
                                 ->title('User rejected and deleted')
@@ -102,6 +106,7 @@ class UsersTable
                         ->modalHeading('Reject User')
                         ->modalDescription('Are you sure? This will permanently delete the user.'),
                     ActionsDeleteAction::make()
+                        ->using(fn ($record): bool => app(AccountDeletion::class)->managedDelete(auth()->user(), $record))
                         ->visible(fn ($record) => $record->is_approved && ! $record->hasRole(RolesEnum::ADMIN->value)),
                 ])
                     ->icon('heroicon-m-ellipsis-vertical')
@@ -109,7 +114,24 @@ class UsersTable
             ])
             ->bulkActions([
                 ActionsBulkActionGroup::make([
-                    ActionsDeleteBulkAction::make()->authorizeIndividualRecords('delete'),
+                    ActionsDeleteBulkAction::make()->authorizeIndividualRecords('delete')
+                        ->using(function ($records, ActionsDeleteBulkAction $action): void {
+                            $reportedUnexpectedFailure = false;
+                            foreach ($records as $record) {
+                                try {
+                                    if (! app(AccountDeletion::class)->managedDelete(auth()->user(), $record)) {
+                                        $action->reportBulkProcessingFailure();
+                                    }
+                                } catch (\Throwable $exception) {
+                                    $action->reportBulkProcessingFailure();
+                                    if (! $reportedUnexpectedFailure && ! $exception instanceof AuthorizationException
+                                        && ! $exception instanceof ValidationException) {
+                                        report($exception);
+                                        $reportedUnexpectedFailure = true;
+                                    }
+                                }
+                            }
+                        }),
                 ]),
             ]);
     }

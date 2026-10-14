@@ -57,3 +57,7 @@ Both FEATURED_CLEANUP_ENABLED and SUBSCRIPTION_REMINDERS_ENABLED default to fals
 ## Retained API token lifetime
 
 SANCTUM_TOKEN_TTL_MINUTES defaults to 1440 minutes (24 hours), bounded to 1..43200. Refresh the reviewed configuration cache before release: the readiness check now rejects an old null token lifetime. Older bearer users may need to log in again; native session lifetime is unchanged. This source stage does not delete or rewrite imported token records. See docs/migration/step-18-api-token-lifecycle.md.
+
+## Account deletion behavior
+
+Native and Filament account deletion now share fresh authorization and credential cleanup. Accounts with salons/subscriptions require separate administrative review and cannot be deleted implicitly through these actions. Existing customer bookings remain with an unlinked user reference; this is not blanket record erasure. Review separate session/reset backend atomicity if the host differs from the tested primary-connection setup. See docs/migration/step-19-account-deletion.md.

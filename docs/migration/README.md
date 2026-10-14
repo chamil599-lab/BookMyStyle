@@ -56,3 +56,5 @@ Step sixteen: [cached native release and staging tools](step-16-staging-verifica
 Step seventeen: [opt-in maintenance operations](step-17-maintenance-operations.md). Scheduler registration, safe dry-run defaults, reminder eligibility/deduplication and precise featured expiry are tested; real host activation remains pending.
 
 Step eighteen: [retained API token lifecycle](step-18-api-token-lifecycle.md). Finite issuance/legacy age limits, safe logout and password revocation are verified; deployment must refresh config cache and older API users may need to log in again.
+
+Step nineteen: [account deletion authorization/cleanup](step-19-account-deletion.md). Fresh authorization and shared transactional cleanup cover native/Filament deletion paths; linked salon/subscription histories are protected and booking retention wording is accurate.

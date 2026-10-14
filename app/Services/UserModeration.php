@@ -39,7 +39,9 @@ class UserModeration
     {
         DB::transaction(function () use ($actor, $target) {
             $record = User::whereKey($target->id)->lockForUpdate()->firstOrFail();
-            Gate::forUser($actor->fresh())->authorize('delete', $record);
+            // Validate established-account restrictions before the deletion service
+            // performs its stricter final delete authorization.
+            Gate::forUser($actor->fresh())->authorize('update', $record);
             if ($record->is_approved) {
                 throw ValidationException::withMessages(['user' => 'An approved user cannot be rejected.']);
             }
@@ -48,7 +50,7 @@ class UserModeration
                 throw ValidationException::withMessages(['user' => 'This account has records. Review it instead of rejecting it.']);
             }
             $email = $record->email;
-            $record->delete();
+            app(AccountDeletion::class)->managedDelete($actor, $record);
             DB::afterCommit(fn () => Mail::to($email)->send(new UserRejected($record)));
         }, 3);
     }

@@ -3,7 +3,9 @@
 namespace App\Filament\Admin\Resources\Users\Pages;
 
 use App\Filament\Admin\Resources\Users\UserResource;
+use App\Filament\Concerns\HandlesServiceValidation;
 use App\Models\User;
+use App\Services\AccountDeletion;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -13,13 +15,13 @@ use Illuminate\Support\Facades\Validator;
 
 class EditUser extends EditRecord
 {
-    use \App\Filament\Concerns\HandlesServiceValidation;
+    use HandlesServiceValidation;
 
     protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {
-        return [DeleteAction::make()];
+        return [DeleteAction::make()->using(fn (User $record): bool => app(AccountDeletion::class)->managedDelete(auth()->user(), $record))];
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

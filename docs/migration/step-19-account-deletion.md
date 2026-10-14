@@ -1,0 +1,15 @@
+# Step 19: account deletion authorization and cleanup
+
+Both native profile deletion forms, Filament user table/edit/bulk deletion and moderation rejection now use AccountDeletion. Self-deletion locks and reloads the current user, blocks admin/owner roles and checks the current stored password. Managed deletion locks/reloads the target and rechecks the actor and policy. UserManagementPolicy also reloads its target so a cached former-customer model cannot bypass protection after promotion to admin.
+
+Accounts with salon or subscription records cannot be deleted through these paths, including former owners whose role has changed. This intentionally narrows the previous general admin deletion behavior to protect linked business/history records. Such accounts need a separately reviewed administrative resolution rather than implicit cascade deletion. Moderation rejection retains its stricter existing rule that also blocks accounts with bookings.
+
+Successful deletion removes personal access tokens, account notifications, password-reset credentials and configured database session rows before deleting the user. Cleanup and deletion are enclosed in the primary database transaction; the failure regression proves rollback on the project's same-connection database stores. If a future host separates session/reset repositories onto another connection or backend, cross-store atomicity requires a separate host review. There is no distributed transaction guarantee. Native logout occurs only after successful self-deletion.
+
+Customer booking behavior is preserved: the existing foreign key sets user_id to null and retains the salon's booking record and contact fields. Deletion is not blanket erasure of all business records. Both profile forms now state that existing booking records remain with the salon.
+
+Filament bulk deletion authorizes individual records, rechecks each permitted deletion inside its own transaction and reports skipped/failed records. The whole bulk selection is not a single atomic transaction; protected records survive while permitted records can be deleted. Unexpected failures are reported once per batch following Filament's existing reporting pattern.
+
+Eleven new isolated tests cover credential cleanup/other-account isolation, stale promotion and password checks, former-owner salon/subscription protection, stale target/actor policy decisions, rollback on synthetic deletion failure, all three real Filament action paths and retained customer booking records. Existing profile tests still cover success, incorrect passwords and profile updates. Mail/notifications are faked and SQLite is isolated.
+
+No imported-data deletion, migration, actual mail or production deployment occurred. The review also checked the existing public/profile field allowlists and privileged Filament handlers; this stage does not alter public registration roles or general mass-assignment behavior. Final results and rollback checkpoint are recorded in verification.md. Live staging/host/integration gates remain pending.

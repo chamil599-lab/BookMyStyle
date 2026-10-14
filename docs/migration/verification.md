@@ -302,3 +302,14 @@ Checkpoint: migration-step-17-maintenance-operations. Private full-history rollb
 - No imported token rewrite/deletion, source database migration, actual .env change, external OAuth/mail test or production deployment occurred. Once effective configuration is activated, older bearer users may need to log in again. Expired record pruning remains unconfigured.
 
 Checkpoint: migration-step-18-api-token-lifecycle. Private full-history rollback bundle: .local/migration-baseline/step-18-api-token-lifecycle.bundle. Revert source/configuration and rebuild the reviewed configuration cache to roll back this policy; do not restore old user data or tokens to undo a frontend/source stage. Unrelated image deletions and untracked local files remain outside the checkpoint.
+
+## Step nineteen account deletion authorization and cleanup
+
+- Full PHP suite: 261 passed, 1,580 assertions (84.65 seconds). Private log: .local/migration-baseline/step-19-php-tests-final.log. Focused deletion/profile/reporting regressions: thirty passed, 165 assertions; SQLite isolated and mail/notifications faked.
+- Eleven new deletion cases verify token/notification/reset/database-session cleanup, other-account isolation, stale role/password rejection, linked salon/subscription protection, stale actor/target policy decisions, rollback after a synthetic delete failure, all three real Filament actions and customer booking retention with null user_id. Existing native profile deletion and wrong-password behavior still pass.
+- Initial full run found one moderation contract regression: a protected onboarding-trial rejection raised authorization before its existing established-account validation. Rejection now checks management authorization, validates established-account restrictions, then delegates final deletion authorization/cleanup. The final full suite passed.
+- Both profile forms state booking retention accurately. Accounts with salon/subscription history are intentionally protected from these deletion paths, including former owners. Bulk deletion is transactional per permitted record rather than for the complete selection; host stores on separate connections/backends require separate consistency review.
+- PHP style and authored Git whitespace checks passed. No frontend asset/dependency changes require a rebuild; native browser evidence remains from step sixteen, while new Filament/Volt action paths are exercised directly through Livewire tests.
+- No real account deletion, imported-data mutation/migration, actual mail delivery or deployment occurred. Live staging, host and integration release gates remain pending.
+
+Checkpoint: migration-step-19-account-deletion. Private full-history rollback bundle: .local/migration-baseline/step-19-account-deletion.bundle. No imported-database restore is needed for this source stage; do not restore old personal data/credentials to undo source changes. Private fixtures and unrelated image deletions remain excluded.
