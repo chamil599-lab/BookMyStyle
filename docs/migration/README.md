@@ -60,3 +60,5 @@ Step eighteen: [retained API token lifecycle](step-18-api-token-lifecycle.md). F
 Step nineteen: [account deletion authorization/cleanup](step-19-account-deletion.md). Fresh authorization and shared transactional cleanup cover native/Filament deletion paths; linked salon/subscription histories are protected and booking retention wording is accurate.
 
 Step twenty: [native pages with imported data](step-20-imported-pages.md). Seventy-four GET checks passed on a fresh MySQL copy, including expected owner access gates; source record fingerprints matched. Authentication was injected, so actual login and staging remain separate gates.
+
+Step twenty-one: [browser journeys with imported records](step-21-imported-browser.md). Real Chrome login/logout for all ten copied identities passed 156 checks, with 50 private screenshots and no uncaught JavaScript errors. Source records remained unchanged; asset parity, real integrations and staging remain open.
