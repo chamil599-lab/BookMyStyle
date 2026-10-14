@@ -291,3 +291,14 @@ Checkpoint: migration-step-16-cached-staging-checks. Private full-history rollba
 - Persistent host cache locks, SMTP, cron/restarts, delivery/partial-failure behavior and staging remain release gates. Cache success markers reduce duplicate sends but do not provide an exactly-once delivery guarantee.
 
 Checkpoint: migration-step-17-maintenance-operations. Private full-history rollback bundle: .local/migration-baseline/step-17-maintenance-operations.bundle. No imported-database restoration is needed for this source stage. Review automation flags before reverting command signatures or redeploying; private artifacts and unrelated image deletions remain outside the checkpoint.
+
+## Step eighteen API token lifecycle
+
+- Full PHP suite: 250 passed, 1,526 assertions (80.47 seconds). Private log: .local/migration-baseline/step-18-php-tests-final.log. Focused lifecycle/readiness tests: fourteen passed, 49 assertions, using SQLite in memory, faked notifications and a synthetic Google verifier.
+- Actual API registration/password login/Google issuance have explicit expiry timestamps. Fresh tokens work; explicit-expired and legacy age-expired tokens are rejected. Legacy record expiry is not rewritten and rejection does not delete the record. Bearer logout preserves other device tokens; a fixture transient-token session route exercises native session logout.
+- Password change/reset revoke all bearer tokens through the existing user hook. TTL settings cannot disable expiration with zero/negative/invalid values; old null cached expiration fails the preflight. The read-only local preflight's finite_api_token_lifetime check passed; other production gates remain pending. Private report: step-18-readiness.json.
+- PHP style and authored Git whitespace checks passed. No frontend/dependency changes; native cached browser evidence remains from step sixteen.
+- Initial session fixture combined native web AuthenticateSession with auth:sanctum and hit a RequestGuard method conflict before the controller. The corrected fixture uses web authentication with a transient token to isolate the controller session branch; stateful SPA middleware is not enabled or claimed as tested in this stage.
+- No imported token rewrite/deletion, source database migration, actual .env change, external OAuth/mail test or production deployment occurred. Once effective configuration is activated, older bearer users may need to log in again. Expired record pruning remains unconfigured.
+
+Checkpoint: migration-step-18-api-token-lifecycle. Private full-history rollback bundle: .local/migration-baseline/step-18-api-token-lifecycle.bundle. Revert source/configuration and rebuild the reviewed configuration cache to roll back this policy; do not restore old user data or tokens to undo a frontend/source stage. Unrelated image deletions and untracked local files remain outside the checkpoint.

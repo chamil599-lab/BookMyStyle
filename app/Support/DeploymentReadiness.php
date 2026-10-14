@@ -14,6 +14,8 @@ final class DeploymentReadiness
         };
         $check('production_environment', $config->get('app.env') === 'production');
         $check('debug_disabled', $config->get('app.debug') === false);
+        $ttl = $config->get('sanctum.expiration');
+        $check('finite_api_token_lifetime', is_int($ttl) && $ttl >= 1 && $ttl <= 43200);
         $check('https_application_url', $this->secureUrl($config->get('app.url')));
         $key = (string) $config->get('app.key');
         $decoded = str_starts_with($key, 'base64:') ? base64_decode(substr($key, 7), true) : $key;

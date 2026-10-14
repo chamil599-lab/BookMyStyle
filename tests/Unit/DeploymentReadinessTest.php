@@ -11,6 +11,7 @@ function releaseConfiguration(): Repository
         'cache' => ['default' => 'database'], 'mail' => ['default' => 'smtp'],
         'database' => ['default' => 'mysql', 'connections' => ['mysql' => ['driver' => 'mysql']]],
         'cors' => ['allowed_origins' => [], 'allowed_origins_patterns' => []],
+        'sanctum' => ['expiration' => 1440],
     ]);
 }
 
@@ -40,6 +41,14 @@ it('fails missing release assets rather than treating configuration alone as suf
     expect($report['automated_pass'])->toBeFalse()
         ->and($report['automated_checks']['root_build_assets_present'])->toBe('fail')
         ->and($report['automated_checks']['filament_assets_present'])->toBe('fail');
+});
+
+it('fails an unbounded token policy left in an old configuration cache', function () {
+    $config = releaseConfiguration();
+    $config->set('sanctum.expiration', null);
+    $report = (new DeploymentReadiness)->report($config, dirname(__DIR__, 2).'/public');
+    expect($report['automated_checks']['finite_api_token_lifetime'])->toBe('fail')
+        ->and($report['automated_pass'])->toBeFalse();
 });
 
 it('rejects wildcard origins and broad proxy networks', function () {

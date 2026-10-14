@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Livewire\Actions\Logout;
 use App\Models\User;
+use App\Services\AccountService;
+use App\Services\ApiTokenService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -29,8 +34,8 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $user = app(\App\Services\AccountService::class)->register($request->all());
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $user = app(AccountService::class)->register($request->all());
+        $token = app(ApiTokenService::class)->issue($user)->plainTextToken;
 
         return response()->json(['success' => true, 'message' => 'Registration successful', 'user' => $this->userPayload($user), 'token' => $token], 201);
     }
@@ -45,7 +50,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = app(\App\Services\AccountService::class)->credentials($validated['email'], $validated['password']);
+        $user = app(AccountService::class)->credentials($validated['email'], $validated['password']);
 
         if ($user->hasRole('owner') && ! $user->is_approved) {
             return response()->json([
@@ -55,7 +60,7 @@ class AuthController extends Controller
         }
 
         // Create token
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = app(ApiTokenService::class)->issue($user)->plainTextToken;
 
         return response()->json([
             'success' => true,
@@ -71,11 +76,11 @@ class AuthController extends Controller
     public function googleAuth(Request $request)
     {
         $validated = $request->validate(['credential' => 'required|string|max:10000', 'role' => 'nullable|in:customer,owner']);
-        $user = app(\App\Services\AccountService::class)->google($validated['credential'], $validated['role'] ?? 'customer');
+        $user = app(AccountService::class)->google($validated['credential'], $validated['role'] ?? 'customer');
         if ($user->hasRole('owner') && ! $user->is_approved) {
             return response()->json(['success' => false, 'message' => 'Your salon owner account is pending admin approval.'], 403);
         }
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = app(ApiTokenService::class)->issue($user)->plainTextToken;
 
         return response()->json(['success' => true, 'message' => 'Login successful', 'user' => $this->userPayload($user), 'token' => $token], $user->wasRecentlyCreated ? 201 : 200);
     }
@@ -85,7 +90,14 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->currentAccessToken();
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        } elseif ($request->hasSession()) {
+            app(Logout::class)();
+        } else {
+            Auth::guard('web')->logout();
+        }
 
         return response()->json([
             'success' => true,
