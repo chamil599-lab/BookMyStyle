@@ -52,3 +52,5 @@ Step fourteen: [production readiness](step-14-deployment-readiness.md). Read-onl
 Step fifteen: [isolated index rehearsal](step-15-index-rehearsal.md). Final migration/rollback/reapplication and source integrity checks passed; the transient source-index incident and explicitly approved repair are documented. Real release approval remains pending.
 
 Step sixteen: [cached native release and staging tools](step-16-staging-verification.md). Local cached verification and the read-only host checker are prepared; live staging details/integration verification remain pending.
+
+Step seventeen: [opt-in maintenance operations](step-17-maintenance-operations.md). Scheduler registration, safe dry-run defaults, reminder eligibility/deduplication and precise featured expiry are tested; real host activation remains pending.

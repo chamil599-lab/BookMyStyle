@@ -12,7 +12,7 @@ class PurgeExpiredFeaturedSalons extends Command
      *
      * @var string
      */
-    protected $signature = 'featured:purge-expired';
+    protected $signature = 'featured:purge-expired {--apply : Apply changes after host operations are enabled}';
 
     /**
      * The console command description.
@@ -26,10 +26,18 @@ class PurgeExpiredFeaturedSalons extends Command
      */
     public function handle(): int
     {
-        $count = FeaturedSalon::where('active', true)
-            ->where('ends_at', '!=', null)
-            ->where('ends_at', '<', now())
-            ->update(['active' => false]);
+        $query = FeaturedSalon::where('active', true)->whereNotNull('ends_at')->where('ends_at', '<=', now());
+        if (! $this->option('apply')) {
+            $this->info('Dry run: '.$query->count().' expired featured salon(s); no changes made.');
+
+            return self::SUCCESS;
+        }
+        if (! config('operations.featured_cleanup_enabled')) {
+            $this->error('Featured cleanup is disabled in host operations configuration.');
+
+            return self::FAILURE;
+        }
+        $count = $query->update(['active' => false]);
 
         if ($count > 0) {
             $this->info("Deactivated {$count} expired featured salon(s).");

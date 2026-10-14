@@ -42,7 +42,7 @@ class FeaturedSalon extends Model
      * A featured salon is active if:
      * - active column is true
      * - starts_at is null or <= now
-     * - ends_at is null or >= now
+     * - ends_at is null or > now
      */
     public function scopeActive($query)
     {
@@ -50,11 +50,11 @@ class FeaturedSalon extends Model
             ->where('active', true)
             ->where(function ($q) {
                 $q->whereNull('starts_at')
-                    ->orWhereDate('starts_at', '<=', now());
+                    ->orWhere('starts_at', '<=', now());
             })
             ->where(function ($q) {
                 $q->whereNull('ends_at')
-                    ->orWhereDate('ends_at', '>=', now());
+                    ->orWhere('ends_at', '>', now());
             });
     }
 
@@ -63,7 +63,7 @@ class FeaturedSalon extends Model
      */
     public function isExpired(): bool
     {
-        if (!$this->ends_at) {
+        if (! $this->ends_at) {
             return false; // No end date, never expires
         }
 

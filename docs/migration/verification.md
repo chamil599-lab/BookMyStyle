@@ -280,3 +280,14 @@ Checkpoint: migration-step-15-index-rehearsal. Private full-history rollback bun
 Final full PHP suite: 233 passed, 1,452 assertions (104.31 seconds); isolated SQLite with suppressed mail. Private log: .local/migration-baseline/step-16-php-tests-final.log.
 
 Checkpoint: migration-step-16-cached-staging-checks. Private full-history rollback bundle: .local/migration-baseline/step-16-cached-staging-checks.bundle. Revert the source checkpoint to undo the exception header change and test tools; no imported-database rollback is required for this stage. Unrelated image deletions and untracked local files are excluded.
+
+## Step seventeen maintenance operations
+
+- Full PHP suite: 240 passed, 1,492 assertions (84.63 seconds). Private log: .local/migration-baseline/step-17-php-tests-final.log. Seven focused maintenance regressions passed separately (40 assertions), using SQLite in memory and faked notifications.
+- Runtime schedule:list checked with isolated SQLite/array cache/mail: zero events with both flags disabled; hourly featured cleanup and daily 09:00 Asia/Colombo reminders when explicitly enabled. Schedule listing did not execute either command.
+- Dry-run and disabled-host gates preserve records and send no notifications; successful reminder retries, changed expiry, approved renewals, owner verification/approval, future-start exclusion and calendar-day boundaries are covered. Featured active-scope exact start/expiry semantics and opt-in cleanup are tested.
+- Commands now intentionally default to dry runs; actual side effects require both host flags and explicit --apply/--send options. Both flags remain disabled by default, including in .env.example. No real .env changes, imported MySQL maintenance, cron installation, real reminders or production deployment occurred.
+- PHP style and authored Git whitespace checks passed. No frontend/dependency changes; the existing native cached HTTP/Chrome evidence remains from step sixteen.
+- Persistent host cache locks, SMTP, cron/restarts, delivery/partial-failure behavior and staging remain release gates. Cache success markers reduce duplicate sends but do not provide an exactly-once delivery guarantee.
+
+Checkpoint: migration-step-17-maintenance-operations. Private full-history rollback bundle: .local/migration-baseline/step-17-maintenance-operations.bundle. No imported-database restoration is needed for this source stage. Review automation flags before reverting command signatures or redeploying; private artifacts and unrelated image deletions remain outside the checkpoint.

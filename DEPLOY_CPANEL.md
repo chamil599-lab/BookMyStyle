@@ -49,3 +49,7 @@ See docs/migration/step-15-index-rehearsal.md: final isolated migration/rollback
 ## Staging inspection
 
 Run node scripts/migration/verify-staging-host.mjs with the approved staging HTTPS origin for public GET/OPTIONS checks; see docs/migration/step-16-staging-verification.md for limits and exit codes. The checker follows no redirects and sends no credentials or messages. Live integrations and host configuration still require separate verification.
+
+## Maintenance activation
+
+Both FEATURED_CLEANUP_ENABLED and SUBSCRIPTION_REMINDERS_ENABLED default to false. Maintenance commands default to dry runs; reviewed automation must use --apply or --send with the corresponding opt-in. See docs/migration/step-17-maintenance-operations.md for timing, cache locks, retry limits and host approval requirements. No real cron or reminder delivery has been enabled by local verification.
