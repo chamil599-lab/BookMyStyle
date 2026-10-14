@@ -54,8 +54,10 @@ try {
         await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 600 });
         await sleep(500); // Allow Alpine's responsive sidebar state and CSS transitions to settle.
     };
-    const screenshot = async name => {
-        const result = await call('Page.captureScreenshot', { format: 'png' });
+    const screenshot = async (name, full = false) => {
+        const metrics = full ? await call('Page.getLayoutMetrics') : null;
+        const clip = metrics ? { x: 0, y: 0, width: metrics.cssContentSize.width, height: metrics.cssContentSize.height, scale: 1 } : undefined;
+        const result = await call('Page.captureScreenshot', { format: 'png', ...(full ? { captureBeyondViewport: true, clip } : {}) });
         await writeFile(path.join(directory, `${name}.png`), Buffer.from(result.data, 'base64'));
     };
     await call('Page.enable'); await call('Runtime.enable');
@@ -91,6 +93,17 @@ try {
         checks.luxury_discovery_search = true;
     }
     await viewport(1440, 1000); await navigate('/salon/1'); await screenshot('desktop-salon');
+    if (await evaluate("document.body.classList.contains('salon-detail')")) {
+        await screenshot('desktop-salon-full', true);
+        expect(await evaluate("['services', 'booking', 'gallery', 'contact', 'reviews'].every(id => document.getElementById(id))"), 'luxury_salon_sections');
+        await evaluate("document.documentElement.classList.add('dark')");
+        expect(await evaluate("getComputedStyle(document.body).backgroundColor === 'rgb(11, 11, 11)'"), 'luxury_salon_dark_black_background');
+        await screenshot('desktop-salon-dark');
+        await evaluate("document.documentElement.classList.remove('dark')");
+        await viewport(320, 780);
+        expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'small_mobile_salon_no_overflow');
+        await viewport(1440, 1000);
+    }
     await evaluate(`const date = document.querySelector('input[type=date]'); date.value = ${JSON.stringify(appointmentDate)}; date.dispatchEvent(new Event('input', { bubbles: true })); date.dispatchEvent(new Event('change', { bubbles: true }));`);
     await sleep(500);
     await evaluate("const service = [...document.querySelectorAll('select')].find(el => el.getAttribute('wire:model.live') === 'service_id'); service.value = service.options[1].value; service.dispatchEvent(new Event('change', { bubbles: true }));");
@@ -99,6 +112,7 @@ try {
     await viewport(390, 844);
     expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'mobile_salon_no_overflow');
     await screenshot('mobile-salon');
+    await screenshot('mobile-salon-full', true);
     await evaluate("document.querySelector('#booking').scrollIntoView()");
     await sleep(300);
     await screenshot('mobile-booking');
