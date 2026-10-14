@@ -62,3 +62,5 @@ Step nineteen: [account deletion authorization/cleanup](step-19-account-deletion
 Step twenty: [native pages with imported data](step-20-imported-pages.md). Seventy-four GET checks passed on a fresh MySQL copy, including expected owner access gates; source record fingerprints matched. Authentication was injected, so actual login and staging remain separate gates.
 
 Step twenty-one: [browser journeys with imported records](step-21-imported-browser.md). Real Chrome login/logout for all ten copied identities passed 156 checks, with 50 private screenshots and no uncaught JavaScript errors. Source records remained unchanged; asset parity, real integrations and staging remain open.
+
+Step twenty-two: [public image fallbacks](step-22-image-fallbacks.md). Shared Blade image rendering uses a local placeholder for invalid or failed sources, including failures before Alpine initialization. Stored URLs and unrelated image deletions remain unchanged.

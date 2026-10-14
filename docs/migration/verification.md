@@ -334,3 +334,14 @@ Checkpoint: migration-step-20-imported-pages. Private full-history rollback bund
 - No source migrations/password/account/session/token mutations, actual delivery, OAuth/payment execution or deployment occurred. Original password knowledge, resource mutations, asset parity, production TLS/proxy/cookies, real integrations and live staging remain separate gates.
 
 Checkpoint: migration-step-21-imported-browser. Private full-history rollback bundle: .local/migration-baseline/step-21-imported-browser.bundle. Reverting scripts/docs requires no imported database restoration; unrelated workspace changes remain excluded.
+
+## Step twenty-two public image fallbacks
+
+- Shared Blade component covers public hero, salon cards/covers/gallery, content and team images. Existing URL validation remains; absent/invalid sources use the local static SVG, and failed loads fall back once, including failures before Alpine initialization. Stored URLs and unrelated image deletions remain unchanged.
+- Full PHP suite: 262 passed, 1,584 assertions (100.92 seconds). Private log: .local/migration-baseline/step-22-php-tests.log. Focused public-page tests: 29 passed, 137 assertions (4.64 seconds), including unsafe-source exclusion and data-URL fallback.
+- Actual Chrome on a fresh isolated MySQL copy: 157 checks passed, ten form logins/logouts, 50 screenshots, zero uncaught JavaScript errors. Hero images must complete with positive natural width despite external-request blocking; updated mobile capture shows the local placeholder. Private evidence: .local/migration-baseline/imported-browser-20261014_132712_17fb8e/summary.json.
+- Source record fingerprints and copied business-record preservation passed. Mail suppressed, external browser requests blocked, maintenance disabled; runtime database-credential file removed after test server shutdown. No source migration, record or password change, actual delivery or deployment occurred.
+- Initial tag conversion was corrected after Blade syntax failures. An initial browser run exposed missed image errors before Alpine initialization; the final component handles those at startup and the final browser run passed. PHP style, Node syntax and authored Git whitespace checks passed. No Vite/dependency changes require a build; deploy the new SVG with the views.
+- Original photograph completeness, every image/video path, visual parity, real integrations and live host verification remain separate gates. This fallback recovers from failures without restoring missing images.
+
+Checkpoint: migration-step-22-image-fallbacks. Private full-history rollback bundle: .local/migration-baseline/step-22-image-fallbacks.bundle. Revert source/asset changes without restoring the imported database. Other workspace changes remain excluded.

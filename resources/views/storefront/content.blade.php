@@ -10,7 +10,7 @@
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse($items as $item)
                 <article class="panel overflow-hidden">
-                    @if($image = \App\Support\PublicUrl::image($item->image ?: $item->src_url))<img src="{{ $image }}" alt="{{ $item->title }}" loading="lazy" width="600" height="400" class="w-full aspect-[3/2] object-cover">@endif
+                    @if($image = \App\Support\PublicUrl::image($item->image ?: $item->src_url))<x-storefront.image :src="$image" alt="{{ $item->title }}" loading="lazy" width="600" height="400" class="w-full aspect-[3/2] object-cover" />@endif
                     <div class="p-6">
                         <p class="eyebrow mb-3">{{ $mode === 'deals' ? $item->category : $item->category_name }}</p><h2 class="text-lg mb-4">{{ $item->title }}</h2><p class="muted text-sm leading-7 mb-5 whitespace-pre-line">{{ $item->description }}</p>
                         @if($mode === 'deals')

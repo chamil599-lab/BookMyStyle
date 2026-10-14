@@ -1,0 +1,11 @@
+# Step twenty-two: reliable public image rendering
+
+Public hero, salon cover/card, gallery, content and team images now use a shared Blade image component. It retains the existing `PublicUrl::image` validation and escaped alt text, dimensions, loading and styling attributes. Invalid or absent sources use a local SVG placeholder immediately. Network failures switch to that placeholder once; initialization also handles failed loads that occurred before Alpine attached its listener. No server-side image fetch is introduced.
+
+The placeholder is a static drawing without scripts, external references or embedded data. It is served from `/images/salon-placeholder.svg` on the application origin, so recovery does not depend on an external image service. Hero images remain eager and retain their slideshow visibility/cloak behavior; other component images default to lazy loading. Stored source URLs, database records, unrelated deleted images and media files are unchanged.
+
+The real imported-record Chrome runner now requires every hero image to finish loading with a nonzero natural width. Its existing external-request blocking creates real image failures and verifies the browser fallback without contacting external image services. The new desktop/mobile home screenshots show the placeholder instead of a broken hero icon. This improves failure behavior; it does not restore missing photographs or establish visual parity with the retired frontend. External video/poster behavior and every gallery image are not individually certified by this check.
+
+Verification results and private artifacts are recorded in verification.md. Public-page tests cover unsafe hero URL exclusion and the component's rejection of a data-URL source. Existing URL validation, page rendering and full application regressions remain passing. No Vite source or dependency changes require a build; the SVG and Blade files must be included in the release alongside its existing assets.
+
+Checkpoint: `migration-step-22-image-fallbacks`. Private full-history rollback bundle: `.local/migration-baseline/step-22-image-fallbacks.bundle`. Revert the views/component/asset and verification changes without restoring the imported database. Live host, real integrations and visual parity remain separate release gates.

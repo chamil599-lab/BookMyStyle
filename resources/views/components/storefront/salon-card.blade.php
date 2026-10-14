@@ -1,7 +1,7 @@
 @props(['salon'])
 <article class="panel overflow-hidden group">
     <a href="{{ route('salon.show', $salon->id) }}" class="block overflow-hidden">
-        <img src="{{ \App\Support\PublicUrl::image($salon->cover_url) }}" alt="{{ $salon->name }}" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-105" loading="lazy" width="600" height="450">
+        <x-storefront.image :src="$salon->cover_url" alt="{{ $salon->name }}" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-105" loading="lazy" width="600" height="450" />
     </a>
     <div class="p-6">
         <div class="flex justify-between gap-3 mb-3"><span class="eyebrow">{{ $salon->location ?: 'Sri Lanka' }}</span><span class="text-xs shrink-0">★ {{ number_format($salon->public_rating ?? 0, 1) }} <span class="muted">({{ $salon->ratings_count }})</span></span></div>

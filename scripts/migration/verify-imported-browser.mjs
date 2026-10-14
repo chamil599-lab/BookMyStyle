@@ -89,7 +89,10 @@ try {
     await call('Page.enable'); await call('Runtime.enable'); await call('Network.enable');
     await call('Fetch.enable', { patterns: [{ urlPattern: '*', requestStage: 'Request' }] });
     await call('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }] });
-    await viewport(1440); await navigate('/'); await screenshot('desktop-home');
+    await viewport(1440); await navigate('/');
+    await until("[...document.querySelectorAll('img.hero-media')].every(image => image.complete && image.naturalWidth > 0)", 'hero image loading or fallback');
+    expect(await evaluate("[...document.querySelectorAll('img.hero-media')].every(image => image.naturalWidth > 0)"), 'hero_images_render_without_broken_icons');
+    await screenshot('desktop-home');
     expect(await evaluate("[...document.styleSheets].some(s => s.href?.includes('storefront'))"), 'public_css_loaded');
     await viewport(390);
     expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'mobile_home_no_overflow');

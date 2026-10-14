@@ -5,7 +5,7 @@
             @if ($heroImages->isNotEmpty())
                 <div x-data="{ active: 0 }" x-init="if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(() => active = (active + 1) % {{ $heroImages->count() }}, 6000)">
                     @foreach ($heroImages as $image)
-                        <img src="{{ \App\Support\PublicUrl::image($image->image_url) }}" alt="{{ $image->alt ?? '' }}" class="hero-media" x-show="active === {{ $loop->index }}" @if(!$loop->first) x-cloak @endif>
+                        <x-storefront.image :src="$image->image_url" alt="{{ $image->alt ?? '' }}" loading="eager" class="hero-media" x-show="active === {{ $loop->index }}" :x-cloak="! $loop->first" />
                     @endforeach
                 </div>
             @else

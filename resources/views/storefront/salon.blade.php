@@ -2,7 +2,7 @@
     <section class="shell py-10">
         <a href="{{ route('salons') }}" class="eyebrow">← All salons</a>
         <div class="grid gap-8 lg:grid-cols-2 mt-7 items-center">
-            <img src="{{ \App\Support\PublicUrl::image($salon->cover_url) }}" alt="{{ $salon->name }}" class="w-full aspect-[4/3] object-cover" width="800" height="600">
+            <x-storefront.image :src="$salon->cover_url" alt="{{ $salon->name }}" class="w-full aspect-[4/3] object-cover" width="800" height="600" />
             <div>
                 <p class="eyebrow mb-5">{{ $salon->location ?: 'Sri Lanka' }}</p>
                 <h1 class="section-title mb-6">{{ $salon->name }}</h1>
@@ -32,7 +32,7 @@
                     <h2 class="text-2xl mb-6">A closer look</h2>
                     <div class="grid grid-cols-2 gap-4">
                         @forelse($salon->getMedia('gallery') as $media)
-                            <a href="{{ \App\Support\PublicUrl::image($media->getUrl()) }}" target="_blank" rel="noopener noreferrer"><img src="{{ \App\Support\PublicUrl::image($media->hasGeneratedConversion('preview') ? $media->getUrl('preview') : $media->getUrl()) }}" alt="{{ $salon->name }} gallery image {{ $loop->iteration }}" loading="lazy" width="400" height="300" class="w-full aspect-[4/3] object-cover"></a>
+                            <a href="{{ \App\Support\PublicUrl::image($media->getUrl()) }}" target="_blank" rel="noopener noreferrer"><x-storefront.image :src="$media->hasGeneratedConversion('preview') ? $media->getUrl('preview') : $media->getUrl()" alt="{{ $salon->name }} gallery image {{ $loop->iteration }}" loading="lazy" width="400" height="300" class="w-full aspect-[4/3] object-cover" /></a>
                         @empty<p class="muted col-span-2">Gallery photos will appear here when added by the salon.</p>@endforelse
                     </div>
                 </section>

@@ -7,15 +7,18 @@ use App\Models\Category;
 use App\Models\DealsPage;
 use App\Models\Department;
 use App\Models\FavoriteSalon;
+use App\Models\ImageCycle;
 use App\Models\Salon;
 use App\Models\SalonRating;
 use App\Models\Service;
 use App\Models\ServicePage;
+use App\Models\SiteVisit;
 use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Models\UserSubscription;
 use App\Services\BookingService;
 use App\Support\PublicUrl;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
@@ -48,6 +51,13 @@ beforeEach(function () {
 it('serves all public routes through Blade without a React redirect', function ($path) {
     $this->get($path)->assertOk()->assertSee('BookMyStyle')->assertSee('storefront-', false);
 })->with(['/', '/salons', '/trending', '/popular', '/services', '/deals', '/about', '/terms-and-condition', '/privacy-policy']);
+
+it('uses a local image fallback without rendering an unsafe hero source', function () {
+    ImageCycle::create(['title' => 'Unsafe fixture', 'src_url' => 'javascript:alert(1)', 'status' => 1]);
+    $this->get('/')->assertOk()->assertDontSee('javascript:alert(1)', false);
+    $html = Blade::render('<x-storefront.image :src="$source" alt="Fixture" />', ['source' => 'data:image/svg+xml,test']);
+    expect($html)->toContain('src="/images/salon-placeholder.svg"')->not->toContain('data:image/svg+xml');
+});
 
 it('renders salon services and booking with session navigation', function () {
     $this->actingAs($this->customer)->get('/salon/'.$this->salon->id)->assertOk()->assertSee('Signature cut')
@@ -179,7 +189,7 @@ it('serves a current sitemap with only public salons and excludes private paths 
 
 it('records public visits without query strings or raw network identity', function () {
     $this->get('/salons?q=private-search')->assertOk();
-    $visit = \App\Models\SiteVisit::firstOrFail();
+    $visit = SiteVisit::firstOrFail();
     expect($visit->path)->toBe('/salons')->and($visit->url)->not->toContain('private-search')
         ->and($visit->ip_hash)->not->toBe('127.0.0.1')->and(strlen($visit->session_id_hash))->toBe(64);
 });
