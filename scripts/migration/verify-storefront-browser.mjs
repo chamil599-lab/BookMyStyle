@@ -61,6 +61,14 @@ try {
     await call('Page.enable'); await call('Runtime.enable');
     await call('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }] });
     await viewport(1440, 1000); await navigate('/');
+    if (await evaluate("document.body.classList.contains('home-luxury')")) {
+        await until("document.querySelector('video.luxury-portrait').readyState >= 2", 'luxury hero film');
+        await evaluate("document.querySelector('video.luxury-portrait').play()");
+        await until("document.querySelector('.luxury-film-toggle').textContent.includes('Pause film')", 'film control state');
+        await evaluate("document.querySelector('.luxury-film-toggle').click()");
+        await until("document.querySelector('video.luxury-portrait').paused", 'film pause control');
+        checks.luxury_film_control = true;
+    }
     expect(await evaluate("!!document.querySelector('link[href*=storefront]') && [...document.styleSheets].some(s => s.href?.includes('storefront'))"), 'public_css_loaded');
     await screenshot('desktop-home');
     await viewport(390, 844); await navigate('/');
@@ -74,6 +82,14 @@ try {
     expect(await evaluate("document.documentElement.classList.contains('dark')") !== darkBefore, 'theme_toggle');
     await evaluate("document.querySelector('button[aria-label=\"Toggle color theme\"]').click()");
     await screenshot('mobile-home');
+    if (await evaluate("document.body.classList.contains('home-luxury')")) {
+        await viewport(320, 780);
+        expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'small_mobile_home_no_overflow');
+        await viewport(390, 844);
+        await evaluate("document.querySelector('#home-location').value = 'nonexistent-luxury-fixture'; setTimeout(() => document.querySelector('form[role=search]').requestSubmit(), 0)");
+        await until("location.pathname === '/salons' && new URLSearchParams(location.search).get('q') === 'nonexistent-luxury-fixture' && document.body.textContent.includes('No salons found')", 'luxury salon discovery');
+        checks.luxury_discovery_search = true;
+    }
     await viewport(1440, 1000); await navigate('/salon/1'); await screenshot('desktop-salon');
     await evaluate(`const date = document.querySelector('input[type=date]'); date.value = ${JSON.stringify(appointmentDate)}; date.dispatchEvent(new Event('input', { bubbles: true })); date.dispatchEvent(new Event('change', { bubbles: true }));`);
     await sleep(500);

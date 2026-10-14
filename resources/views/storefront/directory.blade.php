@@ -1,26 +1,6 @@
 <x-storefront.layout :title="$title">
     @if ($mode === 'home')
-        <section class="hero">
-            @php($heroImages = $images->filter(fn($image) => \App\Support\PublicUrl::image($image->image_url))->values())
-            @if ($heroImages->isNotEmpty())
-                <div x-data="{ active: 0 }" x-init="if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(() => active = (active + 1) % {{ $heroImages->count() }}, 6000)">
-                    @foreach ($heroImages as $image)
-                        <x-storefront.image :src="$image->image_url" alt="{{ $image->alt ?? '' }}" loading="eager" class="hero-media" x-show="active === {{ $loop->index }}" :x-cloak="! $loop->first" />
-                    @endforeach
-                </div>
-            @else
-                <video class="hero-media" src="{{ asset('Girl_touching_her_hair_202605240819.mp4') }}" poster="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=1469&q=80" autoplay loop muted playsinline aria-hidden="true" x-data x-init="if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) $el.pause()"></video>
-            @endif
-            <div class="shell">
-                <p class="eyebrow mb-8 text-[#e07b47]">Premium beauty platform · Sri Lanka</p>
-                <h1>BOOK<br>YOUR<br><span class="editorial font-normal text-[#f5d7b8]">absolute</span> <span class="text-[#e07b47]">BEST.</span></h1>
-                <div class="grid gap-8 mt-10 lg:grid-cols-3 items-end">
-                    <p class="text-white/75 text-sm leading-7 max-w-sm">Discover salons and beauty studios across Sri Lanka. Explore services, read customer reviews, and find your next great style.</p>
-                    <div class="flex gap-8 border border-white/25 p-5 text-center"><div><strong class="block text-2xl">{{ $stats['salons'] }}</strong><span class="text-xs text-white/70">Salons</span></div><div><strong class="block text-2xl">{{ $stats['bookings'] }}</strong><span class="text-xs text-white/70">Bookings</span></div><div><strong class="block text-2xl">{{ $stats['rating'] }}</strong><span class="text-xs text-white/70">Avg. rating</span></div></div>
-                    <div><a href="#salons-section" class="button">Find your salon ↗</a></div>
-                </div>
-            </div>
-        </section>
+        @include('storefront.home-hero')
     @endif
     <section id="salons-section" class="shell py-14 md:py-20">
         <p class="eyebrow mb-5">Our collection</p>
@@ -41,4 +21,7 @@
         </div>
         <div class="mt-10">{{ $salons->links() }}</div>
     </section>
+    @if ($mode === 'home')
+        @include('storefront.home-story')
+    @endif
 </x-storefront.layout>

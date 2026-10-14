@@ -58,7 +58,10 @@ try {
     });
     const evaluate = async expression => {
         const result = await call('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
-        if (result.exceptionDetails) throw new Error('Browser evaluation failed; inspect private artifacts.');
+        if (result.exceptionDetails) {
+            await writeFile(path.join(directory, 'browser-evaluation-private.json'), JSON.stringify(result.exceptionDetails, null, 2));
+            throw new Error('Browser evaluation failed; inspect private artifacts.');
+        }
         return result.result.value;
     };
     const until = async (expression, label) => {
@@ -77,8 +80,10 @@ try {
         await call('Emulation.setDeviceMetricsOverride', { width, height: width < 600 ? 844 : 1000, deviceScaleFactor: 1, mobile: width < 600 });
         await sleep(500);
     };
-    const screenshot = async label => {
-        const result = await call('Page.captureScreenshot', { format: 'png' });
+    const screenshot = async (label, full = false) => {
+        const metrics = full ? await call('Page.getLayoutMetrics') : null;
+        const clip = metrics ? { x: 0, y: 0, width: metrics.cssContentSize.width, height: metrics.cssContentSize.height, scale: 1 } : undefined;
+        const result = await call('Page.captureScreenshot', { format: 'png', ...(full ? { captureBeyondViewport: true, clip } : {}) });
         await writeFile(path.join(directory, `${label}.png`), Buffer.from(result.data, 'base64')); screenshots++;
     };
     const fillLogin = async (email, password) => evaluate(`for (const [field, value] of Object.entries(${JSON.stringify({ 'form.email': email, 'form.password': password })})) {
@@ -90,13 +95,26 @@ try {
     await call('Fetch.enable', { patterns: [{ urlPattern: '*', requestStage: 'Request' }] });
     await call('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }] });
     await viewport(1440); await navigate('/');
-    await until("[...document.querySelectorAll('img.hero-media')].every(image => image.complete && image.naturalWidth > 0)", 'hero image loading or fallback');
-    expect(await evaluate("[...document.querySelectorAll('img.hero-media')].every(image => image.naturalWidth > 0)"), 'hero_images_render_without_broken_icons');
+    await until("[...document.querySelectorAll('img.hero-media')].filter(image => getComputedStyle(image).display !== 'none').every(image => image.complete && image.naturalWidth > 0)", 'hero image loading or fallback');
+    expect(await evaluate("[...document.querySelectorAll('img.hero-media')].filter(image => getComputedStyle(image).display !== 'none').every(image => image.naturalWidth > 0)"), 'hero_images_render_without_broken_icons');
+    if (await evaluate("document.body.classList.contains('home-luxury')")) {
+        await until("document.querySelector('.luxury-portrait').readyState >= 2", 'local hero film');
+        expect(await evaluate("!!document.querySelector('form[role=search] input[name=q]') && !!document.querySelector('form[role=search] select[name=department_id]')"), 'luxury_native_discovery_fields');
+        await evaluate("document.querySelector('video.luxury-portrait').pause()");
+        expect(await evaluate("document.querySelector('video.luxury-portrait').paused"), 'luxury_film_pause');
+    }
     await screenshot('desktop-home');
+    await screenshot('desktop-home-full', true);
     expect(await evaluate("[...document.styleSheets].some(s => s.href?.includes('storefront'))"), 'public_css_loaded');
     await viewport(390);
     expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'mobile_home_no_overflow');
     await screenshot('mobile-home');
+    await screenshot('mobile-home-full', true);
+    if (await evaluate("document.body.classList.contains('home-luxury')")) {
+        await evaluate("document.querySelector('#home-location').value = 'nonexistent-luxury-fixture'; setTimeout(() => document.querySelector('form[role=search]').requestSubmit(), 0)");
+        await until("location.pathname === '/salons' && new URLSearchParams(location.search).get('q') === 'nonexistent-luxury-fixture' && document.body.textContent.includes('No salons found')", 'luxury search submission');
+        checks.luxury_search_submission = true;
+    }
     for (const [index, route] of fixture.salon_paths.entries()) {
         await viewport(1440); await navigate(route); await screenshot(`salon-${index}`);
         checks[`salon-${index}-rendered`] = true;
