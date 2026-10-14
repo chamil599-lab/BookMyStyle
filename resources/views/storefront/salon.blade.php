@@ -31,13 +31,17 @@
                         @empty<div class="salon-empty panel"><span aria-hidden="true">&#10022;</span><p>This salon has no services listed yet.</p><a href="#contact">Contact the salon for more information &rarr;</a></div>@endforelse
                     </div>
                 </section>
-                <section id="gallery" class="salon-section" aria-labelledby="gallery-heading">
+                <section id="gallery" class="salon-section" aria-labelledby="gallery-heading" x-data>
                     <div class="salon-section-heading"><div><p class="luxury-kicker">GET TO KNOW THE SPACE</p><h2 id="gallery-heading">A closer <em>look.</em></h2></div></div>
                     <div class="salon-gallery">
                         @forelse($salon->getMedia('gallery') as $media)
-                            <a href="{{ \App\Support\PublicUrl::image($media->getUrl()) }}" target="_blank" rel="noopener noreferrer"><x-storefront.image :src="$media->hasGeneratedConversion('preview') ? $media->getUrl('preview') : $media->getUrl()" alt="{{ $salon->name }} gallery image {{ $loop->iteration }}" loading="lazy" width="600" height="450" /><span>View photo <span aria-hidden="true">&nearr;</span></span></a>
+                            <button type="button" data-preview-url="{{ \App\Support\PublicUrl::image($media->getUrl()) ?: '/images/salon-placeholder.svg' }}" data-preview-alt="{{ $salon->name }} gallery image {{ $loop->iteration }}" x-on:click="$refs.galleryImage.src = $el.dataset.previewUrl; $refs.galleryImage.alt = $el.dataset.previewAlt; $refs.galleryDialog.showModal()" aria-haspopup="dialog"><x-storefront.image :src="$media->hasGeneratedConversion('preview') ? $media->getUrl('preview') : $media->getUrl()" alt="{{ $salon->name }} gallery image {{ $loop->iteration }}" loading="lazy" width="600" height="450" /><span>View photo <span aria-hidden="true">&#128269;</span></span></button>
                         @empty<div class="salon-empty panel"><span aria-hidden="true">&#10022;</span><p>A little more of the salon, coming soon.</p><small>Gallery photos will appear here when added by the salon.</small></div>@endforelse
                     </div>
+                    <dialog x-ref="galleryDialog" class="salon-photo-dialog" aria-labelledby="gallery-preview-title" x-on:click.self="$el.close()" x-on:close="$refs.galleryImage.removeAttribute('src')">
+                        <div class="salon-photo-dialog-header"><h3 id="gallery-preview-title">Gallery photo</h3><button type="button" autofocus x-on:click="$refs.galleryDialog.close()" aria-label="Close photo preview">Close &times;</button></div>
+                        <img x-ref="galleryImage" alt="Salon gallery preview" x-on:error="if ($el.getAttribute('src') && $el.src !== new URL('/images/salon-placeholder.svg', location.href).href) $el.src = '/images/salon-placeholder.svg'">
+                    </dialog>
                 </section>
                 <section id="contact" class="salon-section salon-contact panel" aria-labelledby="contact-heading">
                     <p class="luxury-kicker">COME SAY HELLO</p><h2 id="contact-heading">Plan your <em>visit.</em></h2>
