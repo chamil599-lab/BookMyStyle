@@ -13,7 +13,7 @@
     <meta property="og:description" content="{{ $description }}">
     <meta property="og:url" content="{{ $canonical }}">
     <meta property="og:type" content="website">
-    <link rel="icon" href="{{ asset('images/brand-mark.png') }}">
+    <link rel="icon" href="{{ asset('images/site-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
