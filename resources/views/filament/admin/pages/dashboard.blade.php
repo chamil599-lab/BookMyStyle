@@ -64,8 +64,8 @@
                                         datasets: [{
                                             label: 'Revenue (LKR)',
                                             data: values,
-                                            backgroundColor: isDark ? 'rgba(214,183,125,0.7)' : 'rgba(139,107,53,0.8)',
-                                            borderColor: '#ad8b50',
+                                            backgroundColor: isDark ? 'rgba(34,197,94,0.7)' : 'rgba(22,163,74,0.8)',
+                                            borderColor: '#16a34a',
                                             borderWidth: 1,
                                             borderRadius: 4,
                                         }]
@@ -200,8 +200,8 @@
                                 datasets: [{
                                     label: 'Revenue (LKR)',
                                     data: values,
-                                    borderColor: '#ad8b50',
-                                    backgroundColor: isDark ? 'rgba(173,139,80,0.1)' : 'rgba(173,139,80,0.15)',
+                                    borderColor: '#16a34a',
+                                    backgroundColor: isDark ? 'rgba(22,163,74,0.1)' : 'rgba(22,163,74,0.15)',
                                     fill: true,
                                     tension: 0.3,
                                     pointRadius: 2,

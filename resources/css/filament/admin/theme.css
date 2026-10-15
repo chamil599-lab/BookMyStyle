@@ -7,13 +7,13 @@
 @source '../../../../vendor/filament';
 @source '../../../../vendor/guava/calendar/resources';
 :root {
-    --bms-paper: #f6f4ef;
+    --bms-paper: #ffffff;
     --bms-card: #fff;
     --bms-ink: #24241f;
     --bms-muted: #707069;
-    --bms-line: #e6e2d9;
-    --bms-gold: #8b6b35;
-    --bms-soft: #f0e9db;
+    --bms-line: #e5e7eb;
+    --bms-accent: #15803d;
+    --bms-soft: #f0fdf4;
 }
 
 html.dark {
@@ -22,8 +22,8 @@ html.dark {
     --bms-ink: #f2f0e9;
     --bms-muted: #b1afa7;
     --bms-line: #30302d;
-    --bms-gold: #d6b77d;
-    --bms-soft: #2c271e;
+    --bms-accent: #4ade80;
+    --bms-soft: #17251c;
 }
 
 .fi-body {
@@ -78,12 +78,12 @@ html.dark {
 }
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn {
-    background: #eee4d1;
-    box-shadow: inset 3px 0 #c2a167;
+    background: #ffffff;
+    box-shadow: inset 3px 0 #16a34a;
 }
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn :is(.fi-sidebar-item-label,.fi-sidebar-item-icon) {
-    color: #30271a;
+    color: #15803d;
 }
 
 .fi-sidebar .fi-icon-btn {
@@ -91,8 +91,8 @@ html.dark {
 }
 
 .fi-sidebar .fi-badge {
-    background: #383126;
-    color: #f0d6a5;
+    background: #153820;
+    color: #86efac;
 }
 
 .fi-sidebar-nav {
@@ -163,7 +163,7 @@ html.dark {
 }
 
 .fi-body :focus-visible {
-    outline: 2px solid var(--bms-gold);
+    outline: 2px solid var(--bms-accent);
     outline-offset: 3px;
 }
 
@@ -193,7 +193,7 @@ html.dark {
 
 .bms-eyebrow {
     margin-bottom: .55rem;
-    color: var(--bms-gold);
+    color: var(--bms-accent);
     font-size: .65rem;
     font-weight: 700;
     letter-spacing: .16em;
@@ -273,7 +273,7 @@ html.dark {
 .bms-stat-icon {
     padding: .55rem;
     border-radius: .7rem;
-    color: var(--bms-gold);
+    color: var(--bms-accent);
     background: var(--bms-soft);
     flex-shrink: 0;
 }

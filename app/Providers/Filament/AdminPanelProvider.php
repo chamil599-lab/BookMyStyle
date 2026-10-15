@@ -31,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('filament')
             ->homeUrl(fn () => route('dashboard'))
             ->colors([
-                'primary' => Color::hex('#8b6b35'),
+                'primary' => Color::Green,
                 'danger' => Color::Red,
                 'gray' => Color::Neutral,
                 'info' => Color::Blue,
