@@ -82,6 +82,7 @@ try {
     expect(await evaluate("getComputedStyle(document.querySelector('#mobile-nav')).display !== 'none'"), 'mobile_menu_opens');
     await call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape' });
     await call('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape' });
+    await until("getComputedStyle(document.querySelector('#mobile-nav')).display === 'none' && document.activeElement === document.querySelector('[aria-controls=mobile-nav]')", 'mobile menu closes and restores focus');
     expect(await evaluate("getComputedStyle(document.querySelector('#mobile-nav')).display === 'none' && document.activeElement === document.querySelector('[aria-controls=mobile-nav]')"), 'mobile_menu_escape_restores_focus');
     const darkBefore = await evaluate("document.documentElement.classList.contains('dark')");
     await evaluate("document.querySelector('button[aria-label=\"Toggle color theme\"]').click()");
@@ -158,6 +159,15 @@ try {
         await until("location.pathname === '/dashboard' && document.body.textContent.includes('Your next appointments')", 'customer native login');
         checks.customer_session_login = true;
         await viewport(1440, 1000); await screenshot('desktop-customer-dashboard');
+        expect(await evaluate("document.querySelectorAll('.customer-stat').length === 5 && document.querySelector('nav[aria-label=\"Account navigation\"] a[aria-current=page]').textContent.includes('Overview')"), 'customer_dashboard_summary_and_navigation');
+        await evaluate("document.documentElement.classList.add('dark')");
+        expect(await evaluate("getComputedStyle(document.body).backgroundColor === 'rgb(11, 11, 11)'"), 'customer_dashboard_black_dark_mode');
+        await sleep(250);
+        await screenshot('dark-customer-dashboard');
+        await viewport(320, 900);
+        expect(await evaluate("[...document.querySelectorAll('.customer-welcome, .customer-stat, .customer-sidebar')].every(el => el.getBoundingClientRect().right <= innerWidth + 1) && document.documentElement.scrollWidth <= innerWidth + 1"), 'customer_dashboard_320_fit');
+        await screenshot('small-mobile-customer-dashboard');
+        await evaluate("document.documentElement.classList.remove('dark')");
         await viewport(390, 844);
         expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'mobile_customer_dashboard_no_overflow');
         await screenshot('mobile-customer-dashboard');
