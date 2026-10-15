@@ -92,8 +92,11 @@ try {
         await viewport(320, 780);
         expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'small_mobile_home_no_overflow');
         await viewport(390, 844);
-        await evaluate("document.querySelector('#home-location').value = 'nonexistent-luxury-fixture'; setTimeout(() => document.querySelector('form[role=search]').requestSubmit(), 0)");
-        await until("location.pathname === '/salons' && new URLSearchParams(location.search).get('q') === 'nonexistent-luxury-fixture' && document.body.textContent.includes('No salons found')", 'luxury salon discovery');
+        await evaluate("window.__directoryFilterDocument = true; document.querySelector('#home-location').value = 'nonexistent-luxury-fixture'; document.querySelector('#home-location').dispatchEvent(new Event('input', { bubbles: true }))");
+        await until("location.pathname === '/' && new URLSearchParams(location.search).get('q') === 'nonexistent-luxury-fixture' && document.querySelector('#salon-results').textContent.includes('No salons found')", 'instant salon discovery');
+        expect(await evaluate("window.__directoryFilterDocument && document.querySelector('#search').value === 'nonexistent-luxury-fixture'"), 'salon_filters_sync_without_reload');
+        await evaluate("document.querySelector('#salon-results a').click()");
+        await until("!new URLSearchParams(location.search).has('q') && document.querySelector('#salon-results').textContent.includes('Amber Studio')", 'instant filter reset');
         checks.luxury_discovery_search = true;
     }
     for (const route of ['/salons', '/trending', '/popular', '/services', '/deals', '/about', '/privacy-policy', '/terms-and-condition']) {

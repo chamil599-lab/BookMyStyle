@@ -1,0 +1,7 @@
+# Instant salon filters
+
+Salon discovery on the homepage, directory, trending and popular pages updates results in place. Search uses a 350ms debounce; department and sort changes apply immediately. The homepage discovery fields stay synchronized with the collection filters. The visible submit buttons have been removed; the hero offers a link to the results, and a noscript submit control preserves the basic GET workflow.
+
+Existing server validation, public visibility rules, literal wildcard handling and escaped Blade cards are retained. Requests use the current same-origin page and extract only its results section. Stale requests are aborted and guarded by a revision number. Filter changes reset pagination, update the shareable URL and retain input focus. Pagination links retain normal navigation. Reset updates results in place. Loading and failure states are announced, and failed requests retain existing results with a retry action. Alpine initializes the replacement cards' image fallback behavior.
+
+Validation: Vite production build, public page feature tests, and isolated Chrome checks covering search, reset, department, available sort controls, image fallbacks, input focus, URL updates and homepage field synchronization across all four directory modes. Browser artifacts remain private in `.local/migration-baseline/auth-smoke-20261015_013756_e31d0d/instant-filters-summary.json`.

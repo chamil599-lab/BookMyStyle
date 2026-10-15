@@ -26,11 +26,12 @@
             <div class="luxury-appointment-note"><span class="luxury-note-icon" aria-hidden="true">✓</span><div><strong>Your next beauty moment</strong><span>Discover. Choose. Request.</span></div></div>
         </div>
     </section>
-    <form class="luxury-discovery" method="GET" action="{{ route('salons') }}#salons-section" role="search" aria-label="Discover a salon">
+    <form x-on:submit.prevent="queue()" class="luxury-discovery" method="GET" action="{{ route('salons') }}#salons-section" role="search" aria-label="Discover a salon">
         <div class="luxury-discovery-title"><span class="luxury-kicker">LET'S FIND YOUR PLACE</span><strong>What are you in the mood for?</strong></div>
-        <div class="luxury-discovery-field"><label for="home-location">Salon or location</label><input id="home-location" name="q" type="search" maxlength="100" placeholder="Try a salon name or city" value="{{ $filters['q'] ?? '' }}"></div>
-        <div class="luxury-discovery-field"><label for="home-treatment">Your treatment</label><select id="home-treatment" name="department_id"><option value="">Something lovely</option>@foreach($departments as $department)<option value="{{ $department->id }}" @selected(($filters['department_id'] ?? '') == $department->id)>{{ $department->name }}</option>@endforeach</select></div>
-        <button class="button luxury-primary" type="submit">Find salons <span aria-hidden="true">↗</span></button>
+        <div class="luxury-discovery-field"><label for="home-location">Salon or location</label><input id="home-location" name="q" x-model="q" type="search" maxlength="100" placeholder="Try a salon name or city" value="{{ $filters['q'] ?? '' }}"></div>
+        <div class="luxury-discovery-field"><label for="home-treatment">Your treatment</label><select id="home-treatment" name="department_id" x-model="department"><option value="">Something lovely</option>@foreach($departments as $department)<option value="{{ $department->id }}" @selected(($filters['department_id'] ?? '') == $department->id)>{{ $department->name }}</option>@endforeach</select></div>
+        <a class="button luxury-primary" href="#salons-section">View results <span aria-hidden="true">&darr;</span></a>
+        <noscript><button class="button" type="submit">Apply filters</button></noscript>
     </form>
 </div>
 <section class="luxury-strip" aria-label="Discover BookMyStyle">

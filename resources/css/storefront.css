@@ -294,7 +294,7 @@ html.dark .salon-booking [role=alert],html.dark .salon-reviews [role=alert] { co
 .public-luxury .legal .text-purple-600 { color:var(--terra); }
 @media(max-width:767px) { .public-luxury .public-content-page { padding-block:38px 45px; } .public-luxury #salons-section { padding-top:38px; } .public-page-intro { padding-bottom:24px; margin-bottom:25px; } .public-luxury .public-page-intro .section-title { font-size:2.5rem; } .public-luxury main form { padding:17px; } .public-luxury main form > div { min-width:0; max-width:100%; } .public-editorial-card > div { padding:22px; } .public-about-stats .panel { padding:20px 10px; border-right:0; border-bottom:1px solid var(--line); } .public-about-stats .panel:last-child { border-bottom:0; } .public-about-stats strong { font-size:2.7rem; } .public-about > h1 { font-size:2.5rem; } .public-luxury .legal .max-w-4xl { padding:25px 20px; } }
 
-@media(min-width:768px) { .public-luxury #salons-section > form.directory-ranked { grid-template-columns:2fr 1fr auto; } }
+@media(min-width:768px) { .public-luxury #salons-section > form.directory-ranked { grid-template-columns:2fr 1fr; } }
 
 /* A consistent navbar rhythm for the new illustrated brand mark. */
 :is(.home-luxury,.salon-detail,.public-luxury) > header .storefront-nav-inner { min-height:88px; gap:24px; }
@@ -317,3 +317,6 @@ html.dark .salon-booking [role=alert],html.dark .salon-reviews [role=alert] { co
 .salon-section-nav { top:88px; }
 @media(min-width:1024px) { .storefront-menu-toggle { display:none; } }
 @media(max-width:767px) { :is(.home-luxury,.salon-detail,.public-luxury) > header .storefront-nav-inner { min-height:74px; gap:12px; } .storefront-brand { gap:9px; } .storefront-brand .storefront-brand-mark { width:42px; height:42px; } :is(.home-luxury,.salon-detail,.public-luxury) > header .brand { font-size:.96rem; } :is(.home-luxury,.salon-detail,.public-luxury) > header .eyebrow { font-size:.44rem; letter-spacing:.19em; } .storefront-nav-actions { gap:7px; } .storefront-icon-button { width:36px; min-height:38px; padding:7px; } .storefront-menu-toggle { min-height:38px; padding:9px 11px; font-size:.72rem; } .salon-section-nav { top:74px; } }
+
+.directory-filter-status { min-height:1.5rem; margin-bottom:1rem; font-size:.75rem; color:var(--muted); }
+#salon-results[aria-busy="true"] { opacity:.65; }
