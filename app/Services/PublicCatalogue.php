@@ -24,7 +24,11 @@ class PublicCatalogue
     {
         return $this->salons()
             ->withCount(['services as published_services_count' => fn ($services) => $services->published()])
-            ->withMin(['services as starting_price' => fn ($services) => $services->published()], 'price');
+            ->withMin(['services as starting_price' => fn ($services) => $services->published()], 'price')
+            ->when(auth()->check(), fn ($query) => $query->addSelect([
+                'is_favorited' => \App\Models\FavoriteSalon::query()->selectRaw('1')
+                    ->whereColumn('salon_id', 'salons.id')->where('user_id', auth()->id())->limit(1),
+            ]));
     }
 
     public function directory(array $filters, string $mode = 'salons')

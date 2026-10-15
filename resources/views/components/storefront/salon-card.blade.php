@@ -1,5 +1,6 @@
 @props(['salon'])
 <article class="panel overflow-hidden salon-collection-card">
+    <x-storefront.favorite-button :salon="$salon" />
     <a href="{{ route('salon.show', $salon->id) }}" class="salon-collection-image" aria-label="{{ 'Explore '.$salon->name }}">
         <x-storefront.image :src="$salon->cover_url" alt="{{ $salon->name }}" loading="lazy" width="600" height="400" />
         <span class="salon-collection-rating">

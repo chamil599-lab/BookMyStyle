@@ -53,6 +53,22 @@ class CustomerDashboardController extends Controller
         return redirect()->route('customer.favorites')->with('status', 'Salon removed from favorites.');
     }
 
+    public function setFavorite(Request $request, int $id, FavoriteService $favorites)
+    {
+        $saved = $request->isMethod('post');
+        if ($saved) {
+            $favorites->add($request->user(), $id);
+        } else {
+            $favorites->remove($request->user(), $id);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['favorited' => $saved]);
+        }
+
+        return back()->with('status', $saved ? 'Salon saved to favorites.' : 'Salon removed from favorites.');
+    }
+
     public function notifications(Request $request)
     {
         $request->validate(['page' => 'nullable|integer|min:1|max:100000']);

@@ -158,6 +158,14 @@ try {
         document.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));`);
         await until("location.pathname === '/dashboard' && document.body.textContent.includes('Your next appointments')", 'customer native login');
         checks.customer_session_login = true;
+        await navigate('/salons');
+        await until("document.querySelector('.salon-card-heart')?.getAttribute('aria-pressed') === 'true'", 'existing favorite on card');
+        await evaluate("document.querySelector('.salon-card-heart').click()");
+        await until("document.querySelector('.salon-card-heart').getAttribute('aria-pressed') === 'false' && !document.querySelector('.salon-card-heart').disabled", 'card favorite removal');
+        await evaluate("document.querySelector('.salon-card-heart').click()");
+        await until("document.querySelector('.salon-card-heart').getAttribute('aria-pressed') === 'true' && !document.querySelector('.salon-card-heart').disabled", 'card favorite saved');
+        checks.customer_card_favorite_save_and_remove = true;
+        await navigate('/dashboard');
         await viewport(1440, 1000); await screenshot('desktop-customer-dashboard');
         expect(await evaluate("document.querySelectorAll('.customer-stat').length === 5 && document.querySelector('nav[aria-label=\"Account navigation\"] a[aria-current=page]').textContent.includes('Overview')"), 'customer_dashboard_summary_and_navigation');
         await evaluate("document.documentElement.classList.add('dark')");

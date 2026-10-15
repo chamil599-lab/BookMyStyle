@@ -141,6 +141,31 @@ it('paginates native lists and rejects malformed page parameters', function () {
     $this->getJson('/dashboard/favorites?page=-1')->assertUnprocessable();
 });
 
+it('saves and removes card favorites idempotently for the current verified user', function () {
+    app(FavoriteService::class)->add($this->other, $this->salon->id);
+    $url = '/salons/'.$this->salon->id.'/favorite';
+    $this->actingAs($this->customer)->postJson($url)->assertOk()->assertJsonPath('favorited', true);
+    $this->postJson($url)->assertOk()->assertJsonPath('favorited', true);
+    expect(FavoriteSalon::where('user_id', $this->customer->id)->count())->toBe(1);
+    expect((bool) app(\App\Services\PublicCatalogue::class)->cardSalons()->findOrFail($this->salon->id)->is_favorited)->toBeTrue();
+    $this->deleteJson($url)->assertOk()->assertJsonPath('favorited', false);
+    $this->deleteJson($url)->assertOk()->assertJsonPath('favorited', false);
+    expect(FavoriteSalon::where('user_id', $this->customer->id)->count())->toBe(0);
+    expect(FavoriteSalon::where('user_id', $this->other->id)->count())->toBe(1);
+});
+
+it('protects card favorites from guests unverified users and hidden salons', function () {
+    $url = '/salons/'.$this->salon->id.'/favorite';
+    $this->postJson($url)->assertUnauthorized();
+    $this->deleteJson($url)->assertUnauthorized();
+    $this->customer->update(['email_verified_at' => null]);
+    $this->actingAs($this->customer)->postJson($url)->assertForbidden();
+    $this->customer->update(['email_verified_at' => now()]);
+    $this->owner->update(['is_approved' => false]);
+    $this->postJson($url)->assertNotFound();
+    $this->assertDatabaseCount('favorite_salons', 0);
+});
+
 it('keeps favorite changes scoped and hides salons whose owners lose approval', function () {
     $favorites = app(FavoriteService::class);
     expect($favorites->add($this->customer, $this->salon->id))->toBeTrue();

@@ -50,6 +50,8 @@ Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', '
     });
 });
 Route::view('/profile', 'profile')->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth'])->name('profile');
+Route::match(['POST', 'DELETE'], '/salons/{id}/favorite', [\App\Http\Controllers\CustomerDashboardController::class, 'setFavorite'])
+    ->whereNumber('id')->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'throttle:20,1'])->name('salon.favorite');
 Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth'])->group(function () {
     \Livewire\Volt\Volt::route('/settings/profile', 'settings.profile')->name('profile.edit');
     \Livewire\Volt\Volt::route('/settings/password', 'settings.password')->name('password.edit');
