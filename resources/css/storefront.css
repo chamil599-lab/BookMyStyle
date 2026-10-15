@@ -320,3 +320,29 @@ html.dark .salon-booking [role=alert],html.dark .salon-reviews [role=alert] { co
 
 .directory-filter-status { min-height:1.5rem; margin-bottom:1rem; font-size:.75rem; color:var(--muted); }
 #salon-results[aria-busy="true"] { opacity:.65; }
+
+/* Salon collection cards follow the editorial treatment used for offers. */
+.salon-collection-card { display:flex; flex-direction:column; min-width:0; border-radius:10px; transition:border-color 180ms ease,box-shadow 180ms ease; }
+.salon-collection-card:hover { border-color:var(--terra); box-shadow:0 14px 32px -24px #0005; }
+.salon-collection-image { position:relative; display:block; overflow:hidden; isolation:isolate; background:var(--cream); }
+.salon-collection-image > img { width:100%; aspect-ratio:3/2; object-fit:cover; transition:transform 300ms ease; }
+.salon-collection-card:hover .salon-collection-image > img { transform:scale(1.035); }
+.salon-collection-rating { position:absolute; left:16px; bottom:16px; display:flex; align-items:center; gap:5px; padding:8px 11px; max-width:calc(100% - 80px); border-radius:5px; background:#fffffff2; color:#252923; font-size:.7rem; font-weight:600; flex-wrap:wrap; }
+.salon-collection-rating > span:first-child { color:#8b6b35; }
+.salon-rating-count { color:#62685f; font-size:.62rem; font-weight:400; }
+.salon-collection-arrow { position:absolute; right:16px; bottom:16px; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; color:#252923; background:#fffffff2; font-size:1.1rem; }
+.salon-collection-body { display:flex; flex:1; flex-direction:column; padding:25px; min-width:0; }
+.salon-collection-location { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:.66rem; letter-spacing:.05em; line-height:1.7; overflow-wrap:anywhere; }
+.salon-collection-location svg { width:15px; height:15px; flex-shrink:0; }
+.salon-collection-body h3 { margin-top:12px; margin-bottom:12px; font-family:var(--lux-serif,Georgia,serif); font-size:1.45rem; font-weight:400; line-height:1.4; letter-spacing:-.035em; overflow-wrap:anywhere; }
+.salon-collection-description { color:var(--muted); font-size:.77rem; line-height:1.9; margin-bottom:18px; overflow-wrap:anywhere; }
+.salon-collection-facts { display:flex; flex-wrap:wrap; gap:7px; margin-top:auto; margin-bottom:20px; }
+.salon-collection-facts > span { padding:5px 9px; border-radius:4px; background:var(--cream); color:var(--ink); font-size:.62rem; }
+.salon-collection-details { display:grid; gap:12px; padding-block:17px; border-top:1px solid var(--line); }
+.salon-collection-details > div { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 12px; }
+.salon-collection-details dt { font-size:.65rem; color:var(--muted); }
+.salon-collection-details dd { font-size:.7rem; color:var(--ink); font-weight:500; }
+.salon-collection-book { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:17px; border-top:1px solid var(--line); color:var(--terra); font-size:.75rem; font-weight:600; }
+.salon-collection-book > span:last-child { font-size:1.15rem; }
+@media(max-width:767px) { .salon-collection-body { padding:21px; } }
+@media(prefers-reduced-motion:reduce) { .salon-collection-card,.salon-collection-image > img { transition:none; } .salon-collection-card:hover .salon-collection-image > img { transform:none; } }

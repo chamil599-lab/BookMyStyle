@@ -12,7 +12,7 @@ class FavoriteService
 {
     public function salons(User $user): Builder
     {
-        return app(PublicCatalogue::class)->salons()->whereIn('salons.id',
+        return app(PublicCatalogue::class)->cardSalons()->whereIn('salons.id',
             FavoriteSalon::where('user_id', $user->id)->select('salon_id'));
     }
 

@@ -101,6 +101,7 @@ it('keeps query filters on paginated links', function () {
 
 it('does not expose hidden prices in HTML, Livewire markup or public services JSON', function () {
     $this->salon->update(['show_price' => false]);
+    $this->get('/salons')->assertOk()->assertDontSee('9,999.55')->assertDontSee('9999.55')->assertSee('Contact salon for pricing');
     $this->get('/salon/'.$this->salon->id)->assertOk()->assertDontSee('9,999.55')->assertDontSee('9999.55')->assertSee('Contact salon for pricing');
     $this->getJson('/api/salons/'.$this->salon->id.'/services')->assertOk()->assertJsonMissingPath('0.price')->assertJsonMissingPath('0.created_by');
     $this->getJson('/api/salons/'.$this->salon->id)->assertOk()->assertJsonMissingPath('services.0.price');

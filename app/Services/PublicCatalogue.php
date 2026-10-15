@@ -20,9 +20,16 @@ class PublicCatalogue
         return $this->salons()->with(['services' => fn ($query) => $query->published()->with(['department', 'category']), 'owner'])->findOrFail($id);
     }
 
+    public function cardSalons(): Builder
+    {
+        return $this->salons()
+            ->withCount(['services as published_services_count' => fn ($services) => $services->published()])
+            ->withMin(['services as starting_price' => fn ($services) => $services->published()], 'price');
+    }
+
     public function directory(array $filters, string $mode = 'salons')
     {
-        $query = $this->salons();
+        $query = $this->cardSalons();
         if ($search = trim($filters['q'] ?? '')) {
             // Bound parameter, with literal wildcard characters escaped.
             $search = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
