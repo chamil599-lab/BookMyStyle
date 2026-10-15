@@ -30,8 +30,8 @@
             <span><span class="brand block text-sm font-bold">BookMyStyle</span><span class="eyebrow block mt-1">Beauty Booking</span></span>
         </a>
         <nav aria-label="Main navigation" class="storefront-desktop-links hidden lg:flex text-xs font-semibold">
-            @foreach (['home' => 'Home', 'salons' => 'Salons', 'services' => 'Services', 'deals' => 'Deals', 'about' => 'About'] as $route => $label)
-                <a href="{{ route($route) }}" @if(request()->routeIs($route) || ($route === 'salons' && request()->routeIs('salon.show', 'trending', 'popular'))) aria-current="{{ request()->routeIs($route) ? 'page' : 'true' }}" @endif>{{ $label }}</a>
+            @foreach (['home' => 'Home', 'services' => 'Services', 'deals' => 'Deals', 'about' => 'About'] as $route => $label)
+                <a href="{{ route($route) }}" @if(request()->routeIs($route)) aria-current="page" @endif>{{ $label }}</a>
             @endforeach
         </nav>
         <div class="storefront-nav-actions flex items-center gap-3 text-xs">
@@ -50,8 +50,8 @@
         </div>
     </div>
     <nav id="mobile-nav" aria-label="Mobile navigation" x-cloak x-show="open" @keydown.escape.window="if (open) { open = false; $refs.menuToggle.focus() }" class="storefront-mobile-links lg:hidden shell border-t border-white/20 py-5 grid grid-cols-2 gap-5 text-sm">
-        @foreach (['home' => 'Home', 'salons' => 'Salons', 'services' => 'Services', 'deals' => 'Deals', 'about' => 'About'] as $route => $label)
-            <a href="{{ route($route) }}" @if(request()->routeIs($route) || ($route === 'salons' && request()->routeIs('salon.show', 'trending', 'popular'))) aria-current="{{ request()->routeIs($route) ? 'page' : 'true' }}" @endif>{{ $label }}</a>
+        @foreach (['home' => 'Home', 'services' => 'Services', 'deals' => 'Deals', 'about' => 'About'] as $route => $label)
+            <a href="{{ route($route) }}" @if(request()->routeIs($route)) aria-current="page" @endif>{{ $label }}</a>
         @endforeach
         @auth
             <a href="{{ route('dashboard') }}">My account</a>
