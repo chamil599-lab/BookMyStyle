@@ -1,9 +1,9 @@
-@props(['title' => 'BookMyStyle', 'description' => 'Discover salons and beauty studios across Sri Lanka. Explore services, read reviews, and request your next appointment.'])
+@props(['title' => 'BookMyStyle', 'description' => 'Discover salons and beauty studios across Sri Lanka. Explore services, read reviews, and request your next appointment.', 'customerApp' => false])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} — BookMyStyle</title>
     <meta name="description" content="{{ $description }}">
@@ -21,7 +21,7 @@
     @vite('resources/css/storefront.css')
     @livewireStyles
 </head>
-<body @class(['home-luxury' => request()->routeIs('home'), 'customer-luxury' => request()->routeIs('dashboard', 'customer.*'), 'salon-detail' => request()->routeIs('salon.show'), 'public-luxury' => request()->routeIs('salons', 'trending', 'popular', 'services', 'deals', 'about', 'privacy', 'terms')])>
+<body @class(['customer-mobile-app' => $customerApp, 'home-luxury' => request()->routeIs('home'), 'customer-luxury' => request()->routeIs('dashboard', 'customer.*'), 'salon-detail' => request()->routeIs('salon.show'), 'public-luxury' => request()->routeIs('salons', 'trending', 'popular', 'services', 'deals', 'about', 'privacy', 'terms')])>
 <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 button">Skip to content</a>
 <header class="sticky top-0 z-40 bg-[#1e1710] text-[#fff3e5]" x-data="{ open: false }" @click.outside="open = false">
     <div class="shell storefront-nav-inner flex min-h-20 items-center justify-between gap-4">

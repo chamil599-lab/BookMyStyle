@@ -418,3 +418,54 @@ html.dark .customer-luxury { --sand:#0b0b0b; --paper:#151515; --cream:#202620; -
     .customer-luxury > header .eyebrow { font-size:.36rem; }
     .customer-luxury .storefront-nav-actions { gap:5px; }
 }
+
+/* App-style navigation is limited to the customer workspace on small screens. */
+.customer-app-header,.customer-app-bottom,.customer-app-account,.customer-app-scrim { display:none; }
+@media(max-width:767px) {
+    .customer-mobile-app { --customer-tab-height:68px; }
+    .customer-mobile-app > header,.customer-mobile-app > footer { display:none; }
+    .customer-mobile-app .customer-sidebar { display:none; }
+    .customer-app-header { display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:45; min-height:70px; padding:10px 20px; padding-top:calc(10px + env(safe-area-inset-top,0px)); background:var(--paper); border-bottom:1px solid var(--line); }
+    .customer-app-brand { display:flex; align-items:center; gap:9px; min-width:0; }
+    .customer-app-brand .brand-emblem { width:36px; height:36px; }
+    .customer-app-brand > span { font-family:Georgia,serif; font-weight:600; font-size:1.08rem; letter-spacing:-.04em; }
+    .customer-app-brand small { display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:.55rem; font-weight:400; color:var(--muted); letter-spacing:.02em; margin-top:3px; }
+    .customer-app-header-actions { display:flex; align-items:center; gap:5px; flex-shrink:0; }
+    .customer-app-header-actions .customer-avatar { width:40px; height:40px; border:1px solid var(--line); }
+    .customer-app-header-actions [data-notification-bell] { min-width:44px; min-height:44px; justify-content:center; }
+    .customer-mobile-app .customer-workspace { padding-top:23px; padding-bottom:calc(var(--customer-tab-height) + env(safe-area-inset-bottom,0px) + 32px); }
+    .customer-mobile-app .customer-page-heading { margin-bottom:20px; }
+    .customer-mobile-app .customer-page-heading .eyebrow { display:none; }
+    .customer-mobile-app .customer-page-heading h1 { font-size:1.65rem; margin-top:0; }
+    .customer-mobile-app .customer-page-heading > a { display:none; }
+    .customer-mobile-app .customer-welcome { padding:23px; border-radius:16px; }
+    .customer-mobile-app .customer-welcome h2 { font-size:1.95rem; margin-block:11px; }
+    .customer-mobile-app .customer-welcome h2 + p { font-size:.73rem; line-height:1.8; }
+    .customer-mobile-app .customer-welcome .eyebrow { font-size:.52rem; }
+    .customer-mobile-app .customer-stats { margin-block:17px 29px; }
+    .customer-mobile-app .customer-stat { border-radius:12px; padding:16px; }
+    .customer-mobile-app .customer-stat:last-child { grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .customer-mobile-app .customer-stat:last-child p { min-height:0; }
+    .customer-mobile-app .customer-stat:last-child strong { margin-top:0; font-size:1.5rem; }
+    .customer-mobile-app .customer-section-heading h2 { font-size:1.35rem; }
+    .customer-mobile-app .customer-section-heading { gap:12px; }
+    .customer-mobile-app .customer-booking,.customer-mobile-app .customer-shortcuts > a { border-radius:14px; padding:21px; }
+    .customer-app-bottom { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); position:fixed; bottom:0; inset-inline:0; z-index:55; min-height:var(--customer-tab-height); padding:7px max(8px,env(safe-area-inset-right,0px)) calc(7px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px)); background:var(--paper); border-top:1px solid var(--line); box-shadow:0 -8px 30px -20px #0005; }
+    .customer-app-bottom > a,.customer-app-bottom > button { display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px; min-width:0; min-height:52px; color:var(--muted); font-size:.58rem; font-weight:500; }
+    .customer-app-tab-icon { display:grid; place-items:center; width:42px; height:28px; border-radius:9px; }
+    .customer-app-tab-icon svg { width:21px; height:21px; }
+    .customer-app-bottom [aria-current],.customer-app-bottom [aria-expanded=true] { color:var(--terra); font-weight:700; }
+    .customer-app-bottom [aria-current] .customer-app-tab-icon,.customer-app-bottom [aria-expanded=true] .customer-app-tab-icon { background:var(--cream); }
+    .customer-app-bottom > a:focus-visible,.customer-app-bottom > button:focus-visible { border-radius:8px; outline-offset:-2px; }
+    .customer-app-scrim { display:block; position:fixed; inset:0; z-index:56; background:#0007; }
+    .customer-app-account { display:block; position:fixed; inset-inline:12px; bottom:calc(var(--customer-tab-height) + env(safe-area-inset-bottom,0px) + 12px); z-index:57; max-height:calc(100dvh - var(--customer-tab-height) - env(safe-area-inset-bottom,0px) - env(safe-area-inset-top,0px) - 35px); overflow:auto; overscroll-behavior:contain; border:1px solid var(--line); border-radius:20px; background:var(--paper); padding:23px; box-shadow:0 20px 60px #0003; }
+    .customer-app-account-heading { display:flex; justify-content:space-between; align-items:start; gap:16px; padding-bottom:18px; border-bottom:1px solid var(--line); }
+    .customer-app-account-heading h2 { font-family:Georgia,serif; font-weight:400; font-size:1.4rem; overflow-wrap:anywhere; }
+    .customer-app-account-heading button { width:36px; height:36px; flex-shrink:0; font-size:1.6rem; line-height:1; border-radius:50%; background:var(--cream); }
+    .customer-app-account nav { display:grid; padding-block:8px; }
+    .customer-app-account nav a,.customer-app-account nav button,.customer-app-account form > button { display:flex; justify-content:space-between; gap:15px; align-items:center; width:100%; min-height:46px; font-size:.78rem; text-align:left; }
+    .customer-app-account nav a:hover,.customer-app-account nav button:hover { color:var(--terra); }
+    .customer-app-account form { border-top:1px solid var(--line); padding-top:10px; }
+    .customer-mobile-app :is(a,button,input,select,textarea) { scroll-margin-bottom:calc(var(--customer-tab-height) + 24px); }
+    .customer-mobile-app :target { scroll-margin-bottom:calc(var(--customer-tab-height) + 24px); }
+}

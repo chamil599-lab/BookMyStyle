@@ -167,6 +167,12 @@ try {
         await viewport(320, 900);
         expect(await evaluate("[...document.querySelectorAll('.customer-welcome, .customer-stat, .customer-sidebar')].every(el => el.getBoundingClientRect().right <= innerWidth + 1) && document.documentElement.scrollWidth <= innerWidth + 1"), 'customer_dashboard_320_fit');
         await screenshot('small-mobile-customer-dashboard');
+        expect(await evaluate("getComputedStyle(document.querySelector('.customer-app-bottom')).position === 'fixed' && document.querySelectorAll('.customer-app-bottom > a, .customer-app-bottom > button').length === 5"), 'customer_mobile_app_navigation');
+        await evaluate("document.querySelector('.customer-app-bottom > button').click()");
+        await until("getComputedStyle(document.querySelector('#customer-app-account')).display !== 'none' && document.activeElement.id === 'customer-app-account-heading'", 'mobile account sheet opens');
+        await call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape' });
+        await call('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape' });
+        await until("getComputedStyle(document.querySelector('#customer-app-account')).display === 'none' && document.activeElement === document.querySelector('.customer-app-header-actions > button')", 'mobile account sheet closes');
         await evaluate("document.documentElement.classList.remove('dark')");
         await viewport(390, 844);
         expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), 'mobile_customer_dashboard_no_overflow');
