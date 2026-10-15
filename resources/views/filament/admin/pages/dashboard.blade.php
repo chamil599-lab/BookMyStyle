@@ -13,62 +13,19 @@
     @vite('resources/js/management-charts.js')
     @endassets
 
-    <div class="space-y-6">
-        <p class="text-sm">Subscription payments retain expired and canceled history; no refund ledger is available. Monthly payments are grouped by subscription start date. Booking values estimate current prices for confirmed appointments.</p>
+    <div class="bms-dashboard">
+        <x-management.welcome eyebrow="BookMyStyle / Administration" heading="Your business, at a glance." description="A clear view of subscriptions, salon owners and booking activity across your platform." />
+        <p class="bms-note">Subscription payments retain expired and canceled history; no refund ledger is available. Monthly payments are grouped by subscription start date. Booking values estimate current prices for confirmed appointments.</p>
 
-        {{-- Stat Cards --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                        <x-filament::icon icon="heroicon-o-currency-dollar" class="w-5 h-5 text-success-600 dark:text-success-400" />
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Recorded subscription payments</p>
-                        <p class="text-xl font-bold text-gray-900 dark:text-white">LKR {{ number_format($rev['subscription_revenue'], 2) }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                        <x-filament::icon icon="heroicon-o-check-badge" class="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Active Subscriptions</p>
-                        <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $subs['active'] }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-warning-100 dark:bg-warning-900/30 flex items-center justify-center">
-                        <x-filament::icon icon="heroicon-o-clock" class="w-5 h-5 text-warning-600 dark:text-warning-400" />
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Pending Approvals</p>
-                        <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $subs['pending'] }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-info-100 dark:bg-info-900/30 flex items-center justify-center">
-                        <x-filament::icon icon="heroicon-o-calendar-days" class="w-5 h-5 text-info-600 dark:text-info-400" />
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Total Bookings</p>
-                        <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $rev['total_bookings'] }}</p>
-                    </div>
-                </div>
-            </div>
+        <div class="bms-stat-grid">
+            <x-management.stat label="Recorded subscription payments" :value="'LKR '.number_format($rev['subscription_revenue'], 2)" icon="heroicon-o-banknotes" description="Recorded payment history" />
+            <x-management.stat label="Active Subscriptions" :value="number_format($subs['active'])" icon="heroicon-o-check-badge" description="Current active plans" />
+            <x-management.stat label="Pending Approvals" :value="number_format($subs['pending'])" icon="heroicon-o-clock" description="Subscription requests to review" />
+            <x-management.stat label="Total Bookings" :value="number_format($rev['total_bookings'])" icon="heroicon-o-calendar-days" description="All booking requests" />
         </div>
 
         <x-filament::section heading="Owners and site visits">
-            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <dl class="bms-overview">
                 @foreach(['owners' => 'Owners', 'pending_owners' => 'Owners awaiting approval', 'visits' => 'Total visits', 'today_visits' => 'Visits today', 'month_visits' => 'Visits this month', 'unique_visitors' => 'Unique visitor identifiers'] as $key => $label)
                     <div><dt>{{ $label }}</dt><dd>{{ number_format($overview[$key]) }}</dd></div>
                 @endforeach
@@ -107,8 +64,8 @@
                                         datasets: [{
                                             label: 'Revenue (LKR)',
                                             data: values,
-                                            backgroundColor: isDark ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.8)',
-                                            borderColor: '#22c55e',
+                                            backgroundColor: isDark ? 'rgba(214,183,125,0.7)' : 'rgba(139,107,53,0.8)',
+                                            borderColor: '#ad8b50',
                                             borderWidth: 1,
                                             borderRadius: 4,
                                         }]
@@ -243,8 +200,8 @@
                                 datasets: [{
                                     label: 'Revenue (LKR)',
                                     data: values,
-                                    borderColor: '#3b82f6',
-                                    backgroundColor: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.15)',
+                                    borderColor: '#ad8b50',
+                                    backgroundColor: isDark ? 'rgba(173,139,80,0.1)' : 'rgba(173,139,80,0.15)',
                                     fill: true,
                                     tension: 0.3,
                                     pointRadius: 2,

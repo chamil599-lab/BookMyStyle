@@ -197,6 +197,16 @@ try {
             await sleep(700);
             checks[`${role}_filament_session_handoff`] = true;
             await viewport(1440, 1000); await screenshot(`desktop-filament-${role}`);
+            expect(await evaluate("document.querySelectorAll('.bms-stat').length === 4 && !!document.querySelector('.bms-welcome')"), role + '_dashboard_overview');
+            await evaluate("document.documentElement.classList.add('dark')");
+            expect(await evaluate("getComputedStyle(document.body).backgroundColor === 'rgb(11, 11, 11)'"), role + '_dashboard_black_dark_theme');
+            await screenshot(`dark-filament-${role}`);
+            await viewport(320, 780);
+            expect(await evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), role + '_dashboard_320_no_overflow');
+            expect(await evaluate("[...document.querySelectorAll('.bms-welcome, .bms-stat')].every(el => el.getBoundingClientRect().right <= innerWidth + 1)"), role + '_dashboard_mobile_cards_fit');
+            await screenshot(`mobile-filament-${role}`);
+            await evaluate("document.documentElement.classList.remove('dark')");
+            await viewport(1440, 1000);
             expect(await evaluate("!!document.querySelector('[data-notification-bell]')"), role + '_notification_bell');
             if (role === 'owner') {
                 await call('Emulation.setTimezoneOverride', { timezoneId: 'America/Los_Angeles' });

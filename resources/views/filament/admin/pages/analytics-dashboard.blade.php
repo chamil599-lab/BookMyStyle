@@ -17,8 +17,9 @@
     @vite('resources/js/management-charts.js')
     @endassets
 
-    <div class="space-y-6">
-        <p class="text-sm">Values are estimates using current service prices, not payments or profit. Period charts include appointments through today; all-time and selected-month totals include future confirmed appointments.</p>
+    <div class="bms-dashboard">
+        <x-management.welcome eyebrow="BookMyStyle / Insights" heading="See the bigger picture." description="Explore booking activity, service performance and estimated appointment value." />
+        <p class="bms-note">Values are estimates using current service prices, not payments or profit. Period charts include appointments through today; all-time and selected-month totals include future confirmed appointments.</p>
 
         @foreach(['period', 'salonId', 'profitYear', 'profitMonth'] as $field)
             @error($field)<p class="text-danger-600" role="alert">{{ $message }}</p>@enderror
@@ -43,7 +44,7 @@
                         type="button"
                         x-on:click="period = '{{ $value }}'; $wire.set('period', '{{ $value }}')"
                         :class="period === '{{ $value }}'
-                            ? 'px-3 py-1.5 text-sm font-medium rounded-lg transition-all bg-primary-500 text-gray-500! shadow-sm'
+                            ? 'px-3 py-1.5 text-sm font-medium rounded-lg transition-all bg-primary-600 text-white shadow-sm'
                             : 'px-3 py-1.5 text-sm font-medium rounded-lg transition-all bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'"
                     >
                         {{ $label }}

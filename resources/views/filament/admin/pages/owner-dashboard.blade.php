@@ -3,57 +3,44 @@
         $stats = $this->ownerStats;
     @endphp
 
-    <div class="space-y-6">
-        <p class="text-sm">Booking value uses current service prices, including future confirmed appointments. It does not represent payments collected.</p>
+    <div class="bms-dashboard">
+        <x-management.welcome eyebrow="BookMyStyle / Your workspace" heading="Make room for a beautiful day." description="Your salons, appointments and membership, brought together in one place." />
+        <p class="bms-note">Booking value uses current service prices, including future confirmed appointments. It does not represent payments collected.</p>
 
-        {{-- Stat Cards --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {{-- Confirmed booking value (estimate) --}}
-            <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-success-100 dark:bg-success-900/30 flex items-center justify-center">
-                        <x-filament::icon icon="heroicon-o-currency-dollar" class="w-5 h-5 text-success-600 dark:text-success-400" />
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Confirmed booking value (estimate)</p>
-                        <p class="text-xl font-bold text-gray-900 dark:text-white">LKR {{ number_format($stats['total_earnings'], 2) }}</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Total Bookings --}}
-            <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                        <x-filament::icon icon="heroicon-o-calendar-days" class="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Bookings</p>
-                        <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($stats['total_bookings']) }}</p>
-                    </div>
-                </div>
-            </div>
+        <div class="bms-stat-grid">
+            <x-management.stat label="Confirmed booking value (estimate)" :value="'LKR '.number_format($stats['total_earnings'], 2)" icon="heroicon-o-banknotes" description="Current service prices" />
+            <x-management.stat label="Total Bookings" :value="number_format($stats['total_bookings'])" icon="heroicon-o-calendar-days" description="Across your salons" />
+            <x-management.stat label="Pending bookings" :value="number_format($stats['pending'])" icon="heroicon-o-clock" description="Awaiting your response" />
+            <x-management.stat label="Completed bookings" :value="number_format($stats['completed'])" icon="heroicon-o-check-badge" description="Completed appointments" />
         </div>
 
         <x-filament::section heading="Account overview">
-            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <dl class="bms-overview">
                 <div><dt>Salons</dt><dd>{{ $stats['salons'] }}</dd></div>
-                <div><dt>Pending bookings</dt><dd>{{ $stats['pending'] }}</dd></div>
-                <div><dt>Completed bookings</dt><dd>{{ $stats['completed'] }}</dd></div>
+                <div><dt>Monthly booking requests</dt><dd>{{ number_format($stats['month_bookings']) }}</dd></div>
+                <div><dt>Membership days remaining</dt><dd>{{ $stats['subscription']?->daysRemaining() ?? 'No active plan' }}</dd></div>
             </dl>
         </x-filament::section>
-        <x-filament::section heading="Subscription">
-            @if($subscription = $stats['subscription'])
-                <p>{{ $subscription->package?->name ?? 'Archived plan' }}{{ $subscription->is_trial ? ' (trial)' : '' }}</p>
-                <p>Ends {{ $subscription->ends_at->format('d M Y') }} ? {{ $subscription->daysRemaining() }} days remaining.</p>
-                <p>Monthly booking requests: {{ $stats['month_bookings'] }} / {{ $subscription->package?->max_bookings_per_month ?? 'Unlimited' }} across all salons.</p>
-                @if(\App\Filament\Admin\Pages\AnalyticsDashboard::canAccess())
-                    <a class="underline" href="{{ \App\Filament\Admin\Pages\AnalyticsDashboard::getUrl() }}">View analytics</a>
-                @endif
-            @else
-                <p>No current active subscription.</p>
-            @endif
-            <a class="underline" href="{{ route('subscription.required') }}">View subscription options</a>
+        <x-filament::section heading="Your membership">
+            <div class="bms-subscription">
+                <div>
+                    @if($subscription = $stats['subscription'])
+                        <p class="bms-eyebrow">Current plan</p>
+                        <h3>{{ $subscription->package?->name ?? 'Archived plan' }}{{ $subscription->is_trial ? ' (trial)' : '' }}</h3>
+                        <p>Ends {{ $subscription->ends_at->format('d M Y') }} &middot; {{ $subscription->daysRemaining() }} days remaining.</p>
+                        <p>Monthly booking requests: {{ $stats['month_bookings'] }} / {{ $subscription->package?->max_bookings_per_month ?? 'Unlimited' }} across all salons.</p>
+                    @else
+                        <h3>Find the right plan for your salon.</h3>
+                        <p>No current active subscription.</p>
+                    @endif
+                </div>
+                <div class="bms-actions">
+                    @if(\App\Filament\Admin\Pages\AnalyticsDashboard::canAccess())
+                        <x-filament::button color="gray" tag="a" :href="\App\Filament\Admin\Pages\AnalyticsDashboard::getUrl()" icon="heroicon-o-chart-bar">View analytics</x-filament::button>
+                    @endif
+                    <x-filament::button tag="a" :href="route('subscription.required')" icon="heroicon-o-arrow-up-right">View subscription options</x-filament::button>
+                </div>
+            </div>
         </x-filament::section>
         {{-- Booking Calendar --}}
         @if(\App\Filament\Admin\Widgets\BookingCalendarWidget::canView())
