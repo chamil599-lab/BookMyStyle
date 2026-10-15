@@ -32,7 +32,7 @@ html.dark {
 }
 
 .fi-sidebar,.fi-sidebar-header {
-    background: #141413;
+    background: #090909;
 }
 
 .fi-sidebar {
@@ -44,14 +44,14 @@ html.dark {
 }
 
 .fi-sidebar-header .fi-logo {
-    color: #f5f0e6;
+    color: #ffffff;
     font-size: .95rem;
     font-weight: 600;
     letter-spacing: -.025em;
 }
 
 .fi-sidebar-group-label {
-    color: #a7a399;
+    color: #c8c8c8;
     font-size: .66rem;
     font-weight: 600;
     letter-spacing: .12em;
@@ -65,12 +65,12 @@ html.dark {
 }
 
 .fi-sidebar-item-label {
-    color: #c9c6bd;
+    color: #eeeeee;
     font-weight: 500;
 }
 
 .fi-sidebar-item-icon {
-    color: #a8a397;
+    color: #c5c5c5;
 }
 
 .fi-sidebar-item-btn:hover {
@@ -113,7 +113,7 @@ html.dark {
 }
 
 .fi-sidebar .fi-icon-btn {
-    color: #c9c6bd;
+    color: #eeeeee;
 }
 
 .fi-sidebar .fi-badge {

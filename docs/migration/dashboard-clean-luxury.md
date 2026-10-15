@@ -2,7 +2,7 @@
 
 Reviewed the local Dianamonkey panel provider, dashboard and widget implementations, and its Filament theme as a visual reference. That project's files were read only.
 
-BookMyStyle now uses a charcoal sidebar, soft green navigation selection with a slim green marker and stronger active label, pure white light-mode page background and green primary controls, following the requested palette revision. Green accents also appear on statistics icons and revenue charts. Dark mode uses a black page background with charcoal cards. Shared styling covers resource tables, forms, tabs, authentication surfaces and dialogs, while retaining Filament's status colors.
+BookMyStyle now uses a near-black sidebar with brighter white labels, soft green navigation selection with a slim green marker and stronger active label, pure white light-mode page background and green primary controls, following the requested palette revision. Green accents also appear on statistics icons and revenue charts. Dark mode uses a black page background with charcoal cards. Shared styling covers resource tables, forms, tabs, authentication surfaces and dialogs, while retaining Filament's status colors.
 
 Admin and owner dashboards have introductory panels, four consistent statistics cards and clearer account metrics. The owner membership panel has dedicated actions. Analytics uses the same introductory treatment and a readable selected period control. The existing inline sidebar overrides were removed in favor of the Vite theme.
 
