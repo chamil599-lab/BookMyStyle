@@ -3,5 +3,5 @@
 it('serves the public homepage through Blade', function () {
     $response = $this->get('/');
 
-    $response->assertOk()->assertSee('BOOK')->assertSee('Find your salon');
+    $response->assertOk()->assertSee('BookMyStyle')->assertSee('Find your salon');
 });

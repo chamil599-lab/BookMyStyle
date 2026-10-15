@@ -1,5 +1,7 @@
 # Blade and Filament migration baseline
 
+Historical snapshot: the React paths described below belong to the pre-migration application. The retired client and React-only verification tools were removed on 15 October 2026. Use `DEPLOY_CPANEL.md` for the current native deployment workflow; earlier source remains in Git history.
+
 Prepared on 10 October 2026 (Asia/Colombo). This records the application before migration; it does not certify that existing behavior is safe or correct.
 
 ## Scope and evidence

@@ -1,22 +1,22 @@
 # Blade and Filament deployment on cPanel
 
-Laravel now serves the public site, authentication and customer pages through Blade/Livewire, and owner/admin management through Filament. The retained React client is a migration reference. Do not copy client/dist into the live document root or install SPA fallback rewrites: those would replace native routes.
+Laravel now serves the public site, authentication and customer pages through Blade/Livewire, and owner/admin management through Filament. The retired React project has been removed. Keep Laravel routing in place; SPA fallback rewrites would replace native routes.
 
 This is a release runbook, not confirmation that production is ready. No deployment or imported-database migration has been performed. See docs/migration/step-14-deployment-readiness.md and docs/migration/rollback.md.
 
 ## 1. Prepare an isolated release
 
-Use the approved source checkpoint and matching composer.lock/package-lock.json. Build in an isolated directory or CI environment, never over the active application. Preserve the existing APP_KEY; rotating it can invalidate encrypted data and sessions. Keep credentials, backups, .local, development tools and the retained client outside the web root and release artifact.
+Use the approved source checkpoint and matching composer.lock/package-lock.json. Build in an isolated directory or CI environment, never over the active application. Preserve the existing APP_KEY; rotating it can invalidate encrypted data and sessions. Keep credentials, backups, .local, development tools outside the web root and release artifact.
 
 Validate the host's actual PHP version/extensions with composer check-platform-reqs --no-dev. The project declares PHP 8.2+, while local verification used PHP 8.4.26; the actual host and optimized autoloader remain unverified. Required extensions must satisfy the complete lockfile, including image processing and MySQL.
 
-In the isolated release, install locked dependencies with composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts. Review lifecycle scripts before running package:discover and filament:assets explicitly. Run npm ci and npm run build at the project root. Root public/build is required. No production React build is required for the native routes.
+In the isolated release, install locked dependencies with composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts. Review lifecycle scripts before running package:discover and filament:assets explicitly. Run npm ci and npm run build at the project root. Root public/build is required. There is one root Vite build for the native site.
 
 ## 2. Configure the server privately
 
 Point the domain document root to the release's public directory; keep app, vendor, .env and storage outside it. If cPanel cannot select this document root, resolve the host layout before release rather than uploading the whole project to public_html. Retain public/.htaccess and Laravel's index.php routing. Only storage and bootstrap/cache need application write permissions; avoid world-writable permissions.
 
-Set APP_ENV=production, APP_DEBUG=false, APP_URL to the real HTTPS domain and FRONTEND_URL to that same native site. Set SESSION_SECURE_COOKIE=true, SESSION_HTTP_ONLY=true, SESSION_SAME_SITE=lax and leave SESSION_DOMAIN unset for a host-only cookie unless a reviewed subdomain requirement exists. Preserve the existing encryption key and configure the actual MySQL database privately.
+Set APP_ENV=production, APP_DEBUG=false, APP_URL to the real HTTPS domain. Set SESSION_SECURE_COOKIE=true, SESSION_HTTP_ONLY=true, SESSION_SAME_SITE=lax and leave SESSION_DOMAIN unset for a host-only cookie unless a reviewed subdomain requirement exists. Preserve the existing encryption key and configure the actual MySQL database privately.
 
 Use persistent session/cache stores whose tables or services already exist. Configure a real mail transport, sender authentication and delivery monitoring. An SMTP setting alone does not prove delivery. Configure queue workers and supervised restarts if using asynchronous jobs; inspect the application's actual scheduling requirements before installing cron. Restrict TRUSTED_PROXIES to actual proxy IPs/CIDRs, or leave empty for direct hosting. Never trust every proxy.
 
