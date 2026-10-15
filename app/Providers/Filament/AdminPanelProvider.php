@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarWidth('20rem')
             ->brandLogo(null)
             ->brandName(fn (): string => auth()->check() ? auth()->user()->name.'\'s Dashboard' : 'Dashboard')
-            ->favicon(asset('logo2.png'))
+            ->favicon(asset('images/brand-mark.png'))
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([

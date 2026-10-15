@@ -295,3 +295,25 @@ html.dark .salon-booking [role=alert],html.dark .salon-reviews [role=alert] { co
 @media(max-width:767px) { .public-luxury .public-content-page { padding-block:38px 45px; } .public-luxury #salons-section { padding-top:38px; } .public-page-intro { padding-bottom:24px; margin-bottom:25px; } .public-luxury .public-page-intro .section-title { font-size:2.5rem; } .public-luxury main form { padding:17px; } .public-luxury main form > div { min-width:0; max-width:100%; } .public-editorial-card > div { padding:22px; } .public-about-stats .panel { padding:20px 10px; border-right:0; border-bottom:1px solid var(--line); } .public-about-stats .panel:last-child { border-bottom:0; } .public-about-stats strong { font-size:2.7rem; } .public-about > h1 { font-size:2.5rem; } .public-luxury .legal .max-w-4xl { padding:25px 20px; } }
 
 @media(min-width:768px) { .public-luxury #salons-section > form.directory-ranked { grid-template-columns:2fr 1fr auto; } }
+
+/* A consistent navbar rhythm for the new illustrated brand mark. */
+:is(.home-luxury,.salon-detail,.public-luxury) > header .storefront-nav-inner { min-height:88px; gap:24px; }
+.storefront-brand { flex-shrink:0; }
+.storefront-brand .storefront-brand-mark { width:52px; height:52px; }
+.storefront-desktop-links { align-items:center; gap:5px; }
+.storefront-desktop-links > a { display:flex; align-items:center; min-height:40px; padding:9px 15px; border:1px solid transparent; border-radius:6px; font-weight:500; }
+:is(.home-luxury,.salon-detail,.public-luxury) .storefront-desktop-links > a:hover { background:var(--cream); color:var(--ink); }
+:is(.home-luxury,.salon-detail,.public-luxury) .storefront-desktop-links > a[aria-current] { background:var(--cream); border-color:var(--line); color:var(--ink); }
+.storefront-nav-actions { align-items:center; gap:10px; flex-shrink:0; }
+.storefront-icon-button,.storefront-menu-toggle { display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:9px 12px; border:1px solid var(--line); border-radius:6px; background:transparent; transition:background .2s,border-color .2s; }
+.storefront-icon-button { width:40px; font-size:18px; line-height:1; }
+.storefront-icon-button:hover,.storefront-menu-toggle:hover { background:var(--cream); color:var(--ink); }
+.storefront-signin,.storefront-account-link,.storefront-signout { padding:11px 13px; border-radius:6px; font-size:.72rem; font-weight:600; line-height:1.5; }
+.storefront-signin:hover,.storefront-account-link:hover,.storefront-signout:hover { background:var(--cream); color:var(--ink); }
+:is(.home-luxury,.salon-detail,.public-luxury) > header .storefront-join { min-height:40px; padding:10px 19px; border-radius:6px; font-size:.72rem; line-height:1.5; }
+.storefront-mobile-links { max-height:calc(100dvh - 74px); overflow-y:auto; gap:7px; padding-block:14px 19px; }
+.storefront-mobile-links > a,.storefront-mobile-links form > button { display:flex; align-items:center; width:100%; min-height:44px; padding:12px 15px; border-radius:6px; text-align:left; font-size:.8rem; }
+:is(.home-luxury,.salon-detail,.public-luxury) .storefront-mobile-links a[aria-current],.storefront-mobile-links > a:hover { background:var(--cream); color:var(--ink); }
+.salon-section-nav { top:88px; }
+@media(min-width:1024px) { .storefront-menu-toggle { display:none; } }
+@media(max-width:767px) { :is(.home-luxury,.salon-detail,.public-luxury) > header .storefront-nav-inner { min-height:74px; gap:12px; } .storefront-brand { gap:9px; } .storefront-brand .storefront-brand-mark { width:42px; height:42px; } :is(.home-luxury,.salon-detail,.public-luxury) > header .brand { font-size:.96rem; } :is(.home-luxury,.salon-detail,.public-luxury) > header .eyebrow { font-size:.44rem; letter-spacing:.19em; } .storefront-nav-actions { gap:7px; } .storefront-icon-button { width:36px; min-height:38px; padding:7px; } .storefront-menu-toggle { min-height:38px; padding:9px 11px; font-size:.72rem; } .salon-section-nav { top:74px; } }

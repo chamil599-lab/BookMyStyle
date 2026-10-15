@@ -334,7 +334,7 @@
     <header>
         <div class="container header-content">
             <div class="logo">
-                <img src="{{ asset('frontend/images/logo2.png') }}" alt="Book My Style Logo">
+                <x-app-logo-icon class="size-12" />
                 <span class="logo-text">
                     <span class="word book">Book</span>
                     <span class="word my">My</span>

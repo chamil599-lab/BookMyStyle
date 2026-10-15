@@ -63,6 +63,8 @@ try {
     await call('Page.enable'); await call('Runtime.enable');
     await call('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }] });
     await viewport(1440, 1000); await navigate('/');
+    expect(await evaluate("document.querySelector('.storefront-brand-mark').naturalWidth > 0 && Math.round(document.querySelector('.storefront-brand-mark').getBoundingClientRect().width) === 52"), 'navbar_brand_loaded_and_sized');
+    expect(await evaluate("document.querySelector('nav[aria-label=\"Main navigation\"] a[aria-current=page]').pathname === '/'"), 'navbar_active_home_link');
     if (await evaluate("document.body.classList.contains('home-luxury')")) {
         await until("document.querySelector('video.luxury-portrait').readyState >= 2", 'luxury hero film');
         await evaluate("document.querySelector('video.luxury-portrait').play()");
@@ -78,7 +80,9 @@ try {
     await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Menu').click()");
     await sleep(100);
     expect(await evaluate("getComputedStyle(document.querySelector('#mobile-nav')).display !== 'none'"), 'mobile_menu_opens');
-    await evaluate("[...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Menu').click()");
+    await call('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape' });
+    await call('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape' });
+    expect(await evaluate("getComputedStyle(document.querySelector('#mobile-nav')).display === 'none' && document.activeElement === document.querySelector('[aria-controls=mobile-nav]')"), 'mobile_menu_escape_restores_focus');
     const darkBefore = await evaluate("document.documentElement.classList.contains('dark')");
     await evaluate("document.querySelector('button[aria-label=\"Toggle color theme\"]').click()");
     expect(await evaluate("document.documentElement.classList.contains('dark')") !== darkBefore, 'theme_toggle');
