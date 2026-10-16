@@ -10,6 +10,8 @@ Use the approved source checkpoint and matching composer.lock/package-lock.json.
 
 Validate the host's actual PHP version/extensions with composer check-platform-reqs --no-dev. The project declares PHP 8.2+, while local verification used PHP 8.4.26; the actual host and optimized autoloader remain unverified. Required extensions must satisfy the complete lockfile, including image processing and MySQL.
 
+Before every release, run `composer audit --locked --no-plugins --no-scripts` and `npm audit` against the exact release lockfiles. Review advisories and abandoned packages before approval; a clean historical audit is not evidence about a later release. Run `composer validate --no-check-publish` and keep both lockfiles in the release source. Resolve updates in the isolated build and test them; do not run automatic audit fixes or dependency updates on the live application.
+
 In the isolated release, install locked dependencies with composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts. Review lifecycle scripts before running package:discover and filament:assets explicitly. Run npm ci and npm run build at the project root. Root public/build is required. There is one root Vite build for the native site.
 
 ## 2. Configure the server privately
