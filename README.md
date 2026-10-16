@@ -12,6 +12,8 @@ Review migrations before applying them. Never run `migrate:fresh` or seed agains
 
 ## Repository and release rules
 
+Current development baseline: **0.1.0**, tracked in [VERSION](VERSION). Record future updates in [CHANGELOG.md](CHANGELOG.md) and follow the [versioned release process](docs/releases.md). Release tags use `vMAJOR.MINOR.PATCH`.
+
 - Keep this repository private. Do not commit `.env`, credentials, database exports, uploads, logs, backups, vendor or node_modules. Reviewed environment templates contain no operational secrets.
 - Use branches and pull requests for changes. Main should represent reviewed code; GitHub branch protection and required checks must be configured after the private repository exists.
 - Existing workflows run tests/build and check formatting. They have read-only repository permissions and require no deployment credentials. They do not deploy. Validate their first GitHub runs before making them required merge checks.
