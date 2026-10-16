@@ -87,6 +87,24 @@ it('shows admins all services and scopes owners to their own records', function 
     $this->get('/filament/services')->assertOk()->assertSee('Foreign service');
 });
 
+it('denies foreign owner booking API references and scopes subscription records', function () {
+    $other = User::factory()->create(['is_approved' => true]);
+    $other->assignRole('owner');
+    $foreignSalon = $this->salon->replicate();
+    $foreignSalon->fill(['created_by' => $other->id])->save();
+    $foreign = Booking::create(array_replace($this->data, ['salon_id' => $foreignSalon->id, 'status' => 'pending']));
+    $foreignSubscription = $this->paid->replicate();
+    $foreignSubscription->fill(['user_id' => $other->id])->save();
+    \Laravel\Sanctum\Sanctum::actingAs($this->owner);
+    $this->getJson('/api/salons/'.$foreignSalon->id.'/bookings')->assertForbidden();
+    $this->patchJson('/api/bookings/'.$foreign->id.'/status', ['status' => 'approved'])->assertForbidden();
+    expect($foreign->fresh()->status)->toBe('pending');
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    $this->actingAs($this->owner, 'web');
+    expect(\App\Filament\Admin\Resources\Bookings\BookingResource::getEloquentQuery()->whereKey($foreign->id)->exists())->toBeFalse()
+        ->and(\App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource::getEloquentQuery()->pluck('id')->all())->toBe([$this->paid->id]);
+});
+
 it('creates salons through Filament without trusting hidden audit fields', function () {
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($this->owner);

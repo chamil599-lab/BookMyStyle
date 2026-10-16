@@ -109,6 +109,30 @@ it('scopes lists and cancellation to account bookings and verified unclaimed gue
     expect(app(CustomerDashboard::class)->bookings($this->customer)->pluck('id')->all())->toBe([$mine->id]);
 });
 
+it('denies cross-account API booking references even when submitted identity matches the victim', function () {
+    $foreign = ($this->makeBooking)(['user_id' => $this->other->id]);
+    Sanctum::actingAs($this->customer);
+    $this->postJson('/api/bookings/my-bookings', ['user_id' => $this->other->id, 'email' => $this->other->email])
+        ->assertOk()->assertExactJson([]);
+    $this->patchJson('/api/customer/bookings/'.$foreign->id.'/cancel', ['user_id' => $this->other->id])->assertNotFound();
+    expect($foreign->fresh()->status)->toBe('pending');
+});
+
+it('denies foreign notification UUIDs across browser and API mutations', function () {
+    $foreign = $this->other->notifications()->create(['id' => (string) Str::uuid(), 'type' => 'idor-fixture',
+        'data' => ['message' => 'Private foreign notification']]);
+    $this->actingAs($this->customer);
+    $this->post('/dashboard/notifications/'.$foreign->id.'/read')->assertNotFound();
+    $this->delete('/dashboard/notifications/'.$foreign->id)->assertNotFound();
+    Sanctum::actingAs($this->customer);
+    $this->getJson('/api/notifications')->assertOk()->assertJsonCount(0, 'notifications');
+    $this->patchJson('/api/notifications/'.$foreign->id.'/read')->assertNotFound();
+    $this->deleteJson('/api/notifications/'.$foreign->id)->assertNotFound();
+    $this->postJson('/api/notifications/read-all')->assertOk();
+    $this->deleteJson('/api/notifications')->assertOk();
+    expect($foreign->fresh())->not->toBeNull()->and($foreign->fresh()->read_at)->toBeNull();
+});
+
 it('rejects repeated and completed cancellation without changing booking state', function () {
     $booking = ($this->makeBooking)();
     $this->actingAs($this->customer)->post('/dashboard/bookings/'.$booking->id.'/cancel')->assertRedirect();
