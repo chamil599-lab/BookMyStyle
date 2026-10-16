@@ -43,3 +43,25 @@ yarn-error.log
 !/storage/app/public/.gitignore
 /storage/app/private/*
 !/storage/app/private/.gitignore
+
+# Private configuration and local tooling; only reviewed templates belong in Git.
+**/.env*
+!**/.env.example
+!/.env.production.example
+**/auth.json
+/.codex/
+/.agents/
+/.aws/
+
+# Database exports, credentials and recovery artifacts.
+*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.sqlite-*
+*.bak
+*.pem
+*.key
+*.p12
+*.pfx
+*.phar
