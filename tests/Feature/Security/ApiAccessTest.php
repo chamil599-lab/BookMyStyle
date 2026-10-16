@@ -54,6 +54,33 @@ it('requires login for all legacy private booking and review entry points', func
     $this->postJson('/api/salons/'.$this->salon->id.'/ratings', ['rating' => 5])->assertUnauthorized();
 });
 
+it('publishes appointment availability without customer identity or booking record IDs', function () {
+    $response = $this->getJson('/api/salons/'.$this->salon->id.'/booked-times?date='.$this->booking->date->format('Y-m-d'))
+        ->assertOk()->assertJsonCount(1, 'booked_times');
+    expect(array_keys($response->json('booked_times.0')))->toBe(['time', 'service_id', 'duration', 'status']);
+    foreach (['name', 'email', 'phone', 'user_id', 'id'] as $field) {
+        $response->assertJsonMissingPath('booked_times.0.'.$field);
+    }
+    $response->assertDontSee($this->customer->email, false)->assertDontSee('0700000000');
+});
+
+it('keeps review email and owner account audit fields out of anonymous catalogue responses', function () {
+    \App\Models\SalonRating::create(['salon_id' => $this->salon->id, 'email' => 'private-reviewer@example.test', 'rating' => 5, 'review' => 'Public review']);
+    $this->getJson('/api/salons/'.$this->salon->id.'/ratings')->assertOk()->assertJsonPath('ratings.0.review', 'Public review')
+        ->assertJsonMissingPath('ratings.0.email')->assertDontSee('private-reviewer@example.test', false);
+    $response = $this->getJson('/api/salons/'.$this->salon->id)->assertOk();
+    foreach (['owner', 'created_by', 'updated_by', 'password', 'remember_token'] as $field) {
+        $response->assertJsonMissingPath($field);
+    }
+    $response->assertDontSee($this->owner->email, false);
+});
+
+it('omits price values when salon pricing is disabled', function () {
+    $this->salon->update(['show_price' => false]);
+    $this->getJson('/api/salons/'.$this->salon->id)->assertOk()->assertJsonMissingPath('services.0.price');
+    $this->getJson('/api/salons/'.$this->salon->id.'/services')->assertOk()->assertJsonMissingPath('0.price');
+});
+
 it('does not let a customer manage booking status or list a salons customer records', function () {
     Sanctum::actingAs($this->customer);
     $this->patchJson('/api/bookings/'.$this->booking->id.'/status', ['status' => 'approved'])->assertForbidden();
