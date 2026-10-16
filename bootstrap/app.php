@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->append(\App\Http\Middleware\SecurityResponseHeaders::class);
         $middleware->web(append: [AuthenticateSession::class, \App\Http\Middleware\RestrictBrowserRedirects::class]);
         $middleware->replace(
             TrustProxies::class,
@@ -62,6 +63,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
             }
 
-            return $response;
+            return \App\Http\Middleware\SecurityResponseHeaders::apply($request, $response);
         });
     })->create();
