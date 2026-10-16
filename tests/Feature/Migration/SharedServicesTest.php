@@ -56,6 +56,16 @@ it('forces public status and account ownership from the authenticated actor', fu
     expect($booking->status)->toBe('pending')->and($booking->user_id)->toBe($this->customer->id);
 });
 
+it('renders booking decision emails after their service has been soft deleted', function () {
+    $booking = Booking::create($this->data + ['status' => 'approved']);
+    $this->service->delete();
+    foreach (['approved', 'rejected'] as $status) {
+        $booking->status = $status;
+        $html = (new \App\Mail\BookingStatusChanged($booking))->render();
+        expect($html)->toContain('Cut')->toContain($booking->name);
+    }
+});
+
 it('discards forged booking identity timestamps and state through the public API', function () {
     Sanctum::actingAs($this->customer);
     $this->postJson('/api/bookings', $this->data + ['id' => 999999, 'user_id' => $this->admin->id,

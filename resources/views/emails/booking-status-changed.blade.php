@@ -150,7 +150,7 @@
                 
                 <div class="detail-row">
                     <span class="detail-label">Service:</span>
-                    <span class="detail-value">{{ $booking->service->title}}</span>
+                    <span class="detail-value">{{ $booking->service()->withTrashed()->first()?->title ?? 'Booked service' }}</span>
                 </div>
                 
                 <div class="detail-row">

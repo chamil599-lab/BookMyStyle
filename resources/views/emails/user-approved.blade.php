@@ -17,7 +17,7 @@
         <p>You can now access your dashboard and start managing your salon on BookMyStyle.</p>
         
         <div style="text-align: center; margin: 30px 0;">
-            <a href="https://bookmystyle.limach.lk/admin" style="background: #8B5FBF; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;">Go to Dashboard</a>
+            <a href="{{ route('dashboard') }}" style="background: #8B5FBF; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;">Go to Dashboard</a>
         </div>
         
         <p>Welcome aboard!<br>The BookMyStyle Team</p>
