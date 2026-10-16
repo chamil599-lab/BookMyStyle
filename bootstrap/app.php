@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [AuthenticateSession::class]);
+        $middleware->web(append: [AuthenticateSession::class, \App\Http\Middleware\RestrictBrowserRedirects::class]);
         $middleware->replace(
             TrustProxies::class,
             ConfiguredTrustProxies::class

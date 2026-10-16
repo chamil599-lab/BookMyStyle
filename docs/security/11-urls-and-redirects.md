@@ -1,0 +1,13 @@
+# 11 - Unsafe URLs and redirects
+
+Checked 16 October 2026. Hardened browser redirects after finding that back() can use an untrusted external Referer. Added RestrictBrowserRedirects to the web middleware stack. It removes unsafe intended/previous destinations from the session before handlers run and replaces unsafe HTTP redirect Locations with `/`. Allowed destinations are root-relative paths or HTTP(S) URLs matching the configured APP_URL scheme, hostname and effective port; credentials, backslashes, control characters and protocol-relative URLs are rejected. Existing middleware controls proxy-derived scheme information separately.
+
+Reviewed public image/social-link handling, login/Google/verification return destinations, favorite back redirects, notification destinations and legacy redirects. PublicUrl limits clickable stored links to HTTP(S) or root-relative paths and rejects active protocols, whitespace/control characters, backslashes and protocol-relative URLs. Public social links intentionally permit external sites and use noopener/noreferrer. Notification destinations are rebuilt from fixed internal routes rather than stored links. Legacy reset bookmarks redirect to the native reset route with validated parameters. No current external browser redirect integration was identified; a future hosted payment/OAuth redirect would need an explicit reviewed exception to the same-origin policy.
+
+Added eight regression cases: five unsafe saved login destinations, preservation of a local intended path, external Referer blocking after a favorite action, and same-origin Referer preservation. Livewire component tests first load the real login route to exercise middleware; direct component tests alone bypass that web pipeline. The configured APP_URL is the canonical absolute origin, so it must match the deployed site's scheme/host/port.
+
+Validation: **57 tests passed, 320 assertions**, including RedirectSecurityTest, BladeAuthTest and BladeCustomerPagesTest. This covers existing authentication, verification, customer navigation and notification behavior alongside the new redirect cases. Synthetic SQLite fixtures only; imported MySQL data was untouched.
+
+Limits: this is local middleware/endpoint verification, not production proxy/domain certification or exhaustive browser URL-parser fuzzing. External HTTP(S) social/image destinations are not endorsed or checked for reputation. SSRF and filesystem traversal are the next separate review.
+
+Reference: [OWASP redirect guidance](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html). Next category: SSRF and path traversal.
