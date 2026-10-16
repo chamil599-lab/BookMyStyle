@@ -185,6 +185,40 @@ it('preserves the active paid plan when a new request is submitted', function ()
     expect(fn () => $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner))->toThrow(ValidationException::class);
 });
 
+it('rejects duplicate pending requests without extending paid access', function () {
+    $end = $this->paid->ends_at->copy();
+    $pending = $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
+    expect(fn () => $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner))
+        ->toThrow(ValidationException::class);
+    expect($this->owner->subscriptions()->pending()->count())->toBe(1)
+        ->and($this->paid->fresh()->ends_at->equalTo($end))->toBeTrue()
+        ->and($pending->fresh()->isActive())->toBeFalse();
+});
+
+it('cannot approve a cancelled payment request or alter its payment details', function () {
+    $pending = $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
+    $this->subscriptions->cancel($pending, $this->admin);
+    expect(fn () => $this->subscriptions->approve($pending, $this->admin, 100))->toThrow(ValidationException::class);
+    expect(fn () => $this->subscriptions->updatePayment($pending, $this->owner, ['payment_method' => 'one_pay']))
+        ->toThrow(ValidationException::class);
+    expect($pending->fresh()->status)->toBe('canceled')->and($this->paid->fresh()->isActive())->toBeTrue();
+});
+
+it('does not allow stale booking edits to overwrite a newer cancellation', function () {
+    $booking = $this->bookings->create($this->data, $this->customer);
+    $stale = Booking::findOrFail($booking->id);
+    $this->bookings->cancel($booking, $this->customer);
+    expect(fn () => $this->bookings->update($stale, ['status' => 'approved'], $this->owner))
+        ->toThrow(ValidationException::class);
+    expect($booking->fresh()->status)->toBe('rejected');
+});
+
+it('rejects unpublished public services without consuming capacity', function () {
+    $this->service->update(['status' => 'draft']);
+    expect(fn () => $this->bookings->create($this->data, $this->customer))->toThrow(ValidationException::class);
+    expect(Booking::count())->toBe(0);
+});
+
 it('queues same-plan renewals and excludes future subscriptions from current access', function () {
     $pending = $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
     $renewal = $this->subscriptions->approve($pending, $this->admin, 100);
