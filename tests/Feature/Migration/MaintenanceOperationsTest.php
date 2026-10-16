@@ -49,6 +49,16 @@ it('suppresses reminders when an approved renewal already covers expiry', functi
     Notification::assertNothingSent();
 });
 
+it('allows reminder retry after delivery fails instead of marking it successfully sent', function () {
+    config(['operations.subscription_reminders_enabled' => true]);
+    Notification::shouldReceive('send')->once()->andThrow(new RuntimeException('Synthetic notification failure'));
+    expect(fn () => \Illuminate\Support\Facades\Artisan::call('subscriptions:notify-expiring', ['--send' => true]))
+        ->toThrow(RuntimeException::class);
+    Notification::fake();
+    $this->artisan('subscriptions:notify-expiring --send')->assertSuccessful();
+    Notification::assertSentToTimes($this->owner, SubscriptionExpiringNotification::class, 1);
+});
+
 it('registers maintenance schedules only after host opt-in', function () {
     $original = Schedule::getFacadeRoot();
     $schedule = new Illuminate\Console\Scheduling\Schedule('Asia/Colombo');
