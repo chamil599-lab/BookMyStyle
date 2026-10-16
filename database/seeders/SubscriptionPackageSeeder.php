@@ -27,7 +27,7 @@ class SubscriptionPackageSeeder extends Seeder
             ],
             [
                 'name' => 'Salon Pro',
-                'slug' => 'salon-pro',
+                'slug' => 'pro-salon',
                 'price' => 49.99,
                 'duration_days' => 30,
                 'max_salons' => 3,

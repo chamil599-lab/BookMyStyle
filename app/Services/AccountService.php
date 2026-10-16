@@ -27,6 +27,9 @@ class AccountService
             $user = User::create(['name' => $data['name'], 'email' => $data['email'], 'password' => $data['password'],
                 'phone' => $data['phone'] ?? null, 'location' => $data['location'] ?? null, 'is_approved' => $role === 'customer']);
             $user->assignRole($role);
+            if ($role === 'owner') {
+                app(SubscriptionService::class)->startRegistrationTrial($user);
+            }
 
             return $user;
         }, 3);
@@ -69,6 +72,9 @@ class AccountService
                     'google_id' => $payload['sub'], 'avatar' => $payload['picture'] ?? null, 'password' => null,
                     'is_approved' => $role === 'customer']);
                 $user->assignRole($role);
+                if ($role === 'owner') {
+                    app(SubscriptionService::class)->startRegistrationTrial($user);
+                }
 
                 return $user;
             }

@@ -12,6 +12,25 @@ use Illuminate\Validation\ValidationException;
 
 class SubscriptionService
 {
+    public function startRegistrationTrial(User $owner): ?UserSubscription
+    {
+        // This path is internal to account creation, never a public trial-grant action.
+        abort_unless($owner->wasRecentlyCreated && $owner->hasRole('owner'), 403);
+
+        return DB::transaction(function () use ($owner) {
+            $owner = User::whereKey($owner->id)->lockForUpdate()->firstOrFail();
+            if ($owner->subscriptions()->exists()) {
+                return null;
+            }
+            $package = SubscriptionPackage::where('slug', 'pro-salon')->lockForUpdate()->first();
+            if (! $package?->isAvailable()) {
+                throw ValidationException::withMessages(['role' => 'Owner registration is temporarily unavailable. Please contact support.']);
+            }
+
+            return $this->createTrial($owner, $package);
+        }, 3);
+    }
+
     public function grantTrial(User $owner, SubscriptionPackage $package, User $actor): ?UserSubscription
     {
         $this->authorize($actor);
@@ -26,11 +45,18 @@ class SubscriptionService
                 return null;
             }
 
-            return UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id,
-                'status' => 'active', 'amount_paid' => 0, 'is_trial' => true, 'starts_at' => now(),
-                'ends_at' => now()->addDays(90), 'features_snapshot' => $package->only(['name', 'price', 'max_salons',
-                    'max_staff', 'max_services', 'max_bookings_per_month', 'analytics', 'priority_support', 'calendar', 'features']) + ['duration_days' => 90]]);
+            return $this->createTrial($owner, $package);
         }, 3);
+    }
+
+    private function createTrial(User $owner, SubscriptionPackage $package): UserSubscription
+    {
+        $start = now();
+
+        return UserSubscription::create(['user_id' => $owner->id, 'package_id' => $package->id,
+            'status' => 'active', 'amount_paid' => 0, 'is_trial' => true, 'starts_at' => $start,
+            'ends_at' => $start->copy()->addDays(90), 'features_snapshot' => $package->only(['name', 'price', 'max_salons',
+                'max_staff', 'max_services', 'max_bookings_per_month', 'analytics', 'priority_support', 'calendar', 'features']) + ['duration_days' => 90]]);
     }
 
     public function request(User $owner, SubscriptionPackage $package, array $payment, User $actor): UserSubscription

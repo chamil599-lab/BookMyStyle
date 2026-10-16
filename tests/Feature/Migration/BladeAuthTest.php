@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ConfiguredTrustProxies;
+use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Services\GoogleIdentityVerifier;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -16,6 +17,8 @@ use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     Notification::fake();
+    SubscriptionPackage::create(['name' => 'Trial fixture', 'slug' => 'pro-salon', 'price' => 100,
+        'duration_days' => 30, 'max_salons' => 1, 'max_staff' => 3, 'max_services' => 10, 'is_active' => true]);
     foreach (['admin', 'owner', 'customer'] as $role) {
         Role::findOrCreate($role, 'web');
     }

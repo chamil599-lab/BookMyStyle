@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\Users\Pages;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Filament\Concerns\HandlesServiceValidation;
 use App\Models\User;
+use App\Services\SubscriptionService;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,9 @@ class CreateUser extends CreateRecord
             }
             $record = parent::handleRecordCreation($data);
             $record->assignRole($role);
+            if ($role === 'owner') {
+                app(SubscriptionService::class)->startRegistrationTrial($record);
+            }
 
             return $record;
         }, 3));

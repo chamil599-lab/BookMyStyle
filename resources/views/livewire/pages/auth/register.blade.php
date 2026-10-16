@@ -35,7 +35,7 @@ new #[Layout('layouts.guest')] class extends Component
                 <option value="customer">Customer</option>
                 <option value="owner">Salon owner</option>
             </select>
-            <p class="text-sm mt-1">Salon owner accounts need admin approval.</p>
+            <p class="text-sm mt-1">New salon owners receive a free 90-day trial from registration. Admin approval is still required.</p>
             <x-input-error :messages="$errors->get('role')" />
         </div>
         <!-- Name -->
