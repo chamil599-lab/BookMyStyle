@@ -56,6 +56,38 @@ it('forces public status and account ownership from the authenticated actor', fu
     expect($booking->status)->toBe('pending')->and($booking->user_id)->toBe($this->customer->id);
 });
 
+it('discards forged booking identity timestamps and state through the public API', function () {
+    Sanctum::actingAs($this->customer);
+    $this->postJson('/api/bookings', $this->data + ['id' => 999999, 'user_id' => $this->admin->id,
+        'status' => 'approved', 'created_at' => '2000-01-01', 'updated_at' => '2000-01-01', 'deleted_at' => now()->toIso8601String()])
+        ->assertCreated();
+    $booking = Booking::firstOrFail();
+    expect($booking->id)->not->toBe(999999)->and($booking->user_id)->toBe($this->customer->id)
+        ->and($booking->status)->toBe('pending')->and($booking->created_at->isToday())->toBeTrue();
+});
+
+it('discards protected subscription fields in payment updates', function () {
+    $pending = $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
+    $before = $pending->only(['user_id', 'package_id', 'status', 'amount_paid', 'is_trial', 'starts_at', 'ends_at', 'features_snapshot']);
+    $this->subscriptions->updatePayment($pending, $this->owner, ['payment_method' => 'one_pay', 'transaction_id' => null,
+        'user_id' => $this->admin->id, 'package_id' => 999999, 'status' => 'active', 'amount_paid' => 999999,
+        'is_trial' => true, 'starts_at' => now(), 'ends_at' => now()->addYears(20), 'features_snapshot' => ['max_salons' => 999999]]);
+    expect($pending->fresh()->only(array_keys($before)))->toEqual($before)
+        ->and($pending->fresh()->payment_method)->toBe('one_pay');
+});
+
+it('discards ownership and primary key fields in catalogue service updates', function () {
+    $before = $this->service->only(['id', 'created_by', 'created_at']);
+    $data = $this->service->only(['slug', 'description', 'department_id', 'category_id', 'price', 'duration', 'status']);
+    app(\App\Services\CatalogueManagement::class)->updateService($this->owner, $this->service, $data + [
+        'title' => 'Allowed title change', 'id' => 999999, 'created_by' => $this->admin->id,
+        'updated_by' => $this->admin->id, 'created_at' => '2000-01-01', 'deleted_at' => now()]);
+    expect($this->service->fresh()->only(array_keys($before)))->toEqual($before)
+        ->and($this->service->fresh()->updated_by)->toBe($this->owner->id)
+        ->and($this->service->fresh()->title)->toBe('Allowed title change')
+        ->and($this->service->fresh()->deleted_at)->toBeNull();
+});
+
 it('prevents double booking and treats adjacent appointments as available', function () {
     $this->bookings->create($this->data);
     try {
