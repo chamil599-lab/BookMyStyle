@@ -126,6 +126,7 @@ class AuthController extends Controller
      */
     public function changePassword(Request $request)
     {
+        app(\App\Services\AuthActionLimiter::class)->check('password-change', $request->user()->email, 5, 'current_password');
         $validated = $request->validate([
             'current_password' => 'required|string',
             'password' => 'required|string|min:8|confirmed',

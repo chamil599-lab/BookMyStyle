@@ -13,6 +13,7 @@ new class extends Component
      */
     public function deleteUser(Logout $logout): void
     {
+        app(\App\Services\AuthActionLimiter::class)->check('password-change', Auth::user()->email, 5, 'password');
         abort_if(Auth::user()->hasRole(['admin', 'owner']), 403);
         $this->validate([
             'password' => ['required', 'string', 'current_password'],

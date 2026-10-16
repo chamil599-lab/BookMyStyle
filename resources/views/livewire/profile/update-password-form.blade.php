@@ -17,6 +17,7 @@ new class extends Component
      */
     public function updatePassword(): void
     {
+        app(\App\Services\AuthActionLimiter::class)->check('password-change', Auth::user()->email, 5, 'current_password');
         try {
             $validated = $this->validate([
                 'current_password' => ['required', 'string', 'current_password'],
