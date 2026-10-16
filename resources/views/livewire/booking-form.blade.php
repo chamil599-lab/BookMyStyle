@@ -1,4 +1,4 @@
-<form wire:submit="submit" class="space-y-5">
+<form wire:submit="submit" wire:poll.15s.visible="$refresh" class="space-y-5">
     @if (session('message'))
         <p role="status" class="panel p-4 text-sm">{{ session('message') }}</p>
     @endif
@@ -18,9 +18,25 @@
         </select>
     </label>
     <label class="label">Date <input class="field mt-2" wire:model.live="date" type="date" min="{{ today()->format('Y-m-d') }}" required></label>
-    <label class="label">Available time <select class="field mt-2" wire:model="time" required><option value="">Choose a time</option>@foreach($slots as $slot)<option value="{{ $slot }}">{{ $slot }}</option>@endforeach</select></label>
+    <fieldset class="booking-times" wire:loading.class="booking-times-loading" wire:target="date,service_id">
+        <legend class="label">Choose a time</legend>
+        <div class="booking-time-grid" aria-label="Appointment times">
+            @foreach($slots as $slot)
+                <button type="button" wire:key="slot-{{ $date }}-{{ $service_id }}-{{ $slot['time'] }}"
+                    wire:click="$set('time', '{{ $slot['time'] }}')"
+                    wire:loading.attr="disabled" wire:target="date,service_id"
+                    class="booking-time {{ $time === $slot['time'] ? 'is-selected' : '' }}"
+                    aria-pressed="{{ $time === $slot['time'] ? 'true' : 'false' }}"
+                    @disabled(!$slot['available'] || !$canBook)>
+                    <span>{{ \Carbon\Carbon::createFromFormat('H:i', $slot['time'])->format('g:i A') }}</span>
+                    <small>{{ $slot['status'] === 'booked' ? 'Booked' : ($slot['status'] === 'past' ? 'Past' : (!$canBook ? 'Unavailable' : ($time === $slot['time'] ? 'Selected' : 'Available'))) }}</small>
+                </button>
+            @endforeach
+        </div>
+        @if(!$date || !$service_id)<p class="muted text-sm mt-2">Choose a service and date to see appointment times.</p>@endif
+    </fieldset>
     <p class="muted text-xs">Choose a service and date to see times with room for the full appointment. Availability is checked again when you submit.</p>
-    @if($date && $service_id && !$slots)<p class="muted text-sm">No times available for this selection. Try another date or service.</p>@endif
+    @if($date && $service_id && !collect($slots)->contains('available', true))<p class="muted text-sm">No times available for this selection. Try another date or service.</p>@endif
     @if ($errors->any())
         <ul role="alert" class="text-red-700 text-sm">
             @foreach ($errors->all() as $error)

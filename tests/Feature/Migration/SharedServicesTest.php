@@ -199,6 +199,32 @@ it('uses shared capacity validation for the Livewire form', function () {
     expect(Booking::count())->toBe(1);
 });
 
+it('shows booked time buttons and preserves spare staff capacity', function () {
+    $this->bookings->create($this->data);
+    $slots = collect($this->bookings->timeSlots($this->salon, $this->data['date'], $this->service))->keyBy('time');
+    expect($slots['10:00']['status'])->toBe('booked')->and($slots['10:30']['available'])->toBeTrue();
+    Livewire::test(BookingForm::class, ['salonId' => $this->salon->id])->set('service_id', $this->service->id)
+        ->set('date', $this->data['date'])->assertSee('Booked')->assertSee('10:00 AM')->assertSee('Available');
+    $this->salon->update(['number_of_staff' => 2]);
+    expect(collect($this->bookings->timeSlots($this->salon, $this->data['date'], $this->service))->keyBy('time')['10:00']['status'])->toBe('available');
+});
+
+it('submits a selected available time and clears the booking form', function () {
+    Livewire::test(BookingForm::class, ['salonId' => $this->salon->id])
+        ->set('service_id', $this->service->id)->set('date', $this->data['date'])->set('time', '10:00')
+        ->set('name', 'Fixture customer')->set('email', 'fixture@example.test')->set('phone', '0700000000')
+        ->call('submit')->assertHasNoErrors()->assertSee('Your booking request has been sent')->assertSet('time', null);
+    expect(Booking::count())->toBe(1)->and(Booking::first()->status)->toBe('pending');
+});
+
+it('clears a selected time when another booking fills it or the date changes', function () {
+    $component = Livewire::test(BookingForm::class, ['salonId' => $this->salon->id])
+        ->set('service_id', $this->service->id)->set('date', $this->data['date'])->set('time', '10:00')->assertSet('time', '10:00');
+    $this->bookings->create($this->data);
+    $component->call('$refresh')->assertSet('time', null)->assertHasErrors('time')->assertSee('Booked');
+    $component->set('time', '10:30')->set('date', today()->addDays(2)->format('Y-m-d'))->assertSet('time', null);
+});
+
 it('preserves the active paid plan when a new request is submitted', function () {
     $pending = $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
     expect($pending->id)->not->toBe($this->paid->id)->and($this->paid->fresh()->isActive())->toBeTrue()

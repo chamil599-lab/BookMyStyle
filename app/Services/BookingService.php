@@ -138,6 +138,11 @@ class BookingService
 
     public function availableSlots(Salon $salon, string $date, Service $service): array
     {
+        return array_column(array_filter($this->timeSlots($salon, $date, $service), fn ($slot) => $slot['available']), 'time');
+    }
+
+    public function timeSlots(Salon $salon, string $date, Service $service): array
+    {
         Validator::make(['date' => $date], ['date' => 'required|date_format:Y-m-d'])->validate();
         abort_unless((int) $service->created_by === (int) $salon->created_by, 404);
         $bookings = Booking::where('salon_id', $salon->id)->whereDate('date', $date)
@@ -149,9 +154,9 @@ class BookingService
         $slots = [];
         for ($start = $open; $start + $duration <= $close; $start += 30) {
             $time = sprintf('%02d:%02d', intdiv($start, 60), $start % 60);
-            if (Carbon::parse($date.' '.$time)->gt(now()) && $this->capacity($salon, $bookings, $durations, $start, $start + $duration) > 0) {
-                $slots[] = $time;
-            }
+            $future = Carbon::parse($date.' '.$time)->gt(now());
+            $available = $future && $this->capacity($salon, $bookings, $durations, $start, $start + $duration) > 0;
+            $slots[] = ['time' => $time, 'available' => $available, 'status' => ! $future ? 'past' : ($available ? 'available' : 'booked')];
         }
 
         return $slots;

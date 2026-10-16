@@ -48,6 +48,18 @@ class BookingForm extends Component
         $this->reset(['name', 'email', 'phone', 'service_id', 'date', 'time']);
     }
 
+    public function updatedServiceId(): void
+    {
+        $this->reset('time');
+        $this->resetValidation('time');
+    }
+
+    public function updatedDate(): void
+    {
+        $this->reset('time');
+        $this->resetValidation('time');
+    }
+
     public function render()
     {
         $salon = Salon::publiclyVisible()->with('owner')->findOrFail($this->salonId);
@@ -57,8 +69,13 @@ class BookingForm extends Component
             && $this->date >= today()->format('Y-m-d') && is_scalar($this->service_id) && ctype_digit((string) $this->service_id)) {
             $service = Service::published()->where('created_by', $salon->created_by)->find((int) $this->service_id);
             if ($service) {
-                $slots = app(BookingService::class)->availableSlots($salon, $this->date, $service);
+                $slots = app(BookingService::class)->timeSlots($salon, $this->date, $service);
             }
+        }
+
+        if ($this->time && ! collect($slots)->contains(fn ($slot) => $slot['time'] === $this->time && $slot['available'])) {
+            $this->reset('time');
+            $this->addError('time', 'That time is no longer available. Please choose another time.');
         }
 
         return view('livewire.booking-form', ['salon' => $salon,
