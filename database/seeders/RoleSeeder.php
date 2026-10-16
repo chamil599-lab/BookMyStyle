@@ -8,8 +8,6 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-
-
 class RoleSeeder extends Seeder
 {
     /**
@@ -28,8 +26,8 @@ class RoleSeeder extends Seeder
         $buyServices = Permission::create(['name' => PermissionsEnum::BuyServices->value]);
 
         // Assign permissions to roles (add this section)
-        $adminRole->syncPermissions([$approveOwners,$sellServices,$buyServices]);
-        $ownerRole->syncPermissions([$sellServices,$buyServices]);
+        $adminRole->syncPermissions([$approveOwners, $sellServices, $buyServices]);
+        $ownerRole->syncPermissions([$sellServices, $buyServices]);
         $userRole->syncPermissions([$buyServices]);
 
         // You might also want to assign multiple permissions:

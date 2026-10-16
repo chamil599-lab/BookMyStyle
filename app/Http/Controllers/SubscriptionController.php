@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\SubscriptionPackage;
+use App\Models\User;
+use App\Services\SubscriptionService;
+use App\Support\ManagementAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,16 +13,16 @@ class SubscriptionController extends Controller
 {
     public function packages()
     {
-        abort_unless(\App\Support\ManagementAccess::owner(Auth::user()?->fresh()), 403);
+        abort_unless(ManagementAccess::owner(Auth::user()?->fresh()), 403);
 
         return redirect()->route('subscription.required');
     }
 
     public function checkout(SubscriptionPackage $package)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
-        if (! \App\Support\ManagementAccess::owner($user?->fresh())) {
+        if (! ManagementAccess::owner($user?->fresh())) {
             abort(403);
         }
 
@@ -41,9 +44,9 @@ class SubscriptionController extends Controller
 
     public function subscribe(Request $request, SubscriptionPackage $package)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
-        if (! \App\Support\ManagementAccess::owner($user?->fresh())) {
+        if (! ManagementAccess::owner($user?->fresh())) {
             abort(403);
         }
 
@@ -60,7 +63,7 @@ class SubscriptionController extends Controller
         ]);
 
         $activeSubscription = $user->activeSubscription()->first();
-        app(\App\Services\SubscriptionService::class)->request($user, $package, $request->only(['payment_method', 'transaction_id']), $user);
+        app(SubscriptionService::class)->request($user, $package, $request->only(['payment_method', 'transaction_id']), $user);
 
         return redirect()->route('filament.admin.resources.user-subscriptions.index')
             ->with('success', $activeSubscription

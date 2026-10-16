@@ -6,6 +6,8 @@ use App\Models\Booking;
 use App\Models\Salon;
 use App\Models\Service;
 use App\Models\User;
+use App\Notifications\BookingCancelledNotification;
+use App\Notifications\BookingStatusChangedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -84,7 +86,7 @@ class BookingService
                 DB::afterCommit(function () use ($locked) {
                     try {
                         $locked->loadMissing(['salon.owner', 'service']);
-                        $locked->salon?->owner?->notify(new \App\Notifications\BookingStatusChangedNotification($locked));
+                        $locked->salon?->owner?->notify(new BookingStatusChangedNotification($locked));
                     } catch (\Throwable $exception) {
                         report($exception);
                     }
@@ -111,7 +113,7 @@ class BookingService
             DB::afterCommit(function () use ($locked) {
                 try {
                     $locked->loadMissing(['salon.owner', 'service']);
-                    $locked->salon?->owner?->notify(new \App\Notifications\BookingCancelledNotification($locked, 'customer', 'owner'));
+                    $locked->salon?->owner?->notify(new BookingCancelledNotification($locked, 'customer', 'owner'));
                 } catch (\Throwable $exception) {
                     report($exception);
                 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\DealsPage;
 use App\Models\Department;
 use App\Models\Salon;
@@ -8,6 +9,7 @@ use App\Models\Service;
 use App\Models\ServicePage;
 use App\Models\User;
 use App\Support\PublicUrl;
+use Filament\Facades\Filament;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
@@ -40,7 +42,7 @@ it('escapes stored salon service department and review payloads', function () {
     $this->salon->update(['name' => $this->payload, 'description' => $this->payload, 'location' => $this->payload,
         'facebook_page' => 'javascript:window.__bmsXss=1']);
     $department = Department::create(['name' => $this->payload, 'slug' => 'xss-test', 'is_active' => true]);
-    $category = \App\Models\Category::create(['name' => $this->payload, 'department_id' => $department->id]);
+    $category = Category::create(['name' => $this->payload, 'department_id' => $department->id]);
     Service::create(['title' => $this->payload, 'slug' => 'xss-test', 'description' => $this->payload,
         'department_id' => $department->id, 'category_id' => $category->id, 'price' => 100, 'duration' => 30, 'status' => 'published',
         'created_by' => $this->owner->id, 'updated_by' => $this->owner->id]);
@@ -92,7 +94,7 @@ it('escapes stored content in Filament tables and the management inbox', functio
     $this->salon->update(['name' => $this->payload]);
     $admin->notifications()->create(['id' => (string) Str::uuid(), 'type' => 'xss-fixture',
         'data' => ['title' => $this->payload, 'message' => $this->payload, 'url' => 'javascript:window.__bmsXss=1']]);
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     foreach (['/filament/salons', '/filament/notification-inbox'] as $url) {
         $response = $this->actingAs($admin)->get($url)->assertOk()->assertSee(e($this->payload), false);
         assertNoXssProbeMarkup($response->getContent());

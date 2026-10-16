@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\SubscriptionPackages\Pages;
 
 use App\Filament\Admin\Resources\SubscriptionPackages\SubscriptionPackageResource;
+use App\Services\PackageManagement;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
@@ -16,7 +17,7 @@ class EditSubscriptionPackage extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make()->using(fn ($record) => app(\App\Services\PackageManagement::class)->archive(auth()->user(), $record)),
+            DeleteAction::make()->using(fn ($record) => app(PackageManagement::class)->archive(auth()->user(), $record)),
             RestoreAction::make(),
         ];
     }

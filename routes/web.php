@@ -1,22 +1,32 @@
 <?php
 
+use App\Http\Controllers\CustomerDashboardController;
+use App\Http\Controllers\LegacyDashboardController;
+use App\Http\Controllers\RetiredManagementController;
+use App\Http\Controllers\StorefrontController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\SubscriptionRequiredController;
+use App\Http\Middleware\PrivateAccountResponse;
+use App\Http\Middleware\RecordPublicVisit;
+use App\Services\CustomerDashboard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
-Route::middleware(\App\Http\Middleware\RecordPublicVisit::class)->group(function () {
-    Route::get('/', [\App\Http\Controllers\StorefrontController::class, 'directory'])->name('home');
-    Route::get('/salons', [\App\Http\Controllers\StorefrontController::class, 'directory'])->name('salons');
-    Route::get('/trending', [\App\Http\Controllers\StorefrontController::class, 'directory'])->name('trending');
-    Route::get('/popular', [\App\Http\Controllers\StorefrontController::class, 'directory'])->name('popular');
-    Route::get('/salon/{id}', [\App\Http\Controllers\StorefrontController::class, 'salon'])->whereNumber('id')->name('salon.show');
-    Route::get('/services', [\App\Http\Controllers\StorefrontController::class, 'content'])->name('services');
-    Route::get('/deals', [\App\Http\Controllers\StorefrontController::class, 'content'])->name('deals');
-    Route::get('/about', [\App\Http\Controllers\StorefrontController::class, 'about'])->name('about');
+Route::middleware(RecordPublicVisit::class)->group(function () {
+    Route::get('/', [StorefrontController::class, 'directory'])->name('home');
+    Route::get('/salons', [StorefrontController::class, 'directory'])->name('salons');
+    Route::get('/trending', [StorefrontController::class, 'directory'])->name('trending');
+    Route::get('/popular', [StorefrontController::class, 'directory'])->name('popular');
+    Route::get('/salon/{id}', [StorefrontController::class, 'salon'])->whereNumber('id')->name('salon.show');
+    Route::get('/services', [StorefrontController::class, 'content'])->name('services');
+    Route::get('/deals', [StorefrontController::class, 'content'])->name('deals');
+    Route::get('/about', [StorefrontController::class, 'about'])->name('about');
     Route::view('/terms-and-condition', 'storefront.terms', ['title' => 'Terms and Conditions'])->name('terms');
     Route::view('/privacy-policy', 'storefront.privacy', ['title' => 'Privacy Policy'])->name('privacy');
 });
-Route::get('/sitemap.xml', [\App\Http\Controllers\StorefrontController::class, 'sitemap'])->name('sitemap');
-Route::get('/robots.txt', [\App\Http\Controllers\StorefrontController::class, 'robots']);
+Route::get('/sitemap.xml', [StorefrontController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [StorefrontController::class, 'robots']);
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if ($user->hasRole('admin')) {
@@ -26,16 +36,16 @@ Route::get('/dashboard', function () {
         return redirect()->route('filament.admin.pages.owner-dashboard');
     }
     if ($user->hasRole('customer') && ! $user->hasRole('owner')) {
-        return app(\App\Http\Controllers\CustomerDashboardController::class)->overview(request(), app(\App\Services\CustomerDashboard::class));
+        return app(CustomerDashboardController::class)->overview(request(), app(CustomerDashboard::class));
     }
 
     return view('dashboard');
-})->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified'])->name('dashboard');
+})->middleware([PrivateAccountResponse::class, 'auth', 'verified'])->name('dashboard');
 
-Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'role:customer'])->prefix('dashboard')->group(function () {
+Route::middleware([PrivateAccountResponse::class, 'auth', 'role:customer'])->prefix('dashboard')->group(function () {
     Route::redirect('/profile', '/profile')->name('customer.profile');
     Route::redirect('/change-password', '/settings/password')->name('customer.password');
-    Route::middleware('verified')->controller(\App\Http\Controllers\CustomerDashboardController::class)->group(function () {
+    Route::middleware('verified')->controller(CustomerDashboardController::class)->group(function () {
         Route::get('/upcoming', 'upcoming')->name('customer.upcoming');
         Route::get('/history', 'history')->name('customer.history');
         Route::get('/favorites', 'favorites')->name('customer.favorites');
@@ -49,13 +59,13 @@ Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', '
         Route::redirect('/bookings', '/dashboard/upcoming'); // Previously issued notification links.
     });
 });
-Route::view('/profile', 'profile')->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth'])->name('profile');
-Route::match(['POST', 'DELETE'], '/salons/{id}/favorite', [\App\Http\Controllers\CustomerDashboardController::class, 'setFavorite'])
-    ->whereNumber('id')->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'throttle:20,1'])->name('salon.favorite');
-Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth'])->group(function () {
-    \Livewire\Volt\Volt::route('/settings/profile', 'settings.profile')->name('profile.edit');
-    \Livewire\Volt\Volt::route('/settings/password', 'settings.password')->name('password.edit');
-    \Livewire\Volt\Volt::route('/settings/appearance', 'settings.appearance')->name('appearance.edit');
+Route::view('/profile', 'profile')->middleware([PrivateAccountResponse::class, 'auth'])->name('profile');
+Route::match(['POST', 'DELETE'], '/salons/{id}/favorite', [CustomerDashboardController::class, 'setFavorite'])
+    ->whereNumber('id')->middleware([PrivateAccountResponse::class, 'auth', 'verified', 'throttle:20,1'])->name('salon.favorite');
+Route::middleware([PrivateAccountResponse::class, 'auth'])->group(function () {
+    Volt::route('/settings/profile', 'settings.profile')->name('profile.edit');
+    Volt::route('/settings/password', 'settings.password')->name('password.edit');
+    Volt::route('/settings/appearance', 'settings.appearance')->name('appearance.edit');
 });
 
 // Keep previously issued query-string links usable during migration.
@@ -71,40 +81,40 @@ Route::get('/reset-password', function (Request $request) {
 });
 
 // Subscription recovery remains available to expired, approved owners.
-Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->group(function () {
-    Route::get('/subscription/packages', [App\Http\Controllers\SubscriptionController::class, 'packages'])->name('subscription.packages');
-    Route::get('/subscription/checkout/{package}', [App\Http\Controllers\SubscriptionController::class, 'checkout'])->whereNumber('package')->name('subscription.checkout');
-    Route::post('/subscription/subscribe/{package}', [App\Http\Controllers\SubscriptionController::class, 'subscribe'])->whereNumber('package')->middleware('throttle:10,1')->name('subscription.subscribe');
-    Route::get('/subscription/required', [App\Http\Controllers\SubscriptionRequiredController::class, 'index'])->name('subscription.required');
+Route::middleware([PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->group(function () {
+    Route::get('/subscription/packages', [SubscriptionController::class, 'packages'])->name('subscription.packages');
+    Route::get('/subscription/checkout/{package}', [SubscriptionController::class, 'checkout'])->whereNumber('package')->name('subscription.checkout');
+    Route::post('/subscription/subscribe/{package}', [SubscriptionController::class, 'subscribe'])->whereNumber('package')->middleware('throttle:10,1')->name('subscription.subscribe');
+    Route::get('/subscription/required', [SubscriptionRequiredController::class, 'index'])->name('subscription.required');
 
     // Empty legacy resource controllers provided no working workflow.
     foreach (['salons', 'bookings'] as $section) {
         $destination = 'filament.admin.resources.'.$section.'.index';
-        Route::post('/owner/'.$section, \App\Http\Controllers\RetiredManagementController::class)->defaults('native_route', $destination);
-        Route::match(['PUT', 'PATCH', 'DELETE'], '/owner/'.$section.'/{record}', \App\Http\Controllers\RetiredManagementController::class)
+        Route::post('/owner/'.$section, RetiredManagementController::class)->defaults('native_route', $destination);
+        Route::match(['PUT', 'PATCH', 'DELETE'], '/owner/'.$section.'/{record}', RetiredManagementController::class)
             ->whereNumber('record')->defaults('native_route', $destination);
     }
     foreach (['services', 'staff'] as $section) {
-        Route::get('/owner/salons/{salon}/'.$section.'/create', \App\Http\Controllers\RetiredManagementController::class)
+        Route::get('/owner/salons/{salon}/'.$section.'/create', RetiredManagementController::class)
             ->whereNumber('salon')->defaults('native_route', 'filament.admin.resources.'.($section === 'staff' ? 'salons' : 'services').'.index');
-        Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/owner/salons/{salon}/'.$section.'/{record?}', \App\Http\Controllers\RetiredManagementController::class)
+        Route::match(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], '/owner/salons/{salon}/'.$section.'/{record?}', RetiredManagementController::class)
             ->whereNumber(['salon', 'record'])->defaults('native_route', 'filament.admin.resources.'.($section === 'staff' ? 'salons' : 'services').'.index');
-        Route::get('/owner/salons/{salon}/'.$section.'/{record}/edit', \App\Http\Controllers\RetiredManagementController::class)
+        Route::get('/owner/salons/{salon}/'.$section.'/{record}/edit', RetiredManagementController::class)
             ->whereNumber(['salon', 'record'])->defaults('native_route', 'filament.admin.resources.'.($section === 'staff' ? 'salons' : 'services').'.index');
     }
 });
 
 // Retained dashboard bookmarks now enter native pages. Legacy writes return 410 instead of replaying requests.
-Route::middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->group(function () {
+Route::middleware([PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->group(function () {
     foreach (['dashboard' => 'owner.dashboard', 'salons' => 'salons.index', 'bookings' => 'bookings.index'] as $path => $name) {
-        Route::get('/owner/'.$path, \App\Http\Controllers\LegacyDashboardController::class)->defaults('path', $path)->name($name);
+        Route::get('/owner/'.$path, LegacyDashboardController::class)->defaults('path', $path)->name($name);
     }
 });
-Route::get('/admin/{path?}', \App\Http\Controllers\LegacyDashboardController::class)
+Route::get('/admin/{path?}', LegacyDashboardController::class)
     ->where('path', '(bookings|salons|users|subscriptions|profile|packages|categories|departments)(/create|/[0-9]+(/edit)?)?')
-    ->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:admin'])->name('legacy.admin');
-Route::get('/owner/{path?}', \App\Http\Controllers\LegacyDashboardController::class)
+    ->middleware([PrivateAccountResponse::class, 'auth', 'verified', 'role:admin'])->name('legacy.admin');
+Route::get('/owner/{path?}', LegacyDashboardController::class)
     ->where('path', '(dashboard|salons|bookings|services|subscription|profile)(/create|/[0-9]+(/edit)?)?')
-    ->middleware([\App\Http\Middleware\PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->name('legacy.owner');
+    ->middleware([PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->name('legacy.owner');
 
 require __DIR__.'/auth.php';

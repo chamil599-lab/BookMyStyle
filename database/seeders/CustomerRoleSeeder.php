@@ -13,7 +13,7 @@ class CustomerRoleSeeder extends Seeder
     public function run(): void
     {
         // Create customer role if it doesn't exist
-        if (!Role::where('name', 'customer')->exists()) {
+        if (! Role::where('name', 'customer')->exists()) {
             Role::create(['name' => 'customer']);
             $this->command->info('Customer role created successfully!');
         } else {

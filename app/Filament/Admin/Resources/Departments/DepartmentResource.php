@@ -11,6 +11,7 @@ use App\Filament\Admin\Resources\Departments\Schemas\DepartmentForm;
 use App\Filament\Admin\Resources\Departments\Schemas\DepartmentInfolist;
 use App\Filament\Admin\Resources\Departments\Tables\DepartmentsTable;
 use App\Models\Department;
+use App\Models\User;
 use App\RolesEnum;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -26,7 +27,7 @@ class DepartmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingLibrary;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Salon Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Salon Management';
 
     public static function getNavigationBadge(): ?string
     {
@@ -67,8 +68,9 @@ class DepartmentResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 }

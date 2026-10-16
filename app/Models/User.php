@@ -5,14 +5,17 @@ namespace App\Models;
 use App\RolesEnum;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVerifyEmail, FilamentUser
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
@@ -51,9 +54,9 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
             }
             $user->tokens()->delete();
             if (config('session.driver') === 'database') {
-                $sessions = \Illuminate\Support\Facades\DB::connection(config('session.connection'))
+                $sessions = DB::connection(config('session.connection'))
                     ->table(config('session.table', 'sessions'))->where('user_id', $user->id);
-                if (request()->hasSession() && (int) \Illuminate\Support\Facades\Auth::guard('web')->id() === (int) $user->id) {
+                if (request()->hasSession() && (int) Auth::guard('web')->id() === (int) $user->id) {
                     $sessions->where('id', '!=', request()->session()->getId());
                 }
                 $sessions->delete();
@@ -114,7 +117,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
         $this->update([
             'is_approved' => true,
             'approved_at' => now(),
-            'approved_by' => \Illuminate\Support\Facades\Auth::id(),
+            'approved_by' => Auth::id(),
         ]);
     }
 
@@ -206,7 +209,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
 
         // Count bookings created this month for salons owned by this user
         $currentMonth = now()->startOfMonth();
-        $currentMonthBookings = \App\Models\Booking::whereIn(
+        $currentMonthBookings = Booking::whereIn(
             'salon_id',
             $this->salons()->pluck('id')
         )
@@ -221,7 +224,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
     {
         $currentMonth = now()->startOfMonth();
 
-        return \App\Models\Booking::whereIn(
+        return Booking::whereIn(
             'salon_id',
             $this->salons()->pluck('id')
         )

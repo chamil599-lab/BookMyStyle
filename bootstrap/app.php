@@ -5,6 +5,8 @@ use App\Http\Middleware\CheckSubscription;
 use App\Http\Middleware\ConfiguredTrustProxies;
 use App\Http\Middleware\EnsureSubscriptionActive;
 use App\Http\Middleware\EnsureUserIsApproved;
+use App\Http\Middleware\RestrictBrowserRedirects;
+use App\Http\Middleware\SecurityResponseHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -23,8 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append(\App\Http\Middleware\SecurityResponseHeaders::class);
-        $middleware->web(append: [AuthenticateSession::class, \App\Http\Middleware\RestrictBrowserRedirects::class]);
+        $middleware->append(SecurityResponseHeaders::class);
+        $middleware->web(append: [AuthenticateSession::class, RestrictBrowserRedirects::class]);
         $middleware->replace(
             TrustProxies::class,
             ConfiguredTrustProxies::class
@@ -63,6 +65,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
             }
 
-            return \App\Http\Middleware\SecurityResponseHeaders::apply($request, $response);
+            return SecurityResponseHeaders::apply($request, $response);
         });
     })->create();

@@ -1,5 +1,8 @@
 <?php
 
+use App\Filament\Admin\Pages\NotificationInbox;
+use App\Filament\Admin\Widgets\BookingCalendarWidget;
+use App\Livewire\NotificationBell;
 use App\Models\Booking;
 use App\Models\Category;
 use App\Models\Department;
@@ -8,12 +11,21 @@ use App\Models\Service;
 use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Models\UserSubscription;
+use App\Notifications\BookingCreatedNotification;
+use App\Notifications\BookingStatusChangedNotification;
+use App\Notifications\SubscriptionExpiringNotification;
 use App\Services\BookingService;
+use App\Services\BookingWhatsApp;
 use App\Services\SubscriptionService;
+use Filament\Facades\Filament;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     $this->travelTo(now()->startOfDay()->addHours(8));
@@ -53,20 +65,20 @@ afterEach(function () {
 
 function fixtureAlert(User $user, array $data = [])
 {
-    return $user->notifications()->create(['id' => (string) \Illuminate\Support\Str::uuid(),
-        'type' => \App\Notifications\BookingCreatedNotification::class,
+    return $user->notifications()->create(['id' => (string) Str::uuid(),
+        'type' => BookingCreatedNotification::class,
         'data' => $data + ['title' => 'Fixture update', 'message' => 'Your appointment was updated.']]);
 }
 
 it('provides an owner inbox with scoped read and delete operations', function () {
     $own = fixtureAlert($this->owner);
     $foreign = fixtureAlert($this->customer, ['title' => 'Private customer alert']);
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($this->owner);
     $this->get('/filament/notification-inbox')->assertOk()->assertSee('Fixture update')->assertDontSee('Private customer alert')
         ->assertHeader('Cache-Control');
     expect($this->get('/filament/notification-inbox')->headers->get('Cache-Control'))->toContain('no-store');
-    $component = Livewire::test(\App\Filament\Admin\Pages\NotificationInbox::class);
+    $component = Livewire::test(NotificationInbox::class);
     $component->call('readNotification', $own->id);
     expect($own->fresh()->read_at)->not->toBeNull()->and($foreign->fresh()->read_at)->toBeNull();
     $component->call('deleteNotification', $own->id)->assertSee('No notifications yet.');
@@ -76,11 +88,11 @@ it('provides an owner inbox with scoped read and delete operations', function ()
 it('denies forged notification IDs and stale approval on component mutations', function () {
     $own = fixtureAlert($this->owner);
     $foreign = fixtureAlert($this->customer);
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($this->owner);
-    expect(fn () => Livewire::test(\App\Filament\Admin\Pages\NotificationInbox::class)->call('deleteNotification', $foreign->id))
-        ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-    $component = Livewire::test(\App\Filament\Admin\Pages\NotificationInbox::class);
+    expect(fn () => Livewire::test(NotificationInbox::class)->call('deleteNotification', $foreign->id))
+        ->toThrow(ModelNotFoundException::class);
+    $component = Livewire::test(NotificationInbox::class);
     $this->owner->update(['is_approved' => false]);
     $component->call('readNotification', $own->id)->assertForbidden();
     expect($own->fresh()->read_at)->toBeNull();
@@ -89,7 +101,7 @@ it('denies forged notification IDs and stale approval on component mutations', f
 it('polls scoped unread counts while allowing expired owners to recover their account', function () {
     $this->paid->update(['ends_at' => now()->subDay()]);
     $this->actingAs($this->owner);
-    $component = Livewire::test(\App\Livewire\NotificationBell::class)->assertSee('Notifications: 0 unread');
+    $component = Livewire::test(NotificationBell::class)->assertSee('Notifications: 0 unread');
     fixtureAlert($this->customer);
     fixtureAlert($this->owner);
     $component->call('$refresh')->assertSee('Notifications: 1 unread');
@@ -122,17 +134,17 @@ it('shares private verified notification API controls without crossing account b
 it('generates correct service titles and role appropriate notification destinations', function () {
     $booking = Booking::create(array_replace($this->data, ['user_id' => $this->customer->id, 'status' => 'completed']));
     $this->service->delete();
-    $created = (new \App\Notifications\BookingCreatedNotification($booking))->toArray($this->owner);
-    $status = new \App\Notifications\BookingStatusChangedNotification($booking);
+    $created = (new BookingCreatedNotification($booking))->toArray($this->owner);
+    $status = new BookingStatusChangedNotification($booking);
     expect($created['service'])->toBe('Cut')->and($status->toArray($this->owner)['link'])->toBe('/filament/bookings')
         ->and($status->toArray($this->customer)['link'])->toBe('/dashboard/bookings');
-    $expiry = (new \App\Notifications\SubscriptionExpiringNotification($this->paid))->toArray($this->owner);
+    $expiry = (new SubscriptionExpiringNotification($this->paid))->toArray($this->owner);
     expect($expiry['link'])->toBe('/owner/subscription');
 });
 
 it('normalizes WhatsApp phone numbers and encodes complete plain text messages safely', function () {
     $booking = Booking::create(array_replace($this->data, ['name' => '<script>name & guest</script>', 'status' => 'completed']));
-    $service = app(\App\Services\BookingWhatsApp::class);
+    $service = app(BookingWhatsApp::class);
     expect($service->phone('077 123 4567'))->toBe('94771234567')->and($service->phone('+44 7700 900123'))->toBe('447700900123')
         ->and($service->phone('0044 7700 900123'))->toBe('447700900123')->and($service->phone('0771234567<script>'))->toBeNull();
     $this->service->delete();
@@ -146,19 +158,19 @@ it('denies WhatsApp access to foreign bookings and revoked owner access', functi
     $otherSalon = $this->salon->replicate();
     $otherSalon->fill(['created_by' => $this->admin->id])->save();
     $foreign = Booking::create(array_replace($this->data, ['salon_id' => $otherSalon->id]));
-    $service = app(\App\Services\BookingWhatsApp::class);
-    expect(fn () => $service->url($this->owner, $foreign))->toThrow(\Illuminate\Auth\Access\AuthorizationException::class);
+    $service = app(BookingWhatsApp::class);
+    expect(fn () => $service->url($this->owner, $foreign))->toThrow(AuthorizationException::class);
     $this->owner->update(['is_approved' => false]);
-    expect(fn () => $service->url($this->owner, $foreign))->toThrow(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+    expect(fn () => $service->url($this->owner, $foreign))->toThrow(HttpException::class);
 });
 
 it('keeps appointment wall times identical for different browser offsets including midnight boundaries', function () {
     $this->package->update(['calendar' => true]);
     $booking = Booking::create(array_replace($this->data, ['time' => '00:30', 'status' => 'completed']));
     $this->service->delete();
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($this->owner);
-    $widget = app(\App\Filament\Admin\Widgets\BookingCalendarWidget::class);
+    $widget = app(BookingCalendarWidget::class);
     foreach ([-480, 0, 330, 720] as $offset) {
         $events = $widget->getEventsJs(['startStr' => today()->toDateString(),
             'endStr' => today()->addDays(7)->toDateString(), 'tzOffset' => $offset]);
@@ -171,9 +183,9 @@ it('keeps appointment wall times identical for different browser offsets includi
 it('makes calendar mutations unavailable even when a client forges action names', function () {
     $this->package->update(['calendar' => true]);
     $booking = Booking::create($this->data);
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($this->owner);
-    Livewire::test(\App\Filament\Admin\Widgets\BookingCalendarWidget::class)->call('onEventClickJs',
+    Livewire::test(BookingCalendarWidget::class)->call('onEventClickJs',
         ['event' => ['extendedProps' => ['model' => Booking::class, 'key' => $booking->id]]], 'delete')->assertForbidden();
     expect(Booking::find($booking->id))->not->toBeNull();
 });

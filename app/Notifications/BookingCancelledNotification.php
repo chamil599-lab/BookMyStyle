@@ -37,14 +37,14 @@ class BookingCancelledNotification extends Notification
             : "Your booking at {$salonName} on {$date} at {$time} was cancelled.";
 
         return [
-            'booking_id'   => $this->booking->id,
-            'salon_name'   => $salonName,
+            'booking_id' => $this->booking->id,
+            'salon_name' => $salonName,
             'cancelled_by' => $this->cancelledBy,
-            'date'         => $date,
-            'time'         => $time,
-            'title'        => 'Booking cancelled',
-            'message'      => $message,
-            'link'         => $link,
+            'date' => $date,
+            'time' => $time,
+            'title' => 'Booking cancelled',
+            'message' => $message,
+            'link' => $link,
         ];
     }
 }

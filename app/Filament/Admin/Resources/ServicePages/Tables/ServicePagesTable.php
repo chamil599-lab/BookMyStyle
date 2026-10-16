@@ -38,7 +38,7 @@ class ServicePagesTable
                     ->searchable(),
                 TextColumn::make('category_color')
                     ->searchable(),
-                
+
                 TextColumn::make('status')
                     ->searchable(),
                 TextColumn::make('created_at')

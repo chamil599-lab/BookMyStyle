@@ -1,10 +1,12 @@
 <?php
 
+use App\Filament\Admin\Resources\Bookings\BookingResource;
 use App\Filament\Admin\Resources\Salons\Pages\CreateSalon;
 use App\Filament\Admin\Resources\Salons\Pages\EditSalon;
 use App\Filament\Admin\Resources\Services\Pages\CreateService;
 use App\Filament\Admin\Resources\Services\Pages\EditService;
 use App\Filament\Admin\Resources\Services\ServiceResource;
+use App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource;
 use App\Filament\Admin\Widgets\BookingCalendarWidget;
 use App\Models\Booking;
 use App\Models\Category;
@@ -22,6 +24,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Laravel\Sanctum\Sanctum;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
@@ -95,14 +98,14 @@ it('denies foreign owner booking API references and scopes subscription records'
     $foreign = Booking::create(array_replace($this->data, ['salon_id' => $foreignSalon->id, 'status' => 'pending']));
     $foreignSubscription = $this->paid->replicate();
     $foreignSubscription->fill(['user_id' => $other->id])->save();
-    \Laravel\Sanctum\Sanctum::actingAs($this->owner);
+    Sanctum::actingAs($this->owner);
     $this->getJson('/api/salons/'.$foreignSalon->id.'/bookings')->assertForbidden();
     $this->patchJson('/api/bookings/'.$foreign->id.'/status', ['status' => 'approved'])->assertForbidden();
     expect($foreign->fresh()->status)->toBe('pending');
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($this->owner, 'web');
-    expect(\App\Filament\Admin\Resources\Bookings\BookingResource::getEloquentQuery()->whereKey($foreign->id)->exists())->toBeFalse()
-        ->and(\App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource::getEloquentQuery()->pluck('id')->all())->toBe([$this->paid->id]);
+    expect(BookingResource::getEloquentQuery()->whereKey($foreign->id)->exists())->toBeFalse()
+        ->and(UserSubscriptionResource::getEloquentQuery()->pluck('id')->all())->toBe([$this->paid->id]);
 });
 
 it('creates salons through Filament without trusting hidden audit fields', function () {

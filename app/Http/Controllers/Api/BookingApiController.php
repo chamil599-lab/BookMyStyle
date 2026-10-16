@@ -6,16 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreBookingRequest;
 use App\Models\Booking;
 use App\Models\Salon;
+use App\Services\BookingService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class BookingApiController extends Controller
 {
     public function store(StoreBookingRequest $request): JsonResponse
     {
-        $service = app(\App\Services\BookingService::class);
+        $service = app(BookingService::class);
         try {
             $booking = $service->create($request->validated(), auth('sanctum')->user());
-        } catch (\Illuminate\Validation\ValidationException $exception) {
+        } catch (ValidationException $exception) {
             if ($exception->status !== 409) {
                 throw $exception;
             }

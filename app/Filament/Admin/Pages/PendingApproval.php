@@ -7,7 +7,7 @@ use Filament\Pages\Page;
 class PendingApproval extends Page
 {
     protected string $view = 'filament.admin.pages.pending-approval';
-    
+
     protected static bool $shouldRegisterNavigation = false;
 
     public static function canAccess(): bool
@@ -18,8 +18,8 @@ class PendingApproval extends Page
     public function mount(): void
     {
         $user = auth()->user();
-        
-        if ($user && !$user->hasRole('owner')) {
+
+        if ($user && ! $user->hasRole('owner')) {
             abort(403);
         }
     }

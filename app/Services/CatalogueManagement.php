@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Enums\ServiceEnum;
 use App\Models\Salon;
 use App\Models\Service;
 use App\Models\User;
@@ -125,6 +126,6 @@ class CatalogueManagement
             'description' => 'required|string|max:20000', 'department_id' => 'required|integer|exists:departments,id',
             'category_id' => ['required', 'integer', Rule::exists('categories', 'id')->where('department_id', $data['department_id'] ?? 0)],
             'price' => 'required|numeric|min:0|max:99999999.99', 'duration' => 'required|integer|min:1|max:1440',
-            'status' => ['required', Rule::in(array_keys(\App\Enums\Enums\ServiceEnum::labels()))]])->validate();
+            'status' => ['required', Rule::in(array_keys(ServiceEnum::labels()))]])->validate();
     }
 }

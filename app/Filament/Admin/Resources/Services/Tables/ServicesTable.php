@@ -7,8 +7,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -39,7 +37,7 @@ class ServicesTable
                     ->badge()
                     ->colors(ServiceEnum::colors())
                     ->searchable(),
-         /*     TextColumn::make('created_by')
+                /*     TextColumn::make('created_by')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('updated_by')
@@ -62,7 +60,7 @@ class ServicesTable
                 SelectFilter::make('status')
                     ->options(ServiceEnum::labels()),
                 SelectFilter::make('department_id')
-                    ->relationship('department', 'name')
+                    ->relationship('department', 'name'),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -75,4 +73,3 @@ class ServicesTable
             ]);
     }
 }
-

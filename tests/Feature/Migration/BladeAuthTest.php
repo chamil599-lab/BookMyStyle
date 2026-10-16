@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Middleware\ConfiguredTrustProxies;
 use App\Models\User;
 use App\Services\GoogleIdentityVerifier;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -21,11 +23,11 @@ beforeEach(function () {
 
 it('ignores forwarded identity and scheme when no proxy is configured even for a cloud-looking host', function () {
     config(['app.trusted_proxies' => []]);
-    $request = \Illuminate\Http\Request::create('http://example.on-forge.com/login', server: [
+    $request = Request::create('http://example.on-forge.com/login', server: [
         'REMOTE_ADDR' => '192.0.2.10', 'HTTP_X_FORWARDED_FOR' => '198.51.100.20',
         'HTTP_X_FORWARDED_PROTO' => 'https',
     ]);
-    (new \App\Http\Middleware\ConfiguredTrustProxies)->handle($request, function ($request) {
+    (new ConfiguredTrustProxies)->handle($request, function ($request) {
         expect($request->ip())->toBe('192.0.2.10')->and($request->isSecure())->toBeFalse();
 
         return response('ok');
@@ -34,18 +36,18 @@ it('ignores forwarded identity and scheme when no proxy is configured even for a
 
 it('accepts forwarded identity only from the configured proxy', function () {
     config(['app.trusted_proxies' => ['192.0.2.10']]);
-    $request = \Illuminate\Http\Request::create('http://example.test/login', server: [
+    $request = Request::create('http://example.test/login', server: [
         'REMOTE_ADDR' => '192.0.2.10', 'HTTP_X_FORWARDED_FOR' => '198.51.100.20',
         'HTTP_X_FORWARDED_PROTO' => 'https',
     ]);
     try {
-        (new \App\Http\Middleware\ConfiguredTrustProxies)->handle($request, function ($request) {
+        (new ConfiguredTrustProxies)->handle($request, function ($request) {
             expect($request->ip())->toBe('198.51.100.20')->and($request->isSecure())->toBeTrue();
 
             return response('ok');
         });
     } finally {
-        \Illuminate\Http\Request::setTrustedProxies([], 0);
+        Request::setTrustedProxies([], 0);
     }
 });
 

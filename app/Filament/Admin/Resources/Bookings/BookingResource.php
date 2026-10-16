@@ -10,6 +10,8 @@ use App\Filament\Admin\Resources\Bookings\Schemas\BookingForm;
 use App\Filament\Admin\Resources\Bookings\Schemas\BookingInfolist;
 use App\Filament\Admin\Resources\Bookings\Tables\BookingsTable;
 use App\Models\Booking;
+use App\Models\Salon;
+use App\Models\User;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
@@ -32,7 +34,7 @@ class BookingResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
         return $user !== null && Gate::forUser($user)->allows('viewAny', Booking::class);
@@ -61,7 +63,7 @@ class BookingResource extends Resource
         // Owner sees only bookings for salons they created
         return $query->whereIn(
             'salon_id',
-            \App\Models\Salon::where('created_by', auth()->id())->pluck('id')
+            Salon::where('created_by', auth()->id())->pluck('id')
         );
     }
 

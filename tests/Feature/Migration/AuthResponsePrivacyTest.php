@@ -1,11 +1,12 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Sanctum;
 
 it('hides internal exception details from API errors when debug mode is disabled', function () {
     config(['app.debug' => false]);
-    \Illuminate\Support\Facades\Route::get('/api/security-error-fixture', function () {
+    Route::get('/api/security-error-fixture', function () {
         throw new RuntimeException('synthetic-private-error-detail');
     });
     $this->withExceptionHandling()->getJson('/api/security-error-fixture')->assertStatus(500)

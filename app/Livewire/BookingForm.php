@@ -6,6 +6,7 @@ use App\Models\Salon;
 use App\Models\Service;
 use App\Services\BookingService;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -52,7 +53,7 @@ class BookingForm extends Component
         $salon = Salon::publiclyVisible()->with('owner')->findOrFail($this->salonId);
 
         $slots = [];
-        if (is_string($this->date) && \Illuminate\Support\Facades\Validator::make(['date' => $this->date], ['date' => 'required|date_format:Y-m-d'])->passes()
+        if (is_string($this->date) && Validator::make(['date' => $this->date], ['date' => 'required|date_format:Y-m-d'])->passes()
             && $this->date >= today()->format('Y-m-d') && is_scalar($this->service_id) && ctype_digit((string) $this->service_id)) {
             $service = Service::published()->where('created_by', $salon->created_by)->find((int) $this->service_id);
             if ($service) {

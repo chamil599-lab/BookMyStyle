@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Google\Client;
 use Illuminate\Validation\ValidationException;
 
 class GoogleIdentityVerifier
@@ -13,7 +14,7 @@ class GoogleIdentityVerifier
             throw ValidationException::withMessages(['credential' => 'Google sign-in is unavailable. Use your email and password.']);
         }
         try {
-            $payload = (new \Google\Client(['client_id' => $clientId]))->verifyIdToken($credential);
+            $payload = (new Client(['client_id' => $clientId]))->verifyIdToken($credential);
         } catch (\Throwable $exception) {
             $payload = false;
         }

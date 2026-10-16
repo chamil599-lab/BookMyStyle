@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Dealspage;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DealspagesSeeder extends Seeder
 {
@@ -150,7 +150,7 @@ class DealspagesSeeder extends Seeder
             $slug = $slugBase;
             $i = 1;
             while (Dealspage::where('slug', $slug)->exists()) {
-                $slug = $slugBase . '-' . $i++;
+                $slug = $slugBase.'-'.$i++;
             }
 
             Dealspage::create([

@@ -4,11 +4,13 @@ namespace App\Filament\Admin\Resources\Services\Schemas;
 
 use App\Enums\Enums\ServiceEnum;
 use App\Models\Salon;
+use App\Support\ManagementAccess;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class ServiceForm
 {
@@ -19,7 +21,7 @@ class ServiceForm
                 Select::make('salon_id')
                     ->label('Salon')
                     ->options(fn () => Salon::query()
-                        ->when(! \App\Support\ManagementAccess::admin(auth()->user()), fn ($query) => $query->where('created_by', auth()->id()))
+                        ->when(! ManagementAccess::admin(auth()->user()), fn ($query) => $query->where('created_by', auth()->id()))
                         ->pluck('name', 'id'))
                     ->required(fn ($operation) => $operation === 'create')
                     ->visible(fn ($operation) => $operation === 'create')
@@ -32,7 +34,7 @@ class ServiceForm
                     ->live(onBlur: true)
                     ->required()
                     ->afterStateUpdated(
-                        fn ($state, $set) => $set('slug', \Illuminate\Support\Str::slug($state))
+                        fn ($state, $set) => $set('slug', Str::slug($state))
                     ),
                 TextInput::make('slug')
                     ->required(),

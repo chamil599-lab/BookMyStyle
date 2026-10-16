@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserSubscription;
 use App\Services\BookingService;
 use App\Services\SubscriptionService;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -20,7 +21,7 @@ use Spatie\Permission\Models\Role;
 
 require __DIR__.'/../../vendor/autoload.php';
 $app = require __DIR__.'/../../bootstrap/app.php';
-$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+$app->make(Kernel::class)->bootstrap();
 if (config('database.default') !== 'mysql' || ! in_array(config('database.connections.mysql.host'), ['127.0.0.1', 'localhost', '::1'], true)) {
     throw new RuntimeException('This check requires local MySQL.');
 }

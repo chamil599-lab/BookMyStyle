@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Salon;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,8 +42,8 @@ class CheckSubscription
         // Check staff limit for specific salon
         if ($request->route('salon') && ($request->is('staff/create') || $request->routeIs('staff.store'))) {
             $salon = $request->route('salon');
-            if (! $salon instanceof \App\Models\Salon) {
-                $salon = \App\Models\Salon::findOrFail($salon);
+            if (! $salon instanceof Salon) {
+                $salon = Salon::findOrFail($salon);
             }
             abort_unless((int) $salon->created_by === (int) $user->id, 403);
             $staffCount = $salon->staff()->count();

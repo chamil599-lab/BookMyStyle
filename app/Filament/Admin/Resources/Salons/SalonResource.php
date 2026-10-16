@@ -9,7 +9,9 @@ use App\Filament\Admin\Resources\Salons\Pages\ViewSalon;
 use App\Filament\Admin\Resources\Salons\Schemas\SalonForm;
 use App\Filament\Admin\Resources\Salons\Tables\SalonsTable;
 use App\Models\Salon;
+use App\Support\ManagementAccess;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -41,8 +43,8 @@ class SalonResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        if (! \App\Support\ManagementAccess::admin(\Filament\Facades\Filament::auth()->user())) {
-            return $query->where('created_by', \Filament\Facades\Filament::auth()->id() ?? 0);
+        if (! ManagementAccess::admin(Filament::auth()->user())) {
+            return $query->where('created_by', Filament::auth()->id() ?? 0);
         }
 
         return $query;

@@ -10,7 +10,9 @@ use App\Filament\Admin\Resources\Services\Schemas\ServiceForm;
 use App\Filament\Admin\Resources\Services\Schemas\ServiceInfolist;
 use App\Filament\Admin\Resources\Services\Tables\ServicesTable;
 use App\Models\Service;
+use App\Support\ManagementAccess;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -37,8 +39,8 @@ class ServiceResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        $user = \Filament\Facades\Filament::auth()->user();
-        if (\App\Support\ManagementAccess::admin($user)) {
+        $user = Filament::auth()->user();
+        if (ManagementAccess::admin($user)) {
             return $query;
         }
 

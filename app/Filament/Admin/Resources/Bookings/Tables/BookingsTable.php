@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Resources\Bookings\Tables;
 
+use App\Services\BookingService;
+use App\Services\BookingWhatsApp;
+use Carbon\Carbon;
 use Filament\Actions\Action as ActionsAction;
 use Filament\Actions\ActionGroup as ActionsActionGroup;
 use Filament\Actions\BulkAction as ActionsBulkAction;
@@ -10,6 +13,7 @@ use Filament\Actions\DeleteAction as ActionsDeleteAction;
 use Filament\Actions\DeleteBulkAction as ActionsDeleteBulkAction;
 use Filament\Actions\EditAction as ActionsEditAction;
 use Filament\Actions\ViewAction as ActionsViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -83,9 +87,9 @@ class BookingsTable
                 // Column 2: Date Range
                 Filter::make('date_range')
                     ->form([
-                        \Filament\Forms\Components\DatePicker::make('date_from')
+                        DatePicker::make('date_from')
                             ->label('From Date'),
-                        \Filament\Forms\Components\DatePicker::make('date_until')
+                        DatePicker::make('date_until')
                             ->label('To Date'),
                     ])
                     ->columns(1)
@@ -104,11 +108,11 @@ class BookingsTable
                         $indicators = [];
 
                         if ($data['date_from'] ?? null) {
-                            $indicators[] = 'From '.\Carbon\Carbon::parse($data['date_from'])->toFormattedDateString();
+                            $indicators[] = 'From '.Carbon::parse($data['date_from'])->toFormattedDateString();
                         }
 
                         if ($data['date_until'] ?? null) {
-                            $indicators[] = 'Until '.\Carbon\Carbon::parse($data['date_until'])->toFormattedDateString();
+                            $indicators[] = 'Until '.Carbon::parse($data['date_until'])->toFormattedDateString();
                         }
 
                         return $indicators;
@@ -134,8 +138,8 @@ class BookingsTable
             ->recordActions([
                 ActionsAction::make('whatsapp')
                     ->label('Open WhatsApp')->icon('heroicon-o-chat-bubble-left-right')
-                    ->url(fn ($record) => app(\App\Services\BookingWhatsApp::class)->url(auth()->user(), $record))
-                    ->visible(fn ($record) => app(\App\Services\BookingWhatsApp::class)->phone($record->phone) !== null)
+                    ->url(fn ($record) => app(BookingWhatsApp::class)->url(auth()->user(), $record))
+                    ->visible(fn ($record) => app(BookingWhatsApp::class)->phone($record->phone) !== null)
                     ->openUrlInNewTab()->extraAttributes(['rel' => 'noopener noreferrer']),
                 ActionsActionGroup::make([
                     ActionsViewAction::make(),
@@ -149,7 +153,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($record) {
                             Gate::authorize('updateStatus', $record);
-                            app(\App\Services\BookingService::class)->changeStatus($record, 'approved', auth()->user());
+                            app(BookingService::class)->changeStatus($record, 'approved', auth()->user());
 
                             Notification::make()
                                 ->title('Booking Approved')
@@ -166,7 +170,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($record) {
                             Gate::authorize('updateStatus', $record);
-                            app(\App\Services\BookingService::class)->changeStatus($record, 'rejected', auth()->user());
+                            app(BookingService::class)->changeStatus($record, 'rejected', auth()->user());
 
                             Notification::make()
                                 ->title('Booking Rejected')
@@ -203,7 +207,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($records) {
                             $records->each(fn ($record) => Gate::authorize('updateStatus', $record));
-                            $records->each(fn ($record) => app(\App\Services\BookingService::class)->changeStatus($record, 'approved', auth()->user()));
+                            $records->each(fn ($record) => app(BookingService::class)->changeStatus($record, 'approved', auth()->user()));
 
                             $count = $records->count();
                             Notification::make()
@@ -219,7 +223,7 @@ class BookingsTable
                         ->requiresConfirmation()
                         ->action(function ($records) {
                             $records->each(fn ($record) => Gate::authorize('updateStatus', $record));
-                            $records->each(fn ($record) => app(\App\Services\BookingService::class)->changeStatus($record, 'rejected', auth()->user()));
+                            $records->each(fn ($record) => app(BookingService::class)->changeStatus($record, 'rejected', auth()->user()));
 
                             $count = $records->count();
                             Notification::make()

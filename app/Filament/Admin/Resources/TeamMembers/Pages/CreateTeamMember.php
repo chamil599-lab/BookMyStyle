@@ -9,4 +9,3 @@ class CreateTeamMember extends CreateRecord
 {
     protected static string $resource = TeamMemberResource::class;
 }
-

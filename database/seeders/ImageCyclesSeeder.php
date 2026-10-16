@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\ImageCycle;
+use Illuminate\Database\Seeder;
 
 class ImageCyclesSeeder extends Seeder
 {
@@ -53,7 +53,9 @@ class ImageCyclesSeeder extends Seeder
                 ->where('src_url', $it['src_url'])
                 ->exists();
 
-            if ($exists) continue;
+            if ($exists) {
+                continue;
+            }
 
             ImageCycle::create([
                 'title' => $it['title'],

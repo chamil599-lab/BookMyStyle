@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class TeamMember extends Model
 {
@@ -32,7 +33,7 @@ class TeamMember extends Model
         }
 
         if ($this->upload_path) {
-            return \Illuminate\Support\Facades\Storage::url($this->upload_path);
+            return Storage::url($this->upload_path);
         }
 
         return null;

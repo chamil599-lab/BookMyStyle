@@ -6,8 +6,8 @@ use App\Models\AdminShare;
 use App\Models\Booking;
 use App\Models\Salon;
 use Filament\Facades\Filament;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class OwnerRevenueStat extends StatsOverviewWidget
 {
@@ -46,11 +46,11 @@ class OwnerRevenueStat extends StatsOverviewWidget
 
         // Get total paid amount from admin_shares table
         $totalPaid = AdminShare::whereIn('salon_id', $salonIds)->sum('paid');
-        
+
         $balanceOwed = $adminShare - $totalPaid;
 
         return [
-        /*    Stat::make('Total Revenue', 'LKR ' . number_format($totalRevenue, 2))
+            /*    Stat::make('Total Revenue', 'LKR ' . number_format($totalRevenue, 2))
                 ->description('From approved bookings')
                 ->color('primary'),
 
@@ -60,7 +60,7 @@ class OwnerRevenueStat extends StatsOverviewWidget
 
             Stat::make('Admin Balance', 'LKR ' . number_format($balanceOwed, 2))
                 ->description(
-                    $balanceOwed > 0 
+                    $balanceOwed > 0
                         ? 'Remaining to pay (' . rtrim(rtrim((string)$percent, '0'), '.') . '% of revenue)'
                         : 'Fully paid'
                 )

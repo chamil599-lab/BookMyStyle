@@ -2,12 +2,12 @@
 
 namespace App\Filament\Admin\Resources\FeaturedSalons\Schemas;
 
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Hidden;
-use Filament\Schemas\Schema;
 use App\Models\Salon;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
 
 class FeaturedSalonForm
 {

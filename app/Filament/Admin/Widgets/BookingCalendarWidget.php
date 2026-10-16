@@ -4,25 +4,33 @@ namespace App\Filament\Admin\Widgets;
 
 use App\Models\Booking;
 use App\Models\Salon;
+use App\Support\ManagementAccess;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use Guava\Calendar\Filament\Actions\DeleteAction;
+use Guava\Calendar\Filament\Actions\EditAction;
 use Guava\Calendar\Filament\CalendarWidget;
 use Guava\Calendar\ValueObjects\CalendarEvent;
+use Guava\Calendar\ValueObjects\EventClickInfo;
 use Guava\Calendar\ValueObjects\FetchInfo;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 
 class BookingCalendarWidget extends CalendarWidget
 {
     public static function canView(): bool
     {
-        $user = \Filament\Facades\Filament::auth()->user()?->fresh();
+        $user = Filament::auth()->user()?->fresh();
 
-        return \App\Support\ManagementAccess::admin($user)
-            || (\App\Support\ManagementAccess::owner($user, true) && $user->activeSubscription?->package?->calendar);
+        return ManagementAccess::admin($user)
+            || (ManagementAccess::owner($user, true) && $user->activeSubscription?->package?->calendar);
     }
 
-    protected function getEloquentQuery(string $model): \Illuminate\Database\Eloquent\Builder
+    protected function getEloquentQuery(string $model): Builder
     {
         abort_unless(static::canView() && $model === Booking::class, 403);
         $query = Booking::query()->with(['salon', 'service' => fn ($q) => $q->withTrashed()]);
@@ -45,17 +53,17 @@ class BookingCalendarWidget extends CalendarWidget
         parent::onEventClickJs($data, 'view');
     }
 
-    public function editAction(): \Guava\Calendar\Filament\Actions\EditAction
+    public function editAction(): EditAction
     {
         return parent::editAction()->authorize(false)->visible(false);
     }
 
-    public function deleteAction(): \Guava\Calendar\Filament\Actions\DeleteAction
+    public function deleteAction(): DeleteAction
     {
         return parent::deleteAction()->authorize(false)->visible(false);
     }
 
-    protected function onEventClick(\Guava\Calendar\ValueObjects\EventClickInfo $info, \Illuminate\Database\Eloquent\Model $event, ?string $action = null): void
+    protected function onEventClick(EventClickInfo $info, Model $event, ?string $action = null): void
     {
         abort_unless(static::canView() && $action === 'view', 403);
         parent::onEventClick($info, $event, 'view');
@@ -72,7 +80,7 @@ class BookingCalendarWidget extends CalendarWidget
     public function getEventsJs(array $info): array
     {
         abort_unless(static::canView(), 403);
-        \Illuminate\Support\Facades\Validator::make($info, [
+        Validator::make($info, [
             'startStr' => 'required|string|max:64|date', 'endStr' => 'required|string|max:64|date',
             'tzOffset' => 'nullable|integer|between:-840,840',
         ])->validate();

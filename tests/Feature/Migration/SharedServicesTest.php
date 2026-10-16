@@ -1,6 +1,11 @@
 <?php
 
+use App\Filament\Admin\Resources\Bookings\Pages\CreateBooking;
+use App\Filament\Admin\Resources\UserSubscriptions\Pages\CreateUserSubscription;
+use App\Filament\Admin\Resources\UserSubscriptions\Pages\EditUserSubscription;
+use App\Filament\Admin\Resources\UserSubscriptions\Pages\ListUserSubscriptions;
 use App\Livewire\BookingForm;
+use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
 use App\Models\Category;
 use App\Models\Department;
@@ -9,8 +14,13 @@ use App\Models\Service;
 use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Models\UserSubscription;
+use App\Notifications\BookingCreatedNotification;
+use App\Notifications\BookingStatusChangedNotification;
 use App\Services\BookingService;
+use App\Services\CatalogueManagement;
 use App\Services\SubscriptionService;
+use Filament\Facades\Filament;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -18,6 +28,7 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\Sanctum;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     $this->travelTo(now()->startOfDay()->addHours(8));
@@ -61,7 +72,7 @@ it('renders booking decision emails after their service has been soft deleted', 
     $this->service->delete();
     foreach (['approved', 'rejected'] as $status) {
         $booking->status = $status;
-        $html = (new \App\Mail\BookingStatusChanged($booking))->render();
+        $html = (new BookingStatusChanged($booking))->render();
         expect($html)->toContain('Cut')->toContain($booking->name);
     }
 });
@@ -89,7 +100,7 @@ it('discards protected subscription fields in payment updates', function () {
 it('discards ownership and primary key fields in catalogue service updates', function () {
     $before = $this->service->only(['id', 'created_by', 'created_at']);
     $data = $this->service->only(['slug', 'description', 'department_id', 'category_id', 'price', 'duration', 'status']);
-    app(\App\Services\CatalogueManagement::class)->updateService($this->owner, $this->service, $data + [
+    app(CatalogueManagement::class)->updateService($this->owner, $this->service, $data + [
         'title' => 'Allowed title change', 'id' => 999999, 'created_by' => $this->admin->id,
         'updated_by' => $this->admin->id, 'created_at' => '2000-01-01', 'deleted_at' => now()]);
     expect($this->service->fresh()->only(array_keys($before)))->toEqual($before)
@@ -147,7 +158,7 @@ it('does not reopen completed bookings', function () {
 it('enforces monthly quotas for public and management writes including a zero limit', function () {
     $this->package->update(['max_bookings_per_month' => 0]);
     expect(fn () => $this->bookings->create($this->data))->toThrow(ValidationException::class)
-        ->and(fn () => $this->bookings->create($this->data, $this->owner, true))->toThrow(\Illuminate\Auth\Access\AuthorizationException::class);
+        ->and(fn () => $this->bookings->create($this->data, $this->owner, true))->toThrow(AuthorizationException::class);
 });
 
 it('counts only bookings created within the current calendar month', function () {
@@ -171,7 +182,7 @@ it('sends notifications only after commit and never after rollback', function ()
     Notification::assertNothingSent();
     expect(Booking::count())->toBe(0);
     $booking = $this->bookings->create($this->data);
-    Notification::assertSentTo($this->owner, \App\Notifications\BookingCreatedNotification::class);
+    Notification::assertSentTo($this->owner, BookingCreatedNotification::class);
     DB::beginTransaction();
     $this->bookings->changeStatus($booking, 'approved', $this->owner);
     Mail::assertNothingSent();
@@ -257,7 +268,7 @@ it('rejects pending requests without interrupting paid access', function () {
 
 it('requires admin approval and rejects repeated approval', function () {
     $pending = $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
-    expect(fn () => $this->subscriptions->approve($pending, $this->owner, 100))->toThrow(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+    expect(fn () => $this->subscriptions->approve($pending, $this->owner, 100))->toThrow(HttpException::class);
     $this->subscriptions->approve($pending, $this->admin, 100);
     expect(fn () => $this->subscriptions->approve($pending, $this->admin, 100))->toThrow(ValidationException::class);
 });
@@ -302,8 +313,8 @@ it('uses shared rules for native plan requests and Filament administrator approv
         ->assertRedirect('/filament/user-subscriptions');
     $pending = $this->owner->subscriptions()->pending()->firstOrFail();
     $this->actingAs($this->admin);
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
-    Livewire::test(\App\Filament\Admin\Resources\UserSubscriptions\Pages\ListUserSubscriptions::class)
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    Livewire::test(ListUserSubscriptions::class)
         ->callTableAction('approve', $pending, data: ['amount_paid' => 100])->assertHasNoActionErrors();
     expect($pending->fresh()->starts_at->equalTo($this->paid->ends_at))->toBeTrue();
 });
@@ -311,20 +322,20 @@ it('uses shared rules for native plan requests and Filament administrator approv
 it('enforces capacity during a Filament create action', function () {
     $this->bookings->create($this->data);
     $this->actingAs($this->admin);
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
-    Livewire::test(\App\Filament\Admin\Resources\Bookings\Pages\CreateBooking::class)
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    Livewire::test(CreateBooking::class)
         ->fillForm($this->data + ['status' => 'pending'])->call('create')->assertHasFormErrors(['time']);
     expect(Booking::count())->toBe(1);
 });
 
 it('creates Filament subscriptions as requests and protects history during edit', function () {
     $this->actingAs($this->admin);
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
-    Livewire::test(\App\Filament\Admin\Resources\UserSubscriptions\Pages\CreateUserSubscription::class)
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    Livewire::test(CreateUserSubscription::class)
         ->fillForm($this->payment + ['user_id' => $this->owner->id, 'package_id' => $this->package->id])
         ->call('create')->assertHasNoFormErrors();
     $pending = $this->owner->subscriptions()->pending()->firstOrFail();
-    Livewire::test(\App\Filament\Admin\Resources\UserSubscriptions\Pages\EditUserSubscription::class, ['record' => $pending->id])
+    Livewire::test(EditUserSubscription::class, ['record' => $pending->id])
         ->fillForm(['payment_method' => 'bank_transfer', 'transaction_id' => 'EDITED'])
         ->call('save')->assertHasNoFormErrors();
     expect($pending->fresh()->transaction_id)->toBe('EDITED')->and($pending->fresh()->status)->toBe('pending')
@@ -346,7 +357,7 @@ it('notifies the customer and salon owner once for an administrator status chang
     Notification::fake();
     $booking = $this->bookings->changeStatus($booking, 'approved', $this->admin);
     $this->bookings->changeStatus($booking, 'approved', $this->admin);
-    Notification::assertSentToTimes($this->customer, \App\Notifications\BookingStatusChangedNotification::class, 1);
-    Notification::assertSentToTimes($this->owner, \App\Notifications\BookingStatusChangedNotification::class, 1);
-    Mail::assertSent(\App\Mail\BookingStatusChanged::class, 1);
+    Notification::assertSentToTimes($this->customer, BookingStatusChangedNotification::class, 1);
+    Notification::assertSentToTimes($this->owner, BookingStatusChangedNotification::class, 1);
+    Mail::assertSent(BookingStatusChanged::class, 1);
 });

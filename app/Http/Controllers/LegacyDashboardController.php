@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class LegacyDashboardController extends Controller
 {
@@ -24,7 +25,7 @@ class LegacyDashboardController extends Controller
         $page = isset($parts[1]) ? ($parts[1] === 'create' ? 'create' : (isset($parts[2]) ? 'edit' : 'view')) : 'index';
         $parameters = isset($parts[1]) && $parts[1] !== 'create' ? ['record' => $parts[1]] : [];
         $route = 'filament.admin.resources.'.$resources[$section].'.'.$page;
-        abort_unless(\Illuminate\Support\Facades\Route::has($route), 404);
+        abort_unless(Route::has($route), 404);
 
         return redirect()->route($route, $parameters);
     }

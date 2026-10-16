@@ -9,6 +9,7 @@ use App\Http\Requests\Api\SalonBookedTimesRequest;
 use App\Models\Booking;
 use App\Models\Salon;
 use App\Models\Service;
+use App\Services\PublicCatalogue;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 
@@ -21,14 +22,14 @@ class PublicSalonController extends Controller
         $departmentId = $validated['department_id'] ?? null;
 
         if ($departmentId) {
-            $salons = app(\App\Services\PublicCatalogue::class)->salons()
+            $salons = app(PublicCatalogue::class)->salons()
                 ->whereHas('services', fn ($query) => $query->published()->whereHas('department', fn ($query) => $query->whereKey($departmentId)->where('is_active', true)))
                 ->get();
 
             return response()->json($salons->map(fn ($salon) => SalonHelper::formatSalonWithMedia($salon, true)));
         }
 
-        $salons = app(\App\Services\PublicCatalogue::class)->salons()->get();
+        $salons = app(PublicCatalogue::class)->salons()->get();
 
         return response()->json($salons->map(fn ($salon) => SalonHelper::formatSalonWithMedia($salon, true)));
     }

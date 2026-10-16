@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Enums\Enums\ServiceEnum;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Service extends Model
 {
@@ -39,10 +39,12 @@ class Service extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
     public function department()
     {
         return $this->belongsTo(Department::class);
     }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -52,7 +54,6 @@ class Service extends Model
     {
         return $this->hasMany(Booking::class);
     }
-
 
     public function getLowestPriceAttribute()
     {

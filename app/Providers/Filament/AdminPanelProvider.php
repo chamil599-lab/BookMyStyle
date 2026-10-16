@@ -6,6 +6,7 @@ use App\Filament\Admin\Pages\Auth\Login;
 use App\Filament\Admin\Pages\Auth\Register;
 use App\Filament\Admin\Pages\PendingApproval;
 use App\Http\Middleware\EnsureUserIsApproved;
+use App\Http\Middleware\PrivateAccountResponse;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -62,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
-                \App\Http\Middleware\PrivateAccountResponse::class,
+                PrivateAccountResponse::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,

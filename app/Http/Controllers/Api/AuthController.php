@@ -7,6 +7,7 @@ use App\Livewire\Actions\Logout;
 use App\Models\User;
 use App\Services\AccountService;
 use App\Services\ApiTokenService;
+use App\Services\AuthActionLimiter;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +127,7 @@ class AuthController extends Controller
      */
     public function changePassword(Request $request)
     {
-        app(\App\Services\AuthActionLimiter::class)->check('password-change', $request->user()->email, 5, 'current_password');
+        app(AuthActionLimiter::class)->check('password-change', $request->user()->email, 5, 'current_password');
         $validated = $request->validate([
             'current_password' => 'required|string',
             'password' => 'required|string|min:8|confirmed',

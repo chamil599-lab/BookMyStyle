@@ -84,6 +84,7 @@ class CategoriesRelationManager extends RelationManager
                     ->label('Add Category')
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['department_id'] = $this->ownerRecord->id;
+
                         return $data;
                     }),
                 AssociateAction::make(),
@@ -101,14 +102,3 @@ class CategoriesRelationManager extends RelationManager
             ]);
     }
 }
-
-
-
-
-
-
-
-
-
-
-

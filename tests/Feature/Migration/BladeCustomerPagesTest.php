@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\User;
 use App\Services\CustomerDashboard;
 use App\Services\FavoriteService;
+use App\Services\PublicCatalogue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -171,7 +172,7 @@ it('saves and removes card favorites idempotently for the current verified user'
     $this->actingAs($this->customer)->postJson($url)->assertOk()->assertJsonPath('favorited', true);
     $this->postJson($url)->assertOk()->assertJsonPath('favorited', true);
     expect(FavoriteSalon::where('user_id', $this->customer->id)->count())->toBe(1);
-    expect((bool) app(\App\Services\PublicCatalogue::class)->cardSalons()->findOrFail($this->salon->id)->is_favorited)->toBeTrue();
+    expect((bool) app(PublicCatalogue::class)->cardSalons()->findOrFail($this->salon->id)->is_favorited)->toBeTrue();
     $this->deleteJson($url)->assertOk()->assertJsonPath('favorited', false);
     $this->deleteJson($url)->assertOk()->assertJsonPath('favorited', false);
     expect(FavoriteSalon::where('user_id', $this->customer->id)->count())->toBe(0);

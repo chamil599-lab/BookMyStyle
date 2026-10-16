@@ -7,17 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up()
-{
-    Schema::table('bookings', function (Blueprint $table) {
-        $table->string('status')->default('pending'); // pending/approved/rejected
-    });
-}
+    {
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->string('status')->default('pending'); // pending/approved/rejected
+        });
+    }
 
-public function down()
-{
-    Schema::table('bookings', function (Blueprint $table) {
-        $table->dropColumn('status');
-    });
-}
-
+    public function down()
+    {
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
+    }
 };

@@ -1,19 +1,24 @@
 <?php
 
+use App\Filament\Admin\Resources\Bookings\Pages\EditBooking;
 use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\Salon;
+use App\Models\SalonRating;
 use App\Models\Service;
 use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Models\UserSubscription;
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -65,7 +70,7 @@ it('publishes appointment availability without customer identity or booking reco
 });
 
 it('keeps review email and owner account audit fields out of anonymous catalogue responses', function () {
-    \App\Models\SalonRating::create(['salon_id' => $this->salon->id, 'email' => 'private-reviewer@example.test', 'rating' => 5, 'review' => 'Public review']);
+    SalonRating::create(['salon_id' => $this->salon->id, 'email' => 'private-reviewer@example.test', 'rating' => 5, 'review' => 'Public review']);
     $this->getJson('/api/salons/'.$this->salon->id.'/ratings')->assertOk()->assertJsonPath('ratings.0.review', 'Public review')
         ->assertJsonMissingPath('ratings.0.email')->assertDontSee('private-reviewer@example.test', false);
     $response = $this->getJson('/api/salons/'.$this->salon->id)->assertOk();
@@ -200,11 +205,11 @@ it('keeps model field protection enabled and rejects injected record identifiers
 });
 
 it('does not show another owners salons or services in Filament booking forms', function () {
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($this->owner);
     $otherSalon = Salon::create(['name' => 'Other salon', 'owner_name' => 'Other',
         'created_by' => $this->admin->id, 'updated_by' => $this->admin->id]);
-    $component = \Livewire\Livewire::test(\App\Filament\Admin\Resources\Bookings\Pages\EditBooking::class, ['record' => $this->booking->id]);
+    $component = Livewire::test(EditBooking::class, ['record' => $this->booking->id]);
     $component->fillForm(['salon_id' => $otherSalon->id])->call('save')->assertHasFormErrors(['salon_id']);
     expect($this->booking->fresh()->salon_id)->toBe($this->salon->id);
     $otherService = $this->service->replicate();
@@ -218,9 +223,9 @@ it('does not show another owners salons or services in Filament booking forms', 
 });
 
 it('denies a Filament booking page for a different owner', function () {
-    \Filament\Facades\Filament::setCurrentPanel(\Filament\Facades\Filament::getPanel('admin'));
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->salon->update(['created_by' => $this->admin->id]);
     $this->actingAs($this->owner);
-    \Livewire\Livewire::test(\App\Filament\Admin\Resources\Bookings\Pages\EditBooking::class, ['record' => $this->booking->id])
+    Livewire::test(EditBooking::class, ['record' => $this->booking->id])
         ->assertSuccessful();
-})->throws(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+})->throws(ModelNotFoundException::class);

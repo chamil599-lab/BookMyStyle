@@ -3,11 +3,10 @@
 namespace App\Filament\Admin\Resources\Salons\Pages;
 
 use App\Filament\Admin\Resources\Salons\SalonResource;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Form;
 use BackedEnum;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
 
 class ManageSalonImages extends EditRecord
 {
@@ -52,7 +51,7 @@ class ManageSalonImages extends EditRecord
                                 ->first(fn ($media) => $media->uuid === $file)
                                 ?->delete();
                         }),
-                ]) ,
+                ]),
 
             Section::make('Gallery Images')
                 ->description('Upload multiple images to showcase your salon')

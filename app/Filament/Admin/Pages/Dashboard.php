@@ -3,7 +3,12 @@
 namespace App\Filament\Admin\Pages;
 
 use App\Models\Booking;
+use App\Models\SiteVisit;
+use App\Models\User;
 use App\Models\UserSubscription;
+use App\Support\BookingValue;
+use App\Support\ManagementAccess;
+use App\Support\SubscriptionSummary;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
@@ -21,17 +26,17 @@ class Dashboard extends Page
 
     public static function canAccess(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
-        return \App\Support\ManagementAccess::admin($user?->fresh());
+        return ManagementAccess::admin($user?->fresh());
     }
 
     public function getSubscriptionStatsProperty(): array
     {
         abort_unless(static::canAccess(), 403);
 
-        return app(\App\Support\SubscriptionSummary::class)->counts();
+        return app(SubscriptionSummary::class)->counts();
     }
 
     public function getRevenueStatsProperty(): array
@@ -39,11 +44,11 @@ class Dashboard extends Page
         abort_unless(static::canAccess(), 403);
         $subscriptionRevenue = UserSubscription::whereIn('status', ['active', 'expired', 'canceled'])->sum('amount_paid');
 
-        $bookingRevenue = \App\Support\BookingValue::query()
+        $bookingRevenue = BookingValue::query()
             ->get()
             ->sum(fn ($b) => $b->service?->price ?? 0);
 
-        $todayBookingRevenue = \App\Support\BookingValue::query()->whereDate('date', today())
+        $todayBookingRevenue = BookingValue::query()->whereDate('date', today())
             ->get()
             ->sum(fn ($b) => $b->service?->price ?? 0);
 
@@ -90,7 +95,7 @@ class Dashboard extends Page
     {
         abort_unless(static::canAccess(), 403);
 
-        return \App\Support\BookingValue::chart(\App\Support\BookingValue::query(), today()->subDays(29), today());
+        return BookingValue::chart(BookingValue::query(), today()->subDays(29), today());
     }
 
     public function getTopPackagesProperty(): Collection
@@ -119,11 +124,11 @@ class Dashboard extends Page
     public function getOverviewProperty(): array
     {
         abort_unless(static::canAccess(), 403);
-        $visits = \App\Models\SiteVisit::query();
+        $visits = SiteVisit::query();
 
         return [
-            'owners' => \App\Models\User::role('owner')->count(),
-            'pending_owners' => \App\Models\User::role('owner')->where('is_approved', false)->count(),
+            'owners' => User::role('owner')->count(),
+            'pending_owners' => User::role('owner')->where('is_approved', false)->count(),
             'visits' => (clone $visits)->count(),
             'today_visits' => (clone $visits)->whereDate('occurred_at', today())->count(),
             'month_visits' => (clone $visits)->where('occurred_at', '>=', now()->startOfMonth())

@@ -17,7 +17,7 @@ class UserSubscriptionForm
 {
     private static function isAdmin(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Models\UserSubscription;
+use App\Support\ManagementAccess;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -138,7 +139,7 @@ class SubscriptionService
     private function authorize(User $actor, ?User $owner = null): void
     {
         $actor = $actor->fresh();
-        abort_unless(\App\Support\ManagementAccess::admin($actor)
-            || ($owner && $actor && (int) $actor->id === (int) $owner->id && \App\Support\ManagementAccess::owner($actor)), 403);
+        abort_unless(ManagementAccess::admin($actor)
+            || ($owner && $actor && (int) $actor->id === (int) $owner->id && ManagementAccess::owner($actor)), 403);
     }
 }

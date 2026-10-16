@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\UserSubscriptions\Pages;
 
 use App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource;
+use App\Services\SubscriptionService;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -42,14 +43,14 @@ class ViewUserSubscription extends ViewRecord
 
     public function savePaymentDetails(): void
     {
-        $this->record = app(\App\Services\SubscriptionService::class)->updatePayment($this->record, auth()->user(), [
+        $this->record = app(SubscriptionService::class)->updatePayment($this->record, auth()->user(), [
             'payment_method' => $this->editPaymentMethod, 'transaction_id' => $this->editTransactionId]);
         Notification::make()->title('Payment details updated successfully.')->success()->send();
     }
 
     public function renewSubscription(): void
     {
-        $newSubscription = app(\App\Services\SubscriptionService::class)->request($this->record->user, $this->record->package, [
+        $newSubscription = app(SubscriptionService::class)->request($this->record->user, $this->record->package, [
             'payment_method' => $this->renewPaymentMethod, 'transaction_id' => $this->renewTransactionId], auth()->user());
         Notification::make()->title('Renewal request submitted!')->body('Your renewal is pending admin approval.')->success()->send();
         $this->redirect(UserSubscriptionResource::getUrl('view', ['record' => $newSubscription->id]));

@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\ImageCycles\Schemas\ImageCycleForm;
 use App\Filament\Admin\Resources\ImageCycles\Schemas\ImageCycleInfolist;
 use App\Filament\Admin\Resources\ImageCycles\Tables\ImageCyclesTable;
 use App\Models\ImageCycle;
+use App\Models\User;
 use App\RolesEnum;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -27,8 +28,8 @@ class ImageCycleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CircleStack;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Content Management';
-    
+    protected static string|UnitEnum|null $navigationGroup = 'Content Management';
+
     public static function form(Schema $schema): Schema
     {
         return ImageCycleForm::configure($schema);
@@ -71,9 +72,9 @@ class ImageCycleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
-    
 }

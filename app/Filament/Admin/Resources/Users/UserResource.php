@@ -10,21 +10,20 @@ use App\Filament\Admin\Resources\Users\Schemas\UserForm;
 use App\Filament\Admin\Resources\Users\Schemas\UserInfolist;
 use App\Filament\Admin\Resources\Users\Tables\UsersTable;
 use App\Models\User;
+use App\RolesEnum;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Enums\UserStatus;
-use App\RolesEnum;
-use Filament\Facades\Filament;
 use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string|UnitEnum|null $navigationGroup = 'User Management';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
@@ -64,9 +63,9 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 }
-

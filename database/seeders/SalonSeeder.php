@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Salon;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class SalonSeeder extends Seeder
@@ -111,7 +110,7 @@ class SalonSeeder extends Seeder
                 'tiktok_page' => 'https://tiktok.com/@blissnails',
                 'created_by' => $owner->id,
                 'updated_by' => $owner->id,
-            ]
+            ],
         ];
 
         foreach ($salons as $salonData) {

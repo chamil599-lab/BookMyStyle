@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
 use App\Models\Salon;
+use App\Services\BookingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
@@ -28,7 +29,7 @@ class BookingController extends Controller
 
         Gate::forUser(auth()->user()->fresh())->authorize('updateStatus', $booking);
 
-        $booking = app(\App\Services\BookingService::class)->changeStatus($booking, $validated['status'], $request->user());
+        $booking = app(BookingService::class)->changeStatus($booking, $validated['status'], $request->user());
 
         return response()->json([
             'message' => "Booking {$validated['status']} successfully",

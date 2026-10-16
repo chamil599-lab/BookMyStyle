@@ -4,6 +4,7 @@ namespace App\Livewire\Frontend;
 
 use App\Models\FavoriteSalon;
 use App\Services\AuthActionLimiter;
+use App\Services\FavoriteService;
 use App\Services\PublicCatalogue;
 use App\Services\SalonReviewService;
 use Livewire\Attributes\Locked;
@@ -28,7 +29,7 @@ class SalonActions extends Component
         $user = auth()->user();
         abort_unless($user?->hasVerifiedEmail(), 403);
         app(AuthActionLimiter::class)->check('favorite', $user->email, 20, 'rating');
-        app(\App\Services\FavoriteService::class)->toggle($user, $this->salonId);
+        app(FavoriteService::class)->toggle($user, $this->salonId);
     }
 
     public function submitReview(): void

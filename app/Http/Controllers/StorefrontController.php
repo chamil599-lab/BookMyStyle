@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DealsPage;
 use App\Models\ImageCycle;
+use App\Models\Salon;
 use App\Models\SalonRating;
 use App\Models\ServicePage;
 use App\Models\TeamMember;
@@ -57,7 +58,7 @@ class StorefrontController extends Controller
 
     public function sitemap()
     {
-        return response()->view('storefront.sitemap', ['salons' => \App\Models\Salon::publiclyVisible()->orderBy('id')->get(['id', 'updated_at'])])
+        return response()->view('storefront.sitemap', ['salons' => Salon::publiclyVisible()->orderBy('id')->get(['id', 'updated_at'])])
             ->header('Content-Type', 'application/xml; charset=UTF-8');
     }
 

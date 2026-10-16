@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\SubscriptionPackages\Schemas\SubscriptionPackag
 use App\Filament\Admin\Resources\SubscriptionPackages\Schemas\SubscriptionPackageInfolist;
 use App\Filament\Admin\Resources\SubscriptionPackages\Tables\SubscriptionPackagesTable;
 use App\Models\SubscriptionPackage;
+use App\Models\User;
 use App\RolesEnum;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -32,7 +33,7 @@ class SubscriptionPackageResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;

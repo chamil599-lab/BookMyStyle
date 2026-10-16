@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Support\ManagementAccess;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreImageCycleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return \App\Support\ManagementAccess::admin($this->user()?->fresh());
+        return ManagementAccess::admin($this->user()?->fresh());
     }
 
     public function rules(): array

@@ -10,20 +10,21 @@ use App\Filament\Admin\Resources\Categories\Schemas\CategoryForm;
 use App\Filament\Admin\Resources\Categories\Schemas\CategoryInfolist;
 use App\Filament\Admin\Resources\Categories\Tables\CategoriesTable;
 use App\Models\Category;
+use App\Models\User;
+use App\RolesEnum;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\RolesEnum;
-use Filament\Facades\Filament;
 use UnitEnum;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Salon Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Salon Management';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
@@ -68,8 +69,9 @@ class CategoryResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 }

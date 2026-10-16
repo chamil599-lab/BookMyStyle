@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\PublicUrl;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,7 @@ class RestrictBrowserRedirects
     public function handle(Request $request, Closure $next)
     {
         $isLocal = static function (mixed $url): bool {
-            if (! is_string($url) || ! \App\Support\PublicUrl::link($url)) {
+            if (! is_string($url) || ! PublicUrl::link($url)) {
                 return false;
             }
             if (str_starts_with($url, '/')) {

@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Salons\Pages;
 
 use App\Filament\Admin\Resources\Salons\SalonResource;
+use App\Filament\Concerns\HandlesServiceValidation;
 use App\Services\CatalogueManagement;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditSalon extends EditRecord
 {
-    use \App\Filament\Concerns\HandlesServiceValidation;
+    use HandlesServiceValidation;
 
     protected static string $resource = SalonResource::class;
 

@@ -13,22 +13,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('salons', function (Blueprint $table) {
-    $table->id();
-    $table->string('name');
-    $table->string('owner_name');
-    $table->string('location')->nullable();
-    $table->string('phone')->nullable();
-    $table->string('email')->nullable();
-    $table->longText('description')->nullable();
-    $table->string('cover_image')->nullable();
-    
-    // Track who created/updated the record
-    $table->foreignIdFor(User::class, 'created_by');
-    $table->foreignIdFor(User::class, 'updated_by');
+            $table->id();
+            $table->string('name');
+            $table->string('owner_name');
+            $table->string('location')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->longText('description')->nullable();
+            $table->string('cover_image')->nullable();
 
-    $table->timestamps();
-    $table->softDeletes();
-});
+            // Track who created/updated the record
+            $table->foreignIdFor(User::class, 'created_by');
+            $table->foreignIdFor(User::class, 'updated_by');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
 
     }
 

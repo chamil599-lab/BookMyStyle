@@ -268,7 +268,7 @@ class ServicePagesSeeder extends Seeder
                 $slug = $slugBase;
                 $i = 1;
                 while (ServicePage::where('slug', $slug)->exists()) {
-                    $slug = $slugBase . '-' . $i++;
+                    $slug = $slugBase.'-'.$i++;
                 }
 
                 ServicePage::create([

@@ -10,20 +10,21 @@ use App\Filament\Admin\Resources\TeamMembers\Schemas\TeamMemberForm;
 use App\Filament\Admin\Resources\TeamMembers\Schemas\TeamMemberInfolist;
 use App\Filament\Admin\Resources\TeamMembers\Tables\TeamMembersTable;
 use App\Models\TeamMember;
-use BackedEnum;
-use UnitEnum;
-use Filament\Resources\Resource;
-use Filament\Facades\Filament;
+use App\Models\User;
 use App\RolesEnum;
+use BackedEnum;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class TeamMemberResource extends Resource
 {
     protected static ?string $model = TeamMember::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Content Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Content Management';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::UserCircle;
 
@@ -53,8 +54,9 @@ class TeamMemberResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 

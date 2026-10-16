@@ -4,6 +4,9 @@ namespace App\Filament\Admin\Pages;
 
 use App\Models\Booking;
 use App\Models\Salon;
+use App\Models\User;
+use App\Support\BookingValue;
+use App\Support\ManagementAccess;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
@@ -20,10 +23,10 @@ class OwnerDashboard extends Page
 
     public static function canAccess(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
-        return \App\Support\ManagementAccess::owner($user?->fresh());
+        return ManagementAccess::owner($user?->fresh());
     }
 
     public function getOwnerStatsProperty(): array
@@ -32,7 +35,7 @@ class OwnerDashboard extends Page
         $user = Filament::auth()->user()->fresh();
         $salonIds = Salon::where('created_by', $user->id)->pluck('id');
 
-        $bookings = \App\Support\BookingValue::query($salonIds)
+        $bookings = BookingValue::query($salonIds)
             ->get();
 
         $totalEarnings = $bookings->sum(fn ($b) => $b->service?->price ?? 0);

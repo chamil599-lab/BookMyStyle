@@ -3,13 +3,14 @@
 namespace App\Filament\Admin\Resources\Salons\Pages;
 
 use App\Filament\Admin\Resources\Salons\SalonResource;
+use App\Filament\Concerns\HandlesServiceValidation;
 use App\Services\CatalogueManagement;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateSalon extends CreateRecord
 {
-    use \App\Filament\Concerns\HandlesServiceValidation;
+    use HandlesServiceValidation;
 
     protected static string $resource = SalonResource::class;
 

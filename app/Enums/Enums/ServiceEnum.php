@@ -9,15 +9,16 @@ enum ServiceEnum: string
 
     public static function labels(): array
     {
-        return[
+        return [
             self::Draft->value => 'Draft',
             self::Published->value => 'Published',
         ];
 
     }
+
     public static function colors(): array
     {
-        return[
+        return [
             self::Draft->value => 'gray',
             self::Published->value => 'green',
         ];

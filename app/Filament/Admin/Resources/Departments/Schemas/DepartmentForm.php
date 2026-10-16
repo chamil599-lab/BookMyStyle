@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\Departments\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class DepartmentForm
 {
@@ -15,8 +16,8 @@ class DepartmentForm
                 TextInput::make('name')
                     ->required()
                     ->afterStateUpdated(function (string $operation, $state, $set) {
-                    $set('slug', \Illuminate\Support\Str::slug($state));
-                }),
+                        $set('slug', Str::slug($state));
+                    }),
                 TextInput::make('slug')
                     ->required(),
                 TextInput::make('meta_title'),

@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\UserSubscriptions\Pages\ViewUserSubscription;
 use App\Filament\Admin\Resources\UserSubscriptions\Schemas\UserSubscriptionForm;
 use App\Filament\Admin\Resources\UserSubscriptions\Schemas\UserSubscriptionInfolist;
 use App\Filament\Admin\Resources\UserSubscriptions\Tables\UserSubscriptionsTable;
+use App\Models\User;
 use App\Models\UserSubscription;
 use App\RolesEnum;
 use BackedEnum;
@@ -73,7 +74,7 @@ class UserSubscriptionResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
         // Admin sees all subscriptions
@@ -91,7 +92,7 @@ class UserSubscriptionResource extends Resource
      */
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
         return $user?->hasRole([RolesEnum::ADMIN->value, RolesEnum::OWNER->value]) ?? false;
@@ -102,7 +103,7 @@ class UserSubscriptionResource extends Resource
      */
     public static function canCreate(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
@@ -113,7 +114,7 @@ class UserSubscriptionResource extends Resource
      */
     public static function canEdit($record): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
 
         return ($user?->hasRole(RolesEnum::ADMIN->value) ?? false) && $record->isPending();

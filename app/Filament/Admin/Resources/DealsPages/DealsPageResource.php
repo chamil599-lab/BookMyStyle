@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\DealsPages\Schemas\DealsPageForm;
 use App\Filament\Admin\Resources\DealsPages\Schemas\DealsPageInfolist;
 use App\Filament\Admin\Resources\DealsPages\Tables\DealsPagesTable;
 use App\Models\DealsPage;
+use App\Models\User;
 use App\RolesEnum;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -27,7 +28,7 @@ class DealsPageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BookmarkSquare;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Content Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Content Management';
 
     public static function form(Schema $schema): Schema
     {
@@ -71,8 +72,9 @@ class DealsPageResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 }

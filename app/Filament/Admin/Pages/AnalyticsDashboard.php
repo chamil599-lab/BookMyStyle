@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
+use Livewire\Attributes\Locked;
 
 class AnalyticsDashboard extends Page
 {
@@ -36,7 +37,7 @@ class AnalyticsDashboard extends Page
 
     public int $profitMonth;
 
-    #[\Livewire\Attributes\Locked]
+    #[Locked]
     public array $validFilters = [];
 
     public static function canAccess(): bool

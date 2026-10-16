@@ -48,7 +48,7 @@ class DealsPagesTable
                 TextColumn::make('valid_until')
                     ->date()
                     ->sortable(),
-                
+
                 TextColumn::make('status')
                     ->numeric()
                     ->sortable(),

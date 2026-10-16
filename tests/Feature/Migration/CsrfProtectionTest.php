@@ -1,9 +1,13 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Session\Middleware\StartSession;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
-    \Spatie\Permission\Models\Role::findOrCreate('admin', 'web');
+    Role::findOrCreate('admin', 'web');
     $user = User::factory()->create();
     $user->assignRole('admin');
     $this->actingAs($user);
@@ -53,8 +57,8 @@ it('does not allow favorite changes through GET requests', function () {
 });
 
 it('keeps the bearer API outside the browser session middleware pipeline', function () {
-    $route = app('router')->getRoutes()->match(\Illuminate\Http\Request::create('/api/auth/logout', 'POST'));
+    $route = app('router')->getRoutes()->match(Request::create('/api/auth/logout', 'POST'));
     $middleware = app('router')->gatherRouteMiddleware($route);
-    expect($middleware)->not->toContain(\Illuminate\Session\Middleware\StartSession::class)
-        ->not->toContain(\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class);
+    expect($middleware)->not->toContain(StartSession::class)
+        ->not->toContain(EnsureFrontendRequestsAreStateful::class);
 });

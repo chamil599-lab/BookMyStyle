@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\ServicePages\Schemas\ServicePageForm;
 use App\Filament\Admin\Resources\ServicePages\Schemas\ServicePageInfolist;
 use App\Filament\Admin\Resources\ServicePages\Tables\ServicePagesTable;
 use App\Models\ServicePage;
+use App\Models\User;
 use App\RolesEnum;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -27,7 +28,7 @@ class ServicePageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BookOpen;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Content Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Content Management';
 
     public static function form(Schema $schema): Schema
     {
@@ -71,8 +72,9 @@ class ServicePageResource extends Resource
 
     public static function canViewAny(): bool
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
+
         return $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
     }
 }

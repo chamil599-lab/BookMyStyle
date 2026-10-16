@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\Department;
+use App\Models\FavoriteSalon;
 use App\Models\Salon;
 use App\Models\SalonRating;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,7 +27,7 @@ class PublicCatalogue
             ->withCount(['services as published_services_count' => fn ($services) => $services->published()])
             ->withMin(['services as starting_price' => fn ($services) => $services->published()], 'price')
             ->when(auth()->check(), fn ($query) => $query->addSelect([
-                'is_favorited' => \App\Models\FavoriteSalon::query()->selectRaw('1')
+                'is_favorited' => FavoriteSalon::query()->selectRaw('1')
                     ->whereColumn('salon_id', 'salons.id')->where('user_id', auth()->id())->limit(1),
             ]));
     }

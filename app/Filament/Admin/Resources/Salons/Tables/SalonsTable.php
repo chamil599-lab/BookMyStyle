@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Salons\Tables;
 
+use App\Support\PublicUrl;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -45,19 +46,19 @@ class SalonsTable
                     ->toggleable(),
                 TextColumn::make('facebook_page')
                     ->label('Facebook')
-                    ->url(fn ($record) => \App\Support\PublicUrl::link($record->facebook_page))
+                    ->url(fn ($record) => PublicUrl::link($record->facebook_page))
                     ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->limit(30),
                 TextColumn::make('instagram_page')
                     ->label('Instagram')
-                    ->url(fn ($record) => \App\Support\PublicUrl::link($record->instagram_page))
+                    ->url(fn ($record) => PublicUrl::link($record->instagram_page))
                     ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->limit(30),
                 TextColumn::make('tiktok_page')
                     ->label('TikTok')
-                    ->url(fn ($record) => \App\Support\PublicUrl::link($record->tiktok_page))
+                    ->url(fn ($record) => PublicUrl::link($record->tiktok_page))
                     ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->limit(30),

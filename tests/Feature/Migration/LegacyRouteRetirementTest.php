@@ -10,12 +10,14 @@ use App\Models\User;
 use App\Models\UserSubscription;
 use App\Services\BookingService;
 use App\Services\SubscriptionService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     $this->travelTo(now()->startOfDay()->addHours(8));
@@ -179,10 +181,10 @@ it('denies stale owner service calls after approval is revoked', function () {
     $pending = $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
     DB::table('users')->where('id', $this->owner->id)->update(['is_approved' => false]);
     expect(fn () => $this->subscriptions->updatePayment($pending, $this->owner, ['payment_method' => 'one_pay']))
-        ->toThrow(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
     $pending->delete();
     expect(fn () => $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner))
-        ->toThrow(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });
 
 it('denies stale administrative subscription approval cancellation and trial calls', function () {
@@ -191,7 +193,7 @@ it('denies stale administrative subscription approval cancellation and trial cal
     foreach ([fn () => $this->subscriptions->approve($pending, $this->admin, 100),
         fn () => $this->subscriptions->cancel($this->paid, $this->admin),
         fn () => $this->subscriptions->grantTrial($this->owner, $this->package, $this->admin)] as $action) {
-        expect($action)->toThrow(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        expect($action)->toThrow(HttpException::class);
     }
     expect($pending->fresh()->status)->toBe('pending')->and($this->paid->fresh()->status)->toBe('active');
 });
@@ -220,9 +222,9 @@ it('rechecks verification in shared booking writes even when the caller holds a 
     $booking = $this->bookings->create($this->data);
     DB::table('users')->where('id', $actor->id)->update(['email_verified_at' => null]);
     expect(fn () => $this->bookings->changeStatus($booking, 'approved', $actor))
-        ->toThrow(\Illuminate\Auth\Access\AuthorizationException::class);
+        ->toThrow(AuthorizationException::class);
     expect(fn () => $this->bookings->create(array_replace($this->data, ['time' => '11:00']), $actor, true))
-        ->toThrow(\Illuminate\Auth\Access\AuthorizationException::class);
+        ->toThrow(AuthorizationException::class);
     expect($booking->fresh()->status)->toBe('pending')->and(Booking::count())->toBe(1);
     Mail::assertNothingSent();
 })->with(['owner', 'admin']);

@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Resources\Salons\Schemas;
 
+use App\Models\User;
+use App\Support\ManagementAccess;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -11,6 +14,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 
 class SalonForm
 {
@@ -45,11 +49,11 @@ class SalonForm
                                             ->required()
                                             ->maxLength(255),
 
-                                        \Filament\Forms\Components\Select::make('owner_id')
+                                        Select::make('owner_id')
                                             ->label('Owner account')
-                                            ->options(fn () => \App\Models\User::role('owner')->where('is_approved', true)->pluck('name', 'id'))
-                                            ->visible(fn ($operation) => $operation === 'create' && \App\Support\ManagementAccess::admin(auth()->user()))
-                                            ->required(fn ($operation) => $operation === 'create' && \App\Support\ManagementAccess::admin(auth()->user()))
+                                            ->options(fn () => User::role('owner')->where('is_approved', true)->pluck('name', 'id'))
+                                            ->visible(fn ($operation) => $operation === 'create' && ManagementAccess::admin(auth()->user()))
+                                            ->required(fn ($operation) => $operation === 'create' && ManagementAccess::admin(auth()->user()))
                                             ->searchable(),
 
                                         TextInput::make('location')
@@ -124,7 +128,7 @@ class SalonForm
                                                 if (! $record) {
                                                     return;
                                                 }
-                                                \Illuminate\Support\Facades\Gate::authorize('update', $record->fresh());
+                                                Gate::authorize('update', $record->fresh());
                                                 $record->getMedia($component->getCollection())
                                                     ->first(fn ($media) => $media->uuid === $file)
                                                     ?->delete();
@@ -153,7 +157,7 @@ class SalonForm
                                                 if (! $record) {
                                                     return;
                                                 }
-                                                \Illuminate\Support\Facades\Gate::authorize('update', $record->fresh());
+                                                Gate::authorize('update', $record->fresh());
                                                 $record->getMedia($component->getCollection())
                                                     ->first(fn ($media) => $media->uuid === $file)
                                                     ?->delete();

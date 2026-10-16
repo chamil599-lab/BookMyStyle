@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserSubscription;
 use App\Notifications\SubscriptionExpiringNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Schedule;
 use Spatie\Permission\Models\Role;
@@ -52,7 +53,7 @@ it('suppresses reminders when an approved renewal already covers expiry', functi
 it('allows reminder retry after delivery fails instead of marking it successfully sent', function () {
     config(['operations.subscription_reminders_enabled' => true]);
     Notification::shouldReceive('send')->once()->andThrow(new RuntimeException('Synthetic notification failure'));
-    expect(fn () => \Illuminate\Support\Facades\Artisan::call('subscriptions:notify-expiring', ['--send' => true]))
+    expect(fn () => Artisan::call('subscriptions:notify-expiring', ['--send' => true]))
         ->toThrow(RuntimeException::class);
     Notification::fake();
     $this->artisan('subscriptions:notify-expiring --send')->assertSuccessful();

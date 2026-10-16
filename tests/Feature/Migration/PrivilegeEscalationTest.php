@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Admin\Resources\Users\Pages\CreateUser;
 use App\Models\User;
 use App\Services\UserModeration;
 use Filament\Facades\Filament;
@@ -42,7 +43,7 @@ it('denies lower role access to role management and user creation components', f
     $this->actingAs($user, 'web');
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->get('/filament/shield/roles')->assertForbidden();
-    Livewire::test(\App\Filament\Admin\Resources\Users\Pages\CreateUser::class)->assertForbidden();
+    Livewire::test(CreateUser::class)->assertForbidden();
     expect(User::count())->toBe(1);
 })->with(['customer', 'owner']);
 

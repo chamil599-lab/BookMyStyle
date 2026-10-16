@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Salon;
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,7 +18,7 @@ class DatabaseSeeder extends Seeder
             SalonSeeder::class,
             ServicePagesSeeder::class,
             SubscriptionPackageSeeder::class,
-                       
+
         ]);
     }
 }

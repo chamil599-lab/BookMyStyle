@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Auth\GoogleSessionController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::middleware('guest')->group(function () {
-    Route::post('auth/google', \App\Http\Controllers\Auth\GoogleSessionController::class)->middleware('throttle:auth-public')->name('auth.google');
+    Route::post('auth/google', GoogleSessionController::class)->middleware('throttle:auth-public')->name('auth.google');
     Volt::route('register', 'pages.auth.register')
         ->name('register');
 
@@ -20,7 +22,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('logout', function (\App\Livewire\Actions\Logout $logout) {
+    Route::post('logout', function (Logout $logout) {
         $logout();
 
         return redirect('/');

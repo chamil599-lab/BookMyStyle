@@ -4,16 +4,19 @@ namespace App\Observers;
 
 use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
+use App\Notifications\BookingCreatedNotification;
+use App\Notifications\BookingStatusChangedNotification;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class BookingObserver implements \Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit
+class BookingObserver implements ShouldHandleEventsAfterCommit
 {
     public function created(Booking $booking): void
     {
         try {
             $booking->loadMissing(['salon.owner', 'service']);
-            $booking->salon?->owner?->notify(new \App\Notifications\BookingCreatedNotification($booking));
+            $booking->salon?->owner?->notify(new BookingCreatedNotification($booking));
         } catch (\Throwable $exception) {
             report($exception);
         }
@@ -25,7 +28,7 @@ class BookingObserver implements \Illuminate\Contracts\Events\ShouldHandleEvents
         if ($booking->wasChanged('status')) {
             try {
                 $booking->loadMissing(['salon', 'service', 'user']);
-                $booking->user?->notify(new \App\Notifications\BookingStatusChangedNotification($booking));
+                $booking->user?->notify(new BookingStatusChangedNotification($booking));
             } catch (\Throwable $exception) {
                 report($exception);
             }

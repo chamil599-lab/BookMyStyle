@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\UserSubscriptions\Pages;
 
 use App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource;
+use App\Models\User;
 use App\RolesEnum;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -15,7 +16,7 @@ class ListUserSubscriptions extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        /** @var \App\Models\User|null $user */
+        /** @var User|null $user */
         $user = Filament::auth()->user();
         $isAdmin = $user?->hasRole(RolesEnum::ADMIN->value) ?? false;
 

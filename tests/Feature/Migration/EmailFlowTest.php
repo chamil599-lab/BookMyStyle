@@ -1,9 +1,14 @@
 <?php
 
+use App\Mail\OwnerRegistered;
+use App\Mail\UserApproved;
+use App\Mail\UserRejected;
 use App\Models\User;
 use App\Services\AccountService;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use Livewire\Volt\Volt;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -35,21 +40,21 @@ it('renders a password-reset email whose link completes the native reset flow', 
     $url = html_entity_decode($matches[1], ENT_QUOTES);
     $this->get($url)->assertOk();
     $token = basename(parse_url($url, PHP_URL_PATH));
-    \Livewire\Volt\Volt::test('pages.auth.reset-password', ['token' => $token])->set('email', $user->email)
+    Volt::test('pages.auth.reset-password', ['token' => $token])->set('email', $user->email)
         ->set('password', 'new-fixture-password')->set('password_confirmation', 'new-fixture-password')
         ->call('resetPassword')->assertHasNoErrors()->assertRedirect(route('login'));
-    expect(\Illuminate\Support\Facades\Hash::check('new-fixture-password', $user->fresh()->password))->toBeTrue();
+    expect(Hash::check('new-fixture-password', $user->fresh()->password))->toBeTrue();
 });
 
 it('renders each account status email to the intended recipient without a queue worker', function () {
     $user = User::factory()->create();
-    foreach ([\App\Mail\OwnerRegistered::class, \App\Mail\UserApproved::class, \App\Mail\UserRejected::class] as $mail) {
+    foreach ([OwnerRegistered::class, UserApproved::class, UserRejected::class] as $mail) {
         Mail::to($user->email)->send(new $mail($user));
         $message = ($this->messages)()->last()->getOriginalMessage();
         expect($message->getTo()[0]->getAddress())->toBe($user->email)
             ->and($message->getHtmlBody())->toContain('BookMyStyle');
     }
     expect(($this->messages)())->toHaveCount(3);
-    expect((new \App\Mail\UserApproved($user))->render())->toContain(route('dashboard'))
+    expect((new UserApproved($user))->render())->toContain(route('dashboard'))
         ->not->toContain('https://bookmystyle.limach.lk/admin');
 });

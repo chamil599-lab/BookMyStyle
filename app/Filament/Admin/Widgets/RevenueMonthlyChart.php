@@ -9,7 +9,9 @@ use Filament\Widgets\LineChartWidget;
 class RevenueMonthlyChart extends LineChartWidget
 {
     protected ?string $heading = 'Monthly Revenue'; // NOT static
+
     protected ?string $pollingInterval = null;       // NOT static
+
     public int $year;
 
     protected function getData(): array
@@ -35,16 +37,15 @@ class RevenueMonthlyChart extends LineChartWidget
             $monthlyRevenue[$m] = 0;
         }
 
-        $bookings = $bookings->filter(fn($b) => $b->date->format('Y') == $this->year);
+        $bookings = $bookings->filter(fn ($b) => $b->date->format('Y') == $this->year);
 
         foreach ($bookings as $booking) {
             $month = (int) $booking->date->format('n');
             $monthlyRevenue[$month] += $booking->service?->price ?? 0;
-}
-
+        }
 
         return [
-            'labels' => array_map(fn($m) => date('F', mktime(0, 0, 0, $m, 1)), array_keys($monthlyRevenue)),
+            'labels' => array_map(fn ($m) => date('F', mktime(0, 0, 0, $m, 1)), array_keys($monthlyRevenue)),
             'datasets' => [
                 [
                     'label' => 'Revenue (LKR)',
@@ -62,16 +63,14 @@ class RevenueMonthlyChart extends LineChartWidget
 
     protected function getFilters(): array
     {
-    // Example: last 5 years
-    $years = [];
-    for ($i = 0; $i < 5; $i++) {
-        $years[] = now()->subYears($i)->year;
+        // Example: last 5 years
+        $years = [];
+        for ($i = 0; $i < 5; $i++) {
+            $years[] = now()->subYears($i)->year;
+        }
+
+        return [
+            'year' => $this->year, // bind to public property
+        ];
     }
-
-    return [
-        'year' => $this->year, // bind to public property
-    ];
-    }
-
-
 }

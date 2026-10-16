@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('service_pages', function (Blueprint $table) {
-            if (!Schema::hasColumn('service_pages', 'src_url')) {
+            if (! Schema::hasColumn('service_pages', 'src_url')) {
                 $table->string('src_url')->nullable()->after('image');
             }
         });

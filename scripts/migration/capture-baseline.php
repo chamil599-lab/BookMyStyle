@@ -4,6 +4,7 @@
 // Read-only against the configured database. Backups are private local artifacts.
 declare(strict_types=1);
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ foreach ($app['router']->getRoutes() as $route) {
         'action' => $route->getActionName(), 'middleware' => $route->gatherMiddleware()];
 }
 writeJson($public.'/laravel-routes.json', $routes);
-$schedule = $app->make(Illuminate\Console\Scheduling\Schedule::class);
+$schedule = $app->make(Schedule::class);
 writeJson($public.'/schedule.json', array_map(static fn ($event) => [
     'description' => $event->description, 'expression' => $event->expression,
     'timezone' => $event->timezone,
