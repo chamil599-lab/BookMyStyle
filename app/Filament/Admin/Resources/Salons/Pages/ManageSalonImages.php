@@ -38,7 +38,6 @@ class ManageSalonImages extends EditRecord
                         ->deletable()
                         ->downloadable()
                         ->openable()
-                        ->preserveFilenames()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
                         ->maxSize(1024) // 1MB
                         ->helperText('Maximum file size: 1MB. Accepted formats: JPG, PNG, WebP')
@@ -70,7 +69,6 @@ class ManageSalonImages extends EditRecord
                         ->deletable()
                         ->downloadable()
                         ->openable()
-                        ->preserveFilenames()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
                         ->maxSize(1024) // 1MB per file
                         ->helperText('Maximum 10 images. Max file size: 1MB each. Accepted formats: JPG, PNG, WebP')

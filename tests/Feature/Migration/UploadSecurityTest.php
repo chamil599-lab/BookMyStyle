@@ -46,6 +46,44 @@ it('rejects unsafe image URL protocols and allows HTTPS', function () {
         ->assertCreated();
 });
 
+it('rejects oversized raster files without storing them', function () {
+    $this->actingAs($this->admin)->postJson('/api/image-cycles', [
+        'file' => UploadedFile::fake()->image('large.png')->size(10241),
+    ])->assertUnprocessable()->assertJsonValidationErrors('file');
+    expect(Storage::disk('public')->allFiles())->toBe([]);
+    $this->assertDatabaseCount('image_cycles', 0);
+});
+
+it('rejects executable extensions even when the content is a valid raster', function () {
+    $raster = UploadedFile::fake()->image('portrait.png', 10, 10);
+    $this->actingAs($this->admin)->postJson('/api/image-cycles', [
+        'file' => UploadedFile::fake()->createWithContent('portrait.php', file_get_contents($raster->getRealPath())),
+    ])->assertUnprocessable()->assertJsonValidationErrors('file');
+    expect(Storage::disk('public')->allFiles())->toBe([]);
+    $this->assertDatabaseCount('image_cycles', 0);
+});
+
+it('rejects non-admin uploads without persisting files', function ($role) {
+    Role::findOrCreate($role, 'web');
+    $user = User::factory()->create(['is_approved' => true]);
+    $user->assignRole($role);
+    $this->actingAs($user)->postJson('/api/image-cycles', [
+        'file' => UploadedFile::fake()->image('denied.png'),
+    ])->assertForbidden();
+    expect(Storage::disk('public')->allFiles())->toBe([]);
+    $this->assertDatabaseCount('image_cycles', 0);
+})->with(['customer', 'owner']);
+
+it('rejects SVG content through the Filament upload form', function () {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    $this->actingAs($this->admin);
+    Livewire::test(CreateImageCycle::class)->fillForm(['title' => 'Rejected SVG', 'order' => 0, 'status' => 1,
+        'upload_path' => [UploadedFile::fake()->createWithContent('attack.svg', '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"/>')]])
+        ->call('create')->assertHasFormErrors();
+    $this->assertDatabaseCount('image_cycles', 0);
+    expect(Storage::disk('public')->allFiles())->toBe([]);
+});
+
 it('rejects a cached admin whose role has been revoked', function () {
     $this->admin->load('roles');
     User::findOrFail($this->admin->id)->removeRole('admin');
