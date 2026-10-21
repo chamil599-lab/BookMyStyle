@@ -11,7 +11,7 @@
                 <p class="luxury-kicker">BEAUTY, MADE PERSONAL</p><h1 id="salon-heading">{{ $salon->name }}</h1>
                 <p class="salon-location"><span aria-hidden="true">&#8982;</span> {{ $salon->location ?: 'Sri Lanka' }}</p>
                 <a href="#reviews" class="salon-rating">@if($salon->ratings_count)<span class="salon-rating-stars" aria-hidden="true">&#9733;</span><strong>{{ number_format($salon->public_rating ?? 0, 1) }}</strong><span>{{ $salon->ratings_count }} {{ \Illuminate\Support\Str::plural('review', $salon->ratings_count) }}</span>@else<span class="salon-rating-stars" aria-hidden="true">&#9734;</span><span>No reviews yet. Your experience could be the first.</span>@endif<span aria-hidden="true">&nearr;</span></a>
-                @if($salon->description)<p class="salon-description">{{ $salon->description }}</p>@endif
+                @if($salon->description)<p class="salon-description">{{ strip_tags($salon->description) }}</p>@endif
                 <div class="salon-facts"><div><span>THE TREATMENTS</span><strong>{{ $salon->services->count() }} {{ \Illuminate\Support\Str::plural('service', $salon->services->count()) }} to explore</strong></div><div><span>OPENING HOURS</span><strong>@if($salon->open_time && $salon->close_time){{ $salon->open_time->format('H:i') }} &ndash; {{ $salon->close_time->format('H:i') }}@else Contact for hours @endif</strong></div></div>
                 <a href="#booking" class="button salon-book-link">Request appointment <span aria-hidden="true">&nearr;</span></a><p class="salon-confirmation-note">Choose your treatment and time. The salon confirms your request.</p>
             </div>
@@ -25,7 +25,7 @@
                     <div class="salon-service-list">
                         @forelse($salon->services as $service)
                             <article class="salon-service panel" x-show="category === 'all' || category === '{{ $service->department_id }}'">
-                                <div class="salon-service-copy"><p class="luxury-kicker">{{ $service->category?->name ?? $service->department?->name ?? 'General' }}</p><h3>{{ $service->title }}</h3>@if($service->description)<p class="muted">{{ $service->description }}</p>@endif<span class="salon-duration">{{ $service->duration ?? 30 }} minutes</span></div>
+                                <div class="salon-service-copy"><p class="luxury-kicker">{{ $service->category?->name ?? $service->department?->name ?? 'General' }}</p><h3>{{ $service->title }}</h3>@if($service->description)<p class="muted">{{ strip_tags($service->description) }}</p>@endif<span class="salon-duration">{{ $service->duration ?? 30 }} minutes</span></div>
                                 <div class="salon-service-price">@if($salon->show_price)<span>LKR</span><strong>{{ number_format((float) $service->price, 2) }}</strong>@else<span>Pricing</span><strong class="salon-price-on-request">Contact salon for pricing</strong>@endif</div>
                             </article>
                         @empty<div class="salon-empty panel"><span aria-hidden="true">&#10022;</span><p>This salon has no services listed yet.</p><a href="#contact">Contact the salon for more information &rarr;</a></div>@endforelse

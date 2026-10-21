@@ -164,6 +164,22 @@ it('denies WhatsApp access to foreign bookings and revoked owner access', functi
     expect(fn () => $service->url($this->owner, $foreign))->toThrow(HttpException::class);
 });
 
+it('authorizes WhatsApp links when opened rather than while rendering booking rows', function () {
+    $booking = Booking::create(array_replace($this->data, ['status' => 'approved']));
+    $this->actingAs($this->owner);
+    $url = route('bookings.whatsapp', $booking);
+    $this->get($url)->assertRedirect(app(BookingWhatsApp::class)->url($this->owner, $booking));
+
+    $foreignSalon = $this->salon->replicate();
+    $foreignSalon->fill(['created_by' => $this->admin->id])->save();
+    $foreign = Booking::create(array_replace($this->data, ['salon_id' => $foreignSalon->id]));
+    $this->get(route('bookings.whatsapp', $foreign))->assertForbidden();
+
+    $this->paid->update(['ends_at' => now()->subMinute()]);
+    $this->get($url)->assertForbidden();
+    $this->actingAs($this->customer)->get($url)->assertForbidden();
+});
+
 it('keeps appointment wall times identical for different browser offsets including midnight boundaries', function () {
     $this->package->update(['calendar' => true]);
     $booking = Booking::create(array_replace($this->data, ['time' => '00:30', 'status' => 'completed']));

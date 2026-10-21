@@ -99,7 +99,7 @@ class Salon extends Model implements HasMedia
 
     public function scopePubliclyVisible($query)
     {
-        return $query->whereHas('owner', fn ($owner) => $owner->where('is_approved', true)
+        return $query->whereNull('salons.deleted_at')->whereHas('owner', fn ($owner) => $owner->where('is_approved', true)
             ->whereHas('roles', fn ($roles) => $roles->where('name', 'owner')->where('guard_name', 'web')));
     }
 

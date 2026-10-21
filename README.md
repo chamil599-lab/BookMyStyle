@@ -2,6 +2,8 @@
 
 Salon discovery and booking application built with Laravel, Blade/Livewire and Filament. Public/customer pages use Blade; owner/administrator management uses Filament. Retained APIs support reviewed external clients. There is no React frontend.
 
+Production deployment progress for `https://bookmystyle.limach.lk` is recorded in [the 21 October 2026 cPanel deployment record](docs/deployment/cpanel-2026-10-21.md). The user reports the site loading; host configuration/key checks and migration completion were confirmed through private setup reports. Integration checks remain open. Follow [the no-Terminal upload instructions](deployment/cpanel/UPLOAD-STEPS.md) for the split public/private layout and use the host's confirmed `/usr/local/bin/php` CLI executable.
+
 ## Local development
 
 Requirements: PHP 8.2+ with the extensions required by composer.lock, Composer, a compatible Node release (CI uses Node 22), npm and MySQL. Commit both lockfiles; install with `composer install` and `npm ci`.

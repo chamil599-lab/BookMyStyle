@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingWhatsAppController;
 use App\Http\Controllers\CustomerDashboardController;
 use App\Http\Controllers\LegacyDashboardController;
 use App\Http\Controllers\RetiredManagementController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionRequiredController;
 use App\Http\Middleware\PrivateAccountResponse;
 use App\Http\Middleware\RecordPublicVisit;
+use App\Http\Middleware\RestrictBrowserRedirects;
 use App\Services\CustomerDashboard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +28,12 @@ Route::middleware(RecordPublicVisit::class)->group(function () {
     Route::view('/privacy-policy', 'storefront.privacy', ['title' => 'Privacy Policy'])->name('privacy');
 });
 Route::get('/sitemap.xml', [StorefrontController::class, 'sitemap'])->name('sitemap');
+Route::get('/filament/bookings/{booking}/whatsapp', BookingWhatsAppController::class)
+    ->whereNumber('booking')
+    ->middleware([PrivateAccountResponse::class, 'auth', 'verified', 'approved'])
+    // The controller builds a fixed wa.me destination after authorization.
+    ->withoutMiddleware(RestrictBrowserRedirects::class)
+    ->name('bookings.whatsapp');
 Route::get('/robots.txt', [StorefrontController::class, 'robots']);
 Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -118,3 +126,10 @@ Route::get('/owner/{path?}', LegacyDashboardController::class)
     ->middleware([PrivateAccountResponse::class, 'auth', 'verified', 'role:owner', 'approved'])->name('legacy.owner');
 
 require __DIR__.'/auth.php';
+
+require __DIR__.'/mobile-admin-approval.php';
+
+// Website-approved native owner sign-in.
+require __DIR__.'/mobile-owner-approval.php';
+
+require __DIR__.'/account-privacy.php';

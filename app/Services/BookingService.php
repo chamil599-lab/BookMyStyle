@@ -24,6 +24,7 @@ class BookingService
 
         return DB::transaction(function () use ($data, $actor, $management, $ownerId) {
             $salon = $this->lockSalon((int) $data['salon_id'], $ownerId);
+            abort_if($salon->deleted_at !== null, 422, 'This salon is archived and cannot accept new bookings.');
             $owner = User::whereKey($salon->created_by)->lockForUpdate()->firstOrFail();
             if ($management) {
                 $actor = $actor?->fresh();
@@ -143,6 +144,9 @@ class BookingService
 
     public function timeSlots(Salon $salon, string $date, Service $service): array
     {
+        if ($salon->deleted_at !== null) {
+            return [];
+        }
         Validator::make(['date' => $date], ['date' => 'required|date_format:Y-m-d'])->validate();
         abort_unless((int) $service->created_by === (int) $salon->created_by, 404);
         $bookings = Booking::where('salon_id', $salon->id)->whereDate('date', $date)

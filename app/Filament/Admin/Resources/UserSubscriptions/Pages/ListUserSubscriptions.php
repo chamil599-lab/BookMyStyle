@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\UserSubscriptions\Pages;
 
+use App\Filament\Admin\Pages\SubscriptionPlans;
 use App\Filament\Admin\Resources\UserSubscriptions\UserSubscriptionResource;
 use App\Models\User;
 use App\RolesEnum;
@@ -34,7 +35,7 @@ class ListUserSubscriptions extends ListRecords
                 ->label($hasSubscription ? 'Change Plan' : 'Choose a Package')
                 ->icon($hasSubscription ? 'heroicon-m-arrow-path' : 'heroicon-m-plus')
                 ->color($hasSubscription ? 'warning' : 'primary')
-                ->action(fn () => redirect()->route('subscription.required')),
+                ->url(SubscriptionPlans::getUrl(panel: 'admin')),
         ];
     }
 }

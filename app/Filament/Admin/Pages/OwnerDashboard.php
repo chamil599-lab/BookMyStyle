@@ -35,10 +35,7 @@ class OwnerDashboard extends Page
         $user = Filament::auth()->user()->fresh();
         $salonIds = Salon::where('created_by', $user->id)->pluck('id');
 
-        $bookings = BookingValue::query($salonIds)
-            ->get();
-
-        $totalEarnings = $bookings->sum(fn ($b) => $b->service?->price ?? 0);
+        $totalEarnings = BookingValue::total(BookingValue::query($salonIds));
         $totalBookings = Booking::whereIn('salon_id', $salonIds)->count();
 
         return [

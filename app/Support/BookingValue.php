@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\Booking;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /** Current-price estimates for confirmed appointments, not a payment ledger. */
 class BookingValue
@@ -19,9 +20,13 @@ class BookingValue
     public static function chart(Builder $query, Carbon $start, Carbon $end, bool $monthly = false): array
     {
         $format = $monthly ? 'Y-m' : 'Y-m-d';
-        $values = $query->whereBetween('date', [$start->toDateString(), $end->toDateString()])
-            ->get()->groupBy(fn ($booking) => $booking->date->format($format))
-            ->map(fn ($group) => $group->sum(fn ($booking) => $booking->service?->price ?? 0));
+        $period = $monthly ? 'SUBSTR(bookings.date, 1, 7)' : 'bookings.date';
+        $values = (clone $query)->reorder()
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+            ->toBase()
+            ->selectRaw("{$period} as period, SUM((SELECT services.price FROM services WHERE services.id = bookings.service_id)) as value")
+            ->groupByRaw($period)
+            ->pluck('value', 'period');
         $labels = $data = [];
         for ($date = $start->copy(); $date->lte($end); $monthly ? $date->addMonthNoOverflow() : $date->addDay()) {
             $labels[] = $date->format($monthly ? 'M Y' : 'M d');
@@ -29,5 +34,13 @@ class BookingValue
         }
 
         return compact('labels', 'data');
+    }
+
+    public static function total(Builder $query): float
+    {
+        // Include archived services, just as the reporting relationship does.
+        return (float) (clone $query)->toBase()->sum(DB::raw(
+            '(SELECT services.price FROM services WHERE services.id = bookings.service_id)'
+        ));
     }
 }
