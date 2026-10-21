@@ -151,3 +151,18 @@ Route::middleware(PrivateAccountResponse::class)->prefix('auth')->group(function
         Route::post('/change-password', [AuthController::class, 'changePassword']);
     });
 });
+
+// Native owner mobile API (existing routes remain unchanged).
+require __DIR__.'/mobile-owner.php';
+
+// Role-protected native administration.
+require __DIR__.'/mobile-admin.php';
+
+require __DIR__.'/mobile-admin-login.php';
+
+// Website-approved native owner sign-in.
+require __DIR__.'/mobile-owner-login.php';
+
+require __DIR__.'/mobile-push.php';
+
+require __DIR__.'/mobile-catalogue.php';

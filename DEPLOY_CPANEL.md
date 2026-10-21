@@ -1,8 +1,41 @@
 # Blade and Filament deployment on cPanel
 
+## Deployment progress — 21 October 2026
+
+The user uploaded the prepared private application and public-file archives using cPanel File Manager, extracted them, and deleted the uploaded ZIPs. The user reports that the website loads. See [the deployment record](docs/deployment/cpanel-2026-10-21.md) for confirmed setup results and remaining checks, and [the no-Terminal instructions](deployment/cpanel/UPLOAD-STEPS.md) for the exact layout and setup modes.
+
+- Private application: `/home/limachlk/bookmystyle`.
+- Public document root: `/home/limachlk/public_html/bookmystyle.limach.lk`.
+- Confirmed PHP CLI: `/usr/local/bin/php`, PHP 8.4.26. `/opt/alt/php84/usr/bin/php` also returned PHP 8.4.26 CLI.
+- `/usr/bin/php` is CGI/FastCGI on this host. The earlier EasyApache example `/opt/cpanel/ea-php84/root/usr/bin/php` does not exist here.
+- The private setup report confirmed the configuration/database connection check, valid application key, and no missing checked extensions. Migrations are marked completed; repeated runs returned `already_completed`.
+- The user confirmed removing the temporary preparation cron. A successful preparation report and administrator initialization/login have not been independently verified.
+
+For any future installation update, preserve the production key, database and uploaded media. The fresh-install key/administrator initialization steps are not an upgrade procedure. Do not reset the production database or re-run demo seeders.
+
+## Target: bookmystyle.limach.lk
+
+The production origin is `https://bookmystyle.limach.lk`. Start from `.env.production.example`, supply the actual cPanel database and SMTP credentials privately, and preserve the existing production `APP_KEY`. The template uses host-only session cookies for this subdomain.
+
+This host uses the split layout recorded above. The package generator adjusts the public entry point to load `/home/limachlk/bookmystyle` and binds Laravel's public path to `/home/limachlk/public_html/bookmystyle.limach.lk` for both HTTP and Artisan. On another host that permits changing the document root, pointing directly to the application's `public` directory is also supported by the source. Keep the main domain's application separate.
+
+The SMTP template uses `MAIL_SCHEME=smtp` with port 587. If your provider specifies implicit TLS on port 465, use `MAIL_SCHEME=smtps` and `MAIL_PORT=465`. `MAIL_ENCRYPTION` is not read by this project's mail configuration. Verify delivery using the provider's actual settings.
+
+The local review before upload found three pending migrations: two dashboard index migrations and `2026_10_20_200000_create_push_tables`. The fresh host's migration helper subsequently reported completion. Local and server databases are separate; never infer server migration status from local status. Before future upgrades, back up the server database and review its actual pending migrations.
+
+Configure a once-per-minute cron entry for Laravel's scheduler, using the host's confirmed PHP executable and application path:
+
+```cron
+* * * * * /usr/local/bin/php /home/limachlk/bookmystyle/artisan schedule:run >> /home/limachlk/bookmystyle-scheduler.log 2>&1
+```
+
+`QUEUE_CONNECTION=database` also requires a queue worker. Use the host's supported worker management; where persistent workers are unavailable, a cron-driven `queue:work --stop-when-empty --tries=3 --timeout=60` needs overlap protection. Confirm this with the host before enabling push delivery. Store Firebase credentials outside `public` and set `FIREBASE_CREDENTIALS` to their absolute path.
+
+Reminder and cleanup switches remain disabled in the template. Enable the required switches only after verifying their tables, scheduler, queue and delivery configuration. Confirm active tasks with `php artisan schedule:list`. Include `public/build` and `public/images/brand-mark-blue.svg` in the upload; Git ignores built assets by design. Run the strict readiness check against the final host configuration before switching traffic.
+
 Laravel now serves the public site, authentication and customer pages through Blade/Livewire, and owner/admin management through Filament. The retired React project has been removed. Keep Laravel routing in place; SPA fallback rewrites would replace native routes.
 
-This is a release runbook, not confirmation that production is ready. No deployment or imported-database migration has been performed. See docs/migration/step-14-deployment-readiness.md and docs/migration/rollback.md.
+This is a release runbook, not blanket production-readiness approval. The deployment progress above supersedes historical statements that no upload or host migration had occurred. See docs/migration/step-14-deployment-readiness.md and docs/migration/rollback.md for earlier evidence and recovery guidance.
 
 ## 1. Prepare an isolated release
 

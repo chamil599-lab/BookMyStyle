@@ -2,6 +2,7 @@
 
 use App\Filament\Admin\Pages\AnalyticsDashboard;
 use App\Filament\Admin\Pages\Dashboard;
+use App\Filament\Admin\Resources\Bookings\Pages\ListBookings;
 use App\Filament\Admin\Resources\SubscriptionPackages\Pages\EditSubscriptionPackage;
 use App\Filament\Admin\Resources\Users\Pages\CreateUser;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
@@ -21,6 +22,7 @@ use App\Services\UserModeration;
 use App\Support\BookingValue;
 use Filament\Facades\Filament;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
@@ -63,6 +65,46 @@ afterEach(function () {
     $this->travelBack();
 });
 
+it('calculates owner booking cards in one scoped aggregate query', function () {
+    $this->actingAs($this->owner);
+    $this->owner->load('roles');
+    Booking::create(array_replace($this->data, ['status' => 'pending', 'date' => today()->toDateString()]));
+    Booking::create(array_replace($this->data, ['status' => 'approved']));
+    $foreign = $this->salon->replicate();
+    $foreign->fill(['created_by' => $this->admin->id])->save();
+    Booking::create(array_replace($this->data, ['salon_id' => $foreign->id, 'status' => 'pending']));
+
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+    $stats = (new ListBookings)->getBookingOverview();
+    $queries = DB::getQueryLog();
+    DB::disableQueryLog();
+
+    expect(array_column($stats, 'value'))->toBe([2, 1, 1, 1])
+        ->and(count($queries))->toBe(1);
+});
+
+it('renders booking filters and generates row links without per-row database queries', function () {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    $this->actingAs($this->owner);
+    $booking = Booking::create(array_replace($this->data, ['status' => 'pending']));
+    $page = Livewire::test(ListBookings::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$booking]);
+    $action = $page->instance()->getTable()->getAction('whatsapp');
+
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+    for ($i = 0; $i < 25; $i++) {
+        expect($action->record($booking)->getUrl())->toBe(route('bookings.whatsapp', $booking));
+    }
+    $queries = DB::getQueryLog();
+    DB::disableQueryLog();
+    expect($queries)->toHaveCount(0);
+
+    $page->set('activeTab', 'approved')->assertCanNotSeeTableRecords([$booking]);
+});
+
 it('separates scheduled renewals and historical payment totals without overlapping buckets', function () {
     $make = fn ($status, $start, $end, $amount = 100) => UserSubscription::create([
         'user_id' => $this->owner->id, 'package_id' => $this->package->id, 'amount_paid' => $amount,
@@ -86,12 +128,34 @@ it('uses appointment dates and soft deleted service prices with exact inclusive 
         Booking::create(array_replace($this->data, ['date' => $date, 'status' => 'completed']));
     }
     $this->service->delete();
+    expect(BookingValue::total(BookingValue::query([$this->salon->id])))->toBe(400.0);
     $chart = BookingValue::chart(BookingValue::query([$this->salon->id]), today()->subDays(29), today());
     expect($chart['labels'])->toHaveCount(30)->and($chart['data'][0])->toBe(100.0)->and($chart['data'][29])->toBe(100.0)
         ->and(array_sum($chart['data']))->toBe(200.0);
     $monthly = BookingValue::chart(BookingValue::query(), today()->startOfMonth()->subMonthsNoOverflow(11), today(), true);
     expect($monthly['labels'])->toHaveCount(12)->and(array_unique($monthly['labels']))->toHaveCount(12)
         ->and($monthly['labels'][10])->toBe('Feb 2026')->and($monthly['data'][11])->toBe(300.0);
+});
+
+it('aggregates monthly payments and top packages without changing reporting buckets', function () {
+    $this->travelTo(Carbon::parse('2026-05-15 08:00:00'));
+    $this->paid->update(['starts_at' => '2026-05-01', 'ends_at' => '2026-05-25']);
+    foreach ([['canceled', '2026-04-01', 80], ['active', '2026-06-01', 200], ['pending', '2026-05-01', 500]] as [$status, $start, $amount]) {
+        UserSubscription::create(['user_id' => $this->owner->id, 'package_id' => $this->package->id,
+            'status' => $status, 'starts_at' => $start, 'ends_at' => '2026-07-01', 'amount_paid' => $amount]);
+    }
+    $this->package->delete();
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    $this->actingAs($this->admin);
+    $page = new Dashboard;
+    $monthly = $page->getMonthlySubRevenueProperty();
+    expect($monthly['data'])->toHaveCount(12)
+        ->and($monthly['data'][10])->toBe(80.0)
+        ->and($monthly['data'][11])->toBe(100.0)
+        ->and(array_sum($monthly['data']))->toBe(180.0)
+        ->and($page->getTopPackagesProperty()->all())->toBe([
+            ['name' => 'Basic', 'count' => 1, 'revenue' => 100.0],
+        ]);
 });
 
 it('rejects forged analytics filters and expired or revoked feature access on live updates', function () {

@@ -32,7 +32,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('filament')
             ->homeUrl(fn () => route('dashboard'))
             ->colors([
-                'primary' => Color::Green,
+                'primary' => array_replace(Color::hex('#2271b1'), [
+                    600 => '#2271b1',
+                    700 => '#1d639c',
+                ]),
                 'danger' => Color::Red,
                 'gray' => Color::Neutral,
                 'info' => Color::Blue,
@@ -40,11 +43,11 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Amber,
             ])
             ->sidebarCollapsibleOnDesktop()
-            ->sidebarWidth('18rem')
+            ->sidebarWidth('13.75rem')
             ->maxContentWidth(Width::Full)
             ->brandLogo(null)
             ->brandName(fn (): string => auth()->check() ? auth()->user()->name.'\'s Dashboard' : 'Dashboard')
-            ->favicon(asset('images/site-icon.png'))
+            ->favicon(asset('images/brand-mark-blue.svg'))
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([

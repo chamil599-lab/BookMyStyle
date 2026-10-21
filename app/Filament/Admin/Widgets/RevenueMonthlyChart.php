@@ -50,7 +50,8 @@ class RevenueMonthlyChart extends LineChartWidget
                 [
                     'label' => 'Revenue (LKR)',
                     'data' => array_values($monthlyRevenue),
-                    'backgroundColor' => '#10B981', // green bars
+                    'backgroundColor' => '#2271b1',
+                    'borderColor' => '#2271b1',
                 ],
             ],
         ];

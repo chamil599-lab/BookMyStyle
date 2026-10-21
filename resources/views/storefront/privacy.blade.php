@@ -12,7 +12,7 @@
           </div>
 
           
-          <div class="prose prose-lg max-w-none">
+          <div class="prose prose-lg max-w-none"><section id="account-deletion" class="mb-8"><h2 class="text-2xl font-bold mb-4">Account and data deletion</h2><p>Customers, salon owners and administrators can <a class="underline" href="/delete-account">request BookMyStyle account and associated data deletion</a> without the app or an active subscription. The request page explains ownership verification, account review and retained records.</p></section>
             <section class="mb-8">
               <h2 class="text-2xl font-bold text-[var(--ink)] mb-4">Introduction</h2>
               <p class="text-[var(--ink)] leading-relaxed">

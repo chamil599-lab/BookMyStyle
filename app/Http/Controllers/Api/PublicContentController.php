@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreImageCycleRequest;
 use App\Models\Booking;
-use App\Models\Dealspage;
+use App\Models\DealsPage;
 use App\Models\Department;
 use App\Models\ImageCycle;
 use App\Models\Salon;
@@ -83,7 +83,7 @@ class PublicContentController extends Controller
 
     public function dealsPages(): JsonResponse
     {
-        $items = Dealspage::where('status', 1)
+        $items = DealsPage::where('status', 1)
             ->orderByDesc('created_at')
             ->get([
                 'id', 'category', 'title', 'salon', 'original_price',

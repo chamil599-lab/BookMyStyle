@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Admin\Pages\SubscriptionCheckout;
 use App\Models\SubscriptionPackage;
 use App\Models\User;
 use App\Services\SubscriptionService;
@@ -35,11 +36,7 @@ class SubscriptionController extends Controller
                 ->with('error', 'You have a pending subscription. Please wait for admin approval before changing plans.');
         }
 
-        // Check if this is a plan change (owner has active subscription)
-        $activeSubscription = $user->activeSubscription;
-        $isChangingPlan = $activeSubscription && $activeSubscription->package_id !== $package->id;
-
-        return view('subscription.checkout', compact('package', 'isChangingPlan'));
+        return redirect(SubscriptionCheckout::getUrl(['package' => $package->id], panel: 'admin'));
     }
 
     public function subscribe(Request $request, SubscriptionPackage $package)

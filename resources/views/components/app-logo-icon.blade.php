@@ -1,1 +1,1 @@
-<img src="{{ asset('images/brand-mark.png') }}" alt="" width="48" height="48" {{ $attributes->merge(['class' => 'brand-emblem']) }} style="display:inline-block;flex-shrink:0;object-fit:contain;background:#f5f0e6;border:1px solid #d5c9b2;border-radius:50%;padding:4px;">
+<img src="{{ asset('images/brand-mark-blue.svg') }}" alt="" width="48" height="48" {{ $attributes->merge(['class' => 'brand-emblem']) }} style="display:inline-block;flex-shrink:0;object-fit:contain;border-radius:50%;">

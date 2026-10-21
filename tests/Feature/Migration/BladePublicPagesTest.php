@@ -107,10 +107,10 @@ it('does not expose hidden prices in HTML, Livewire markup or public services JS
     $this->getJson('/api/salons/'.$this->salon->id)->assertOk()->assertJsonMissingPath('services.0.price');
 });
 
-it('escapes salon and review content and rejects executable social URLs', function () {
+it('strips salon HTML, escapes reviews and rejects executable social URLs', function () {
     $this->salon->update(['description' => '<script>alert(1)</script>', 'facebook_page' => 'javascript:alert(1)']);
     SalonRating::create(['salon_id' => $this->salon->id, 'email' => 'private@example.test', 'rating' => 5, 'review' => '<script>alert(2)</script>']);
-    $this->get('/salon/'.$this->salon->id)->assertOk()->assertSee('&lt;script&gt;alert(1)', false)->assertDontSee('<script>alert(1)', false)
+    $this->get('/salon/'.$this->salon->id)->assertOk()->assertSee('<p class="salon-description">alert(1)</p>', false)->assertDontSee('<script>alert(1)', false)
         ->assertDontSee('javascript:alert(1)', false)->assertDontSee('private@example.test')->assertSee('&lt;script&gt;alert(2)', false);
     expect(PublicUrl::image('data:image/svg+xml,test'))->toBeNull()->and(PublicUrl::image('//evil.test/image'))->toBeNull()
         ->and(PublicUrl::image('../private.txt'))->toBeNull()->and(PublicUrl::link('https://example.test'))->toBe('https://example.test');

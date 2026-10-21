@@ -9,16 +9,17 @@ class SubscriptionSummary
     public function counts(): array
     {
         $counts = array_fill_keys(['active', 'scheduled', 'pending', 'expired', 'canceled', 'rejected'], 0);
-        $records = UserSubscription::select('status', 'starts_at', 'ends_at')->get();
+        $now = now();
+        $records = UserSubscription::query()->toBase()
+            ->selectRaw("CASE WHEN status = 'active' THEN CASE
+                WHEN ends_at IS NULL OR ends_at <= ? THEN 'expired'
+                WHEN starts_at > ? THEN 'scheduled'
+                ELSE 'active' END ELSE status END as summary_status, COUNT(*) as total", [$now, $now])
+            ->groupBy('summary_status')->get();
         foreach ($records as $record) {
-            $status = $record->status;
-            if ($status === 'active') {
-                $status = ! $record->ends_at || $record->ends_at <= now() ? 'expired'
-                    : ($record->starts_at && $record->starts_at > now() ? 'scheduled' : 'active');
-            }
-            $counts[$status] = ($counts[$status] ?? 0) + 1;
+            $counts[$record->summary_status] = (int) $record->total;
         }
 
-        return ['total' => $records->count()] + $counts;
+        return ['total' => array_sum($counts)] + $counts;
     }
 }
