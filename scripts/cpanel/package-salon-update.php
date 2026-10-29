@@ -45,6 +45,29 @@ foreach ($paths as $path) {
 if (count($migrations) !== 2 || ! isset($application['app/Models/Salon.php'], $application['resources/views/storefront/salon.blade.php'])) {
     throw new RuntimeException('Expected feature files are missing.');
 }
+$installed = json_decode(file_get_contents($root.'/vendor/composer/installed.json'), true, 512, JSON_THROW_ON_ERROR);
+if (($installed['dev'] ?? true) !== false) {
+    throw new RuntimeException('Install locked production dependencies with --no-dev before packaging.');
+}
+$locked = json_decode($git(['show', $commit.':composer.lock']), true, 512, JSON_THROW_ON_ERROR);
+$installedVersions = array_column($installed['packages'], 'version', 'name');
+foreach ($locked['packages'] as $package) {
+    if (($installedVersions[$package['name']] ?? null) !== $package['version']) {
+        throw new RuntimeException('Production dependencies do not match the candidate lockfile.');
+    }
+}
+$application['composer.lock'] = $git(['show', $commit.':composer.lock']);
+// Ship the audited Mime patch and matching production Composer metadata, not a full vendor replacement.
+foreach (['vendor/symfony/mime', 'vendor/composer'] as $directory) {
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root.'/'.$directory, FilesystemIterator::SKIP_DOTS)) as $file) {
+        if ($file->isLink() || ! $file->isFile()) {
+            throw new RuntimeException('Unexpected dependency patch entry.');
+        }
+        $path = str_replace('\\', '/', substr($file->getPathname(), strlen($root) + 1));
+        $application[$path] = file_get_contents($file->getPathname());
+    }
+}
+$application['vendor/autoload.php'] = file_get_contents($root.'/vendor/autoload.php');
 $public = [];
 $build = $root.'/public/build';
 if (! is_file($build.'/manifest.json')) {

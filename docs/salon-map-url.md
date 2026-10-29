@@ -14,7 +14,7 @@ Review and release this feature through the repository's normal Git workflow. Ba
 
 Source rollback can retain the nullable column and its saved data. Reversing the migration removes all saved map URLs, so do not drop the column as a routine rollback.
 
-The feature is available on the local Herd site; it has not been pushed or deployed to production.
+The feature is available on the local Herd site and pushed to `origin/feature/salon-map-url`. [Draft PR #2](https://github.com/chamil599-lab/BookMyStyle/pull/2) is open for review; production deployment remains pending. See [the cPanel upgrade steps](../deployment/cpanel/SALON-FEATURES-UPDATE.md) for the prepared update process and the targeted dependency security patch discovered during its audit.
 
 ## Local verification
 

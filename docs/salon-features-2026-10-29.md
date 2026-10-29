@@ -4,7 +4,7 @@ Reference date: 29 October 2026 (Asia/Colombo).
 
 ## Current implementation and Git status
 
-Both features are available in the main project folder served by the local Herd site at `https://bookmystyle.test`. They have not been pushed, merged into `main`, or deployed to the hosted site.
+Both features are available in the main project folder served by the local Herd site at `https://bookmystyle.test` and pushed to `origin/feature/salon-map-url`. [Draft PR #2](https://github.com/chamil599-lab/BookMyStyle/pull/2) is open. They have not been merged into `main` or deployed to the hosted site. The user selected cPanel File Manager and temporary Cron Jobs for the hosted upgrade.
 
 The current branch is `feature/salon-map-url`. It was created from the local preview branch and includes both feature commits:
 
@@ -63,7 +63,9 @@ See [the detailed map-link reference](salon-map-url.md).
 | Closed dates | `2026_10_29_000001_create_salon_closed_dates_table.php` |
 | Map URL | `2026_10_29_000002_add_map_url_to_salons_table.php` |
 
-Both additive migrations were applied to the verified local Herd MySQL database. This does not establish migration status on the hosted database. No dependency or environment changes are required by these features.
+Both additive migrations were applied to the verified local Herd MySQL database. This does not establish migration status on the hosted database. The features themselves need no dependency or environment changes. During the fresh hosted-upgrade audit, CVE-2026-45070 was reported for the existing Symfony Mime 7.4.19 lock, so the candidate also includes the targeted 7.4.22 security patch and matching production Composer metadata.
+
+The cPanel update uses three patch archives and a private CLI-only helper. See [the exact upload and cron sequence](../deployment/cpanel/SALON-FEATURES-UPDATE.md). Unlike the fresh-install helper, this process preserves the production key and existing records, runs only the two feature migrations, verifies installed update files, refreshes caches and reopens the site after successful preparation.
 
 Before a hosted update:
 

@@ -4,6 +4,10 @@ Track user-visible changes here. Versions use MAJOR.MINOR.PATCH; Git release tag
 
 ## [Unreleased]
 
+### Security
+
+- Update Symfony Mime from 7.4.19 to 7.4.22 for CVE-2026-45070, discovered during the hosted-upgrade audit.
+
 ### Added
 
 - Owners can save an optional Map URL; salon pages show a map icon/link and use the saved destination for directions. The API exposes map_url. Requires the add_map_url_to_salons_table migration.

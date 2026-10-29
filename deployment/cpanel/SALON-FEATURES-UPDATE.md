@@ -1,12 +1,14 @@
 # Update the existing hosted salon features
 
-This is an upgrade for `https://bookmystyle.limach.lk`, not a fresh installation. It adds closed-date calendars and salon map URLs. The bundle is prepared from committed source and excludes unrelated local edits, credentials, databases, uploads and dependencies. No production update has been performed merely by creating or uploading these files.
+This is an upgrade for `https://bookmystyle.limach.lk`, not a fresh installation. It adds closed-date calendars and salon map URLs, plus the targeted Symfony Mime security patch described below. The bundle is prepared from committed source and excludes unrelated local edits, credentials, databases, uploads and development dependencies. No production update has been performed merely by creating or uploading these files.
 
 The feature branch and draft PR must be reviewed through the normal Git workflow before rollout. The package's manifest identifies its exact candidate source commit; it is not a published version tag.
 
 ## Before uploading
 
-Back up the hosted database, current application files and public assets using cPanel. Keep the existing `.env`, `APP_KEY`, uploaded media, `storage` content and `vendor` directory. Keep the backup outside `public_html`. The helper does not create a database backup for you. Stop any queue worker during the maintenance window, and restart it after the update through the host's existing process; do not introduce a new permanent worker/cron configuration for this update.
+Back up the hosted database, current application files, dependency files and public assets using cPanel. Keep the existing `.env`, `APP_KEY`, uploaded media, `storage` content and unrelated `vendor` packages. Keep the backup outside `public_html`. The helper does not create a database backup for you. Stop any queue worker during the maintenance window, and restart it after the update through the host's existing process; do not introduce a new permanent worker/cron configuration for this update.
+
+The fresh release audit identified CVE-2026-45070 in the existing `symfony/mime` 7.4.19 lock. The application patch includes 7.4.22, the matching `composer.lock`, and production Composer autoload/installed-package metadata. Other locked package versions are unchanged. This is a patch to the existing dependency installation, not a replacement of the whole `vendor` directory.
 
 The confirmed PHP CLI is `/usr/local/bin/php` (PHP 8.4). `/usr/bin/php` is CGI/FastCGI and is unsuitable. Do not use the old `ops/setup.php`, `--new-key`, or `--initialize` for this upgrade, and do not delete old installation completion markers.
 
@@ -57,7 +59,7 @@ While the site is in maintenance:
 2. Extract **03-salon-update-public.zip** into `/home/limachlk/public_html/bookmystyle.limach.lk`, allowing replacement of `build/manifest.json` and adding the included hashed assets.
 3. Delete the uploaded ZIPs after extraction. Confirm there is no extra enclosing folder.
 
-These are patches. Do not delete the existing application or public directory first. Do not replace the hosted `bootstrap/app.php`, `index.php`, `.env`, dependencies, media link or uploads. Keep existing hashed build assets for source rollback; the new manifest selects the new files.
+These are patches. Do not delete the existing application, public directory or `vendor` directory first. Allow replacement of the included `vendor/symfony/mime`, `vendor/composer` metadata, `vendor/autoload.php` and `composer.lock` files only. Do not replace the hosted `bootstrap/app.php`, `index.php`, `.env`, other dependency packages, media link or uploads. Keep existing hashed build assets for source rollback; the new manifest selects the new files.
 
 ## 5. Verify the files and reopen the site
 
@@ -77,6 +79,6 @@ Once verified, remove the private `ops/update-salon-features.php` and `ops/salon
 
 ## Recovery
 
-On failure, stop the temporary cron and keep the site in maintenance while investigating. Restore only the changed application files and the previous public build manifest/assets from the backup when reverting source. Retain the new table/column and their data: dropping them loses closed schedules/map links. Do not restore an old database over new customer transactions without a separate recovery decision.
+On failure, stop the temporary cron and keep the site in maintenance while investigating. Restore the changed application/dependency files and the previous public build manifest/assets from the backup when reverting source. Retain the new table/column and their data: dropping them loses closed schedules/map links. Do not restore an old database over new customer transactions without a separate recovery decision. Restoring the old dependency also restores its known advisory; resolve that in the recovery decision.
 
 After restoring the previous source/assets, run the helper once with **`--resume`** to refresh caches and leave maintenance mode, then remove that cron. This recovery mode does not apply migrations or verify new feature files; use it only after restoring the intended previous source. The existing application key, environment, dependencies and uploads must remain in place.
