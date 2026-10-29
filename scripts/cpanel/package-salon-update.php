@@ -60,6 +60,13 @@ $application['composer.lock'] = $git(['show', $commit.':composer.lock']);
 // Ship the audited Mime patch and matching production Composer metadata, not a full vendor replacement.
 foreach (['vendor/symfony/mime', 'vendor/composer'] as $directory) {
     foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root.'/'.$directory, FilesystemIterator::SKIP_DOTS)) as $file) {
+        if ($directory === 'vendor/composer' && ! in_array($file->getFilename(), [
+            'autoload_real.php', 'autoload_static.php', 'autoload_psr4.php', 'autoload_namespaces.php',
+            'autoload_files.php', 'autoload_classmap.php', 'ClassLoader.php', 'InstalledVersions.php',
+            'installed.php', 'installed.json', 'platform_check.php', 'LICENSE',
+        ], true)) {
+            continue; // Never package Composer download archives or temporary files.
+        }
         if ($file->isLink() || ! $file->isFile()) {
             throw new RuntimeException('Unexpected dependency patch entry.');
         }
