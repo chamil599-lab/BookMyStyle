@@ -1,5 +1,7 @@
 # Salon map links
 
+For the combined feature history, local preview status, commits and hosted upgrade checklist, see [Salon closed dates and map links](salon-features-2026-10-29.md).
+
 In Salon Management > Salons > Edit > Basic Information, paste the salon's shared map link into **Map URL** and save. The field is optional and accepts HTTP/HTTPS URLs up to 2048 characters, including short shared links.
 
 The public salon detail page displays a map icon and **View on map** below the address. Both this link and **Get directions** open the saved destination in a new tab. If the field is empty, directions use a Google Maps search for the existing address. If neither a valid destination nor an address exists, map links are hidden. The public salon API includes the resolved destination in `map_url`; Android client changes are separate from this website update.
