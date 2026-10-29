@@ -6,6 +6,8 @@ Track user-visible changes here. Versions use MAJOR.MINOR.PATCH; Git release tag
 
 ### Added
 
+- Salon owners can select full-day closures on a calendar; active appointment conflicts must be resolved first. Closed dates are disabled for website bookings and enforced in shared booking validation. Requires the salon_closed_dates migration; see docs/salon-closed-dates.md.
+
 - Repository version tracking and a documented release process.
 - No-Terminal cPanel packaging, private CLI setup, and tested fresh-install administrator/plan initialization without demo accounts.
 - Native mobile catalogue, owner/admin APIs, browser-approved mobile login, push-device support, booking reminders, and account deletion information.

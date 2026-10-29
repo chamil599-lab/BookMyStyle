@@ -17,7 +17,10 @@
             @endforeach
         </select>
     </label>
-    <label class="label">Date <input class="field mt-2" wire:model.live="date" type="date" min="{{ today()->format('Y-m-d') }}" required></label>
+    <div wire:key="closed-calendar-{{ md5(json_encode($closedDates)) }}" x-data="{ selected: $wire.entangle('date').live, closed: @js($closedDates), month: '{{ today()->format('Y-m') }}' }">
+        @include('components.date-calendar', ['ownerCalendar' => false])
+    </div>
+    @if($isClosed)<p role="status" class="panel p-4 text-sm">Salon closed on this date. Please choose another date.</p>@endif
     <fieldset class="booking-times" wire:loading.class="booking-times-loading" wire:target="date,service_id">
         <legend class="label">Choose a time</legend>
         <div class="booking-time-grid" aria-label="Appointment times">
@@ -36,7 +39,7 @@
         @if(!$date || !$service_id)<p class="muted text-sm mt-2">Choose a service and date to see appointment times.</p>@endif
     </fieldset>
     <p class="muted text-xs">Choose a service and date to see times with room for the full appointment. Availability is checked again when you submit.</p>
-    @if($date && $service_id && !collect($slots)->contains('available', true))<p class="muted text-sm">No times available for this selection. Try another date or service.</p>@endif
+    @if(!$isClosed && $date && $service_id && !collect($slots)->contains('available', true))<p class="muted text-sm">No times available for this selection. Try another date or service.</p>@endif
     @if ($errors->any())
         <ul role="alert" class="text-red-700 text-sm">
             @foreach ($errors->all() as $error)

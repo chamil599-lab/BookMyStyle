@@ -126,6 +126,9 @@ class BookingService
 
     public function remainingCapacity(Salon $salon, string $date, string $time, int $serviceId, ?int $ignoreId = null): int
     {
+        if ($salon->isClosedOn($date)) {
+            return 0;
+        }
         $service = Service::findOrFail($serviceId);
         $start = $this->minutes($time);
         $end = $start + $this->duration($service->duration);
@@ -149,6 +152,9 @@ class BookingService
         }
         Validator::make(['date' => $date], ['date' => 'required|date_format:Y-m-d'])->validate();
         abort_unless((int) $service->created_by === (int) $salon->created_by, 404);
+        if ($salon->isClosedOn($date)) {
+            return [];
+        }
         $bookings = Booking::where('salon_id', $salon->id)->whereDate('date', $date)
             ->whereIn('status', ['pending', 'approved'])->get(['time', 'service_id']);
         $durations = Service::withTrashed()->whereIn('id', $bookings->pluck('service_id'))->pluck('duration', 'id');
@@ -217,6 +223,9 @@ class BookingService
         }
         if (! in_array($data['status'] ?? 'pending', ['pending', 'approved'], true)) {
             return; // Historical completed/rejected records do not occupy capacity.
+        }
+        if ($salon->isClosedOn($data['date'])) {
+            throw ValidationException::withMessages(['date' => 'The salon is closed on this date. Please choose another date.']);
         }
         $at = Carbon::createFromFormat('Y-m-d H:i', $data['date'].' '.$data['time'])->startOfMinute();
         if ($public && $at->lte(now())) {

@@ -31,6 +31,7 @@ class SalonHelper
             'open_time' => $salon->open_time?->format('H:i') ?? $salon->open_time,
             'close_time' => $salon->close_time?->format('H:i') ?? $salon->close_time,
             'number_of_staff' => $salon->number_of_staff,
+            'closed_dates' => $salon->closedDates()->where('date', '>=', today()->format('Y-m-d'))->orderBy('date')->pluck('date')->all(),
             'show_price' => (bool) $salon->show_price,
             'facebook_page' => $salon->facebook_page,
             'instagram_page' => $salon->instagram_page,

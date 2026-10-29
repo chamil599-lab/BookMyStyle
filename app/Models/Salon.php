@@ -108,6 +108,16 @@ class Salon extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
+    public function closedDates()
+    {
+        return $this->hasMany(SalonClosedDate::class);
+    }
+
+    public function isClosedOn(string $date): bool
+    {
+        return $this->closedDates()->where('date', $date)->exists();
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);

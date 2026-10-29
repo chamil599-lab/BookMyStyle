@@ -79,6 +79,8 @@ class BookingForm extends Component
         }
 
         return view('livewire.booking-form', ['salon' => $salon,
+            'closedDates' => $salon->closedDates()->where('date', '>=', today()->format('Y-m-d'))->orderBy('date')->pluck('date')->all(),
+            'isClosed' => is_string($this->date) && $salon->isClosedOn($this->date),
             'slots' => $slots, 'canBook' => $salon->owner->hasActiveSubscription(),
             'services' => Service::published()->where('created_by', $salon->created_by)->get()]);
     }
