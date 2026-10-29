@@ -10,6 +10,12 @@
             <div class="salon-intro-copy">
                 <p class="luxury-kicker">BEAUTY, MADE PERSONAL</p><h1 id="salon-heading">{{ $salon->name }}</h1>
                 <p class="salon-location"><span aria-hidden="true">&#8982;</span> {{ $salon->location ?: 'Sri Lanka' }}</p>
+                @if($mapLink = $salon->map_link)
+                    <a href="{{ $mapLink }}" target="_blank" rel="noopener noreferrer" class="salon-map-link" style="display:inline-flex;align-items:center;gap:0.4rem">
+                        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m9 4.5-6 3v13l6-3m0-13 6 3m-6-3v13m6-10 6-3v13l-6 3m0-13v13m0 0-6-3"/></svg>
+                        View on map <span aria-hidden="true">&nearr;</span>
+                    </a>
+                @endif
                 <a href="#reviews" class="salon-rating">@if($salon->ratings_count)<span class="salon-rating-stars" aria-hidden="true">&#9733;</span><strong>{{ number_format($salon->public_rating ?? 0, 1) }}</strong><span>{{ $salon->ratings_count }} {{ \Illuminate\Support\Str::plural('review', $salon->ratings_count) }}</span>@else<span class="salon-rating-stars" aria-hidden="true">&#9734;</span><span>No reviews yet. Your experience could be the first.</span>@endif<span aria-hidden="true">&nearr;</span></a>
                 @if($salon->description)<p class="salon-description">{{ strip_tags($salon->description) }}</p>@endif
                 <div class="salon-facts"><div><span>THE TREATMENTS</span><strong>{{ $salon->services->count() }} {{ \Illuminate\Support\Str::plural('service', $salon->services->count()) }} to explore</strong></div><div><span>OPENING HOURS</span><strong>@if($salon->open_time && $salon->close_time){{ $salon->open_time->format('H:i') }} &ndash; {{ $salon->close_time->format('H:i') }}@else Contact for hours @endif</strong></div></div>
@@ -50,7 +56,7 @@
                         @if(filter_var($salon->email, FILTER_VALIDATE_EMAIL))<div><dt>DROP US A NOTE</dt><dd><a href="mailto:{{ $salon->email }}">{{ $salon->email }}</a></dd></div>@endif
                     </dl>
                     <div class="salon-contact-links">@foreach(['facebook_page' => 'Facebook', 'instagram_page' => 'Instagram', 'tiktok_page' => 'TikTok'] as $field => $label)@if($link = \App\Support\PublicUrl::link($salon->{$field}))<a href="{{ $link }}" target="_blank" rel="noopener noreferrer">{{ $label }} &nearr;</a>@endif @endforeach
-                        @if($salon->location)<a href="https://www.google.com/maps/search/?api=1&query={{ rawurlencode($salon->location) }}" target="_blank" rel="noopener noreferrer">Get directions &nearr;</a>@endif
+                        @if($mapLink)<a href="{{ $mapLink }}" target="_blank" rel="noopener noreferrer">Get directions &nearr;</a>@endif
                     </div>
                 </section>
             </div>

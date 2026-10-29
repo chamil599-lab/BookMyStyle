@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -17,6 +18,7 @@ class Salon extends Model implements HasMedia
         'name',
         'owner_name',
         'location',
+        'map_url',
         'phone',
         'email',
         'open_time',
@@ -106,6 +108,16 @@ class Salon extends Model implements HasMedia
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getMapLinkAttribute(): ?string
+    {
+        $url = PublicUrl::link($this->map_url);
+        if ($url && preg_match('~^https?://~i', $url)) {
+            return $url;
+        }
+
+        return $this->location ? 'https://www.google.com/maps/search/?api=1&query='.rawurlencode($this->location) : null;
     }
 
     public function closedDates()

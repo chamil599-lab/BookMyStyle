@@ -6,6 +6,8 @@ Track user-visible changes here. Versions use MAJOR.MINOR.PATCH; Git release tag
 
 ### Added
 
+- Owners can save an optional Map URL; salon pages show a map icon/link and use the saved destination for directions. The API exposes map_url. Requires the add_map_url_to_salons_table migration.
+
 - Salon owners can select full-day closures on a calendar; active appointment conflicts must be resolved first. Closed dates are disabled for website bookings and enforced in shared booking validation. Requires the salon_closed_dates migration; see docs/salon-closed-dates.md.
 
 - Repository version tracking and a documented release process.

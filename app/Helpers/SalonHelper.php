@@ -26,6 +26,7 @@ class SalonHelper
             'owner_name' => $salon->owner_name,
             'description' => $salon->description,
             'location' => $salon->location,
+            'map_url' => $salon->map_link,
             'phone' => $salon->phone,
             'email' => $salon->email,
             'open_time' => $salon->open_time?->format('H:i') ?? $salon->open_time,
