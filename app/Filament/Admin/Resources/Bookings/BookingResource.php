@@ -63,7 +63,7 @@ class BookingResource extends Resource
         // Owner sees only bookings for salons they created
         return $query->whereIn(
             'salon_id',
-            Salon::where('created_by', auth()->id())->pluck('id')
+            Salon::where('created_by', auth()->id())->select('id')
         );
     }
 

@@ -20,8 +20,8 @@
 .booking-time:disabled span { text-decoration:line-through; }
 .booking-times-loading { opacity:.5; pointer-events:none; }
 
-:root { color-scheme: light; --sand:#f7f0e6; --cream:#efe6d3; --terra:#c4622d; --sienna:#8b3a1e; --ink:#1e1710; --muted:#72675b; --paper:#fffcf8; --line:#ded3c3; }
-html.dark { color-scheme:dark; --sand:#211c18; --cream:#342b24; --ink:#f7f0e6; --muted:#c8b9a8; --paper:#2a231e; --line:#534438; }
+:root { color-scheme: light; --sand:#f5f8fc; --cream:#eaf2f9; --terra:#2271b1; --sienna:#1d639c; --ink:#1e293b; --muted:#64748b; --paper:#ffffff; --line:#dce5ef; }
+html.dark { color-scheme:dark; --terra:#78b7e6; --sienna:#a3cff0; --sand:#0f172a; --cream:#1e293b; --ink:#f5f8fc; --muted:#b0bfd1; --paper:#172033; --line:#334155; }
 body { margin:0; background:var(--sand); color:var(--ink); font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
 h1,h2,h3,.brand { font-family:'Unbounded',system-ui,sans-serif; }
 .editorial { font-family:'Libre Baskerville',Georgia,serif; font-style:italic; }
@@ -34,8 +34,8 @@ h1,h2,h3,.brand { font-family:'Unbounded',system-ui,sans-serif; }
 .field { display:block; width:100%; background:var(--paper); border:1px solid var(--line); padding:.8rem; color:var(--ink); }
 .label { display:block; margin-bottom:.4rem; font-size:.8rem; font-weight:600; }
 .muted { color:var(--muted); }
-.hero { position:relative; min-height:650px; display:flex; align-items:center; background:#1a0f0a; color:#fff3e5; overflow:hidden; }
-.hero::after { content:''; position:absolute; inset:0; background:linear-gradient(100deg,rgba(26,15,10,.87),rgba(26,15,10,.4)); }
+.hero { position:relative; min-height:650px; display:flex; align-items:center; background:#142d46; color:#f1f5f9; overflow:hidden; }
+.hero::after { content:''; position:absolute; inset:0; background:linear-gradient(100deg,rgba(20,45,70,.87),rgba(20,45,70,.4)); }
 .hero-media { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .hero .shell { position:relative; z-index:1; padding-block:6rem; }
 .hero h1 { font-size:clamp(3.2rem,7.5vw,6.8rem); line-height:.95; letter-spacing:-.05em; max-width:850px; }
@@ -52,8 +52,8 @@ html { scroll-behavior:smooth; scroll-padding-top:6rem; }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }
 
 /* Homepage: a quiet, editorial salon experience. */
-:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) { --sand:#f8f7f3; --paper:#fffefa; --cream:#efeee7; --ink:#253b32; --muted:#6c746c; --line:#dedfd5; --terra:#2d493c; --sienna:#20362c; --lux-gold:#806b45; --lux-serif:'Libre Baskerville',Georgia,serif; }
-html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) { --sand:#0b0b0b; --paper:#151515; --cream:#202020; --ink:#f1f0e8; --muted:#bdbdb7; --line:#333333; --terra:#a9c2ab; --sienna:#bdd2bf; --lux-gold:#c4ac7d; }
+:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) { --sand:#f5f8fc; --paper:#ffffff; --cream:#eaf2f9; --ink:#1e293b; --muted:#64748b; --line:#dce5ef; --terra:#2271b1; --sienna:#1d639c; --lux-gold:#2271b1; --lux-serif:'Libre Baskerville',Georgia,serif; }
+html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) { --sand:#0f172a; --paper:#172033; --cream:#1e293b; --ink:#f1f5f9; --muted:#b0bfd1; --line:#334155; --terra:#78b7e6; --sienna:#a3cff0; --lux-gold:#78b7e6; }
 :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .shell { width:min(1280px,calc(100% - 5rem)); }
 :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > header { background:var(--sand); color:var(--ink); border-bottom:1px solid var(--line); }
 :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > header .shell { min-height:96px; }
@@ -64,8 +64,8 @@ html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) { --sa
 :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > header button { border-color:var(--line); }
 :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > header .button { color:var(--paper); }
 :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) #mobile-nav { border-color:var(--line); }
-:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .button { border-radius:4px; padding:1rem 1.5rem; background:var(--ink); color:var(--sand); letter-spacing:.015em; }
-:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .button:hover { background:var(--terra); }
+:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .button { border-radius:4px; padding:1rem 1.5rem; background:var(--terra); color:var(--paper); letter-spacing:.015em; }
+:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .button:hover { background:var(--sienna); }
 .luxury-intro { padding-top:38px; padding-bottom:46px; }
 .luxury-hero { display:grid; grid-template-columns:1.08fr 1fr; gap:60px; align-items:center; }
 .luxury-hero-copy { padding:35px 0 45px; }
@@ -84,7 +84,7 @@ html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) { --sa
 .luxury-proof p { display:grid; gap:5px; font-size:.65rem; }
 .luxury-proof strong { font-weight:600; }
 .luxury-proof p span { color:var(--muted); }
-.luxury-hero-visual { min-height:570px; height:100%; position:relative; isolation:isolate; background:#31443b; border-radius:180px 8px 8px 8px; color:#fffef5; }
+.luxury-hero-visual { min-height:570px; height:100%; position:relative; isolation:isolate; background:#1d639c; border-radius:180px 8px 8px 8px; color:#f8fafc; }
 .luxury-portrait,.luxury-visual-shade { position:absolute; inset:0; width:100%; height:100%; border-radius:inherit; }
 .luxury-portrait { object-fit:cover; object-position:center 35%; }
 .luxury-visual-shade { background:linear-gradient(180deg,rgba(13,25,18,.1) 40%,rgba(13,25,18,.72)); }
@@ -132,19 +132,19 @@ html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) { --sa
 .luxury-step-number { color:var(--lux-gold); font-family:var(--lux-serif); font-size:1rem; }
 .luxury-steps h3 { font-family:var(--lux-serif); font-size:1.25rem; font-weight:400; margin:22px 0 14px; letter-spacing:-.04em; }
 .luxury-steps p { color:var(--muted); font-size:.76rem; line-height:1.9; }
-.luxury-owner { position:relative; overflow:hidden; display:flex; align-items:center; justify-content:space-between; gap:35px; padding:50px 60px; background:#263e32; color:#f7f5eb; border-radius:8px; margin-bottom:80px; }
-.luxury-owner .luxury-kicker { color:#cfbb95; margin-bottom:20px; }
+.luxury-owner { position:relative; overflow:hidden; display:flex; align-items:center; justify-content:space-between; gap:35px; padding:50px 60px; background:#1d639c; color:#f1f5f9; border-radius:8px; margin-bottom:80px; }
+.luxury-owner .luxury-kicker { color:#c9e5fa; margin-bottom:20px; }
 .luxury-owner h2 { font-size:clamp(1.9rem,3vw,2.8rem); position:relative; }
-.luxury-owner h2 em { color:#cfbb95; }
-.luxury-owner p:last-child { max-width:440px; font-size:.77rem; line-height:1.9; color:#c6d0c6; margin-top:18px; position:relative; }
+.luxury-owner h2 em { color:#c9e5fa; }
+.luxury-owner p:last-child { max-width:440px; font-size:.77rem; line-height:1.9; color:#dcecf9; margin-top:18px; position:relative; }
 .luxury-owner-link { display:inline-flex; align-items:center; gap:32px; white-space:nowrap; border:1px solid #f7f5eb66; border-radius:4px; padding:16px 24px; font-size:.75rem; position:relative; }
 .luxury-owner-link:hover { background:#ffffff12; }
 .luxury-owner-ornament { position:absolute; right:200px; top:-65px; font-size:340px; line-height:1; color:#ffffff05; }
-:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > footer { margin-top:0; background:#1c2c24; }
+:is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > footer { margin-top:0; background:#142d46; }
 :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > footer .brand { font-family:var(--lux-serif); font-weight:400; }
-html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .luxury-owner { background:#181818; border:1px solid var(--line); }
-html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > footer { background:#080808; }
-html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .luxury-hero-visual { background:#151515; }
+html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .luxury-owner { background:#172033; border:1px solid var(--line); }
+html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) > footer { background:#0b1220; }
+html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .luxury-hero-visual { background:#172033; }
 
 /* Salon detail: the same luxury palette, with a practical booking layout. */
 .salon-page { padding-block:30px 55px; }
@@ -154,10 +154,10 @@ html.dark :is(.home-luxury,.salon-detail,.public-luxury,.customer-luxury) .luxur
 .salon-intro { display:grid; grid-template-columns:1.15fr 1fr; gap:65px; align-items:center; }
 .salon-cover { position:relative; overflow:hidden; isolation:isolate; border-radius:100px 7px 7px 7px; background:var(--cream); min-height:460px; }
 .salon-cover > img { display:block; width:100%; height:100%; min-height:460px; max-height:610px; object-fit:cover; }
-.salon-cover::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(180deg,#0c1b1266,transparent 35%,#0c1b12b3); }
-.salon-cover-label { position:absolute; right:26px; top:25px; display:flex; align-items:center; gap:20px; color:#fffdf6; z-index:1; font-size:.58rem; letter-spacing:.18em; }
+.salon-cover::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:linear-gradient(180deg,#142d4666,transparent 35%,#142d46b3); }
+.salon-cover-label { position:absolute; right:26px; top:25px; display:flex; align-items:center; gap:20px; color:#f8fafc; z-index:1; font-size:.58rem; letter-spacing:.18em; }
 .salon-cover-label > span { font-size:2rem; line-height:1; }
-.salon-cover-caption { position:absolute; left:32px; bottom:35px; z-index:1; color:#fffdf6; font-family:var(--lux-serif); font-size:clamp(1.7rem,3vw,2.8rem); line-height:1.28; letter-spacing:-.04em; }
+.salon-cover-caption { position:absolute; left:32px; bottom:35px; z-index:1; color:#f8fafc; font-family:var(--lux-serif); font-size:clamp(1.7rem,3vw,2.8rem); line-height:1.28; letter-spacing:-.04em; }
 .salon-intro-copy { min-width:0; padding:12px 0; }
 .salon-intro h1 { font-family:var(--lux-serif); font-weight:400; font-size:clamp(2.4rem,4vw,4.1rem); line-height:1.15; letter-spacing:-.06em; margin:20px 0; overflow-wrap:anywhere; }
 .salon-location { display:flex; gap:9px; align-items:baseline; color:var(--muted); font-size:.8rem; line-height:1.7; overflow-wrap:anywhere; }
@@ -337,10 +337,10 @@ html.dark .salon-booking [role=alert],html.dark .salon-reviews [role=alert] { co
 .salon-collection-image { position:relative; display:block; overflow:hidden; isolation:isolate; background:var(--cream); }
 .salon-collection-image > img { width:100%; aspect-ratio:3/2; object-fit:cover; transition:transform 300ms ease; }
 .salon-collection-card:hover .salon-collection-image > img { transform:scale(1.035); }
-.salon-collection-rating { position:absolute; left:16px; bottom:16px; display:flex; align-items:center; gap:5px; padding:8px 11px; max-width:calc(100% - 80px); border-radius:5px; background:#fffffff2; color:#252923; font-size:.7rem; font-weight:600; flex-wrap:wrap; }
-.salon-collection-rating > span:first-child { color:#8b6b35; }
-.salon-rating-count { color:#62685f; font-size:.62rem; font-weight:400; }
-.salon-collection-arrow { position:absolute; right:16px; bottom:16px; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; color:#252923; background:#fffffff2; font-size:1.1rem; }
+.salon-collection-rating { position:absolute; left:16px; bottom:16px; display:flex; align-items:center; gap:5px; padding:8px 11px; max-width:calc(100% - 80px); border-radius:5px; background:#fffffff2; color:#1e293b; font-size:.7rem; font-weight:600; flex-wrap:wrap; }
+.salon-collection-rating > span:first-child { color:#2271b1; }
+.salon-rating-count { color:#64748b; font-size:.62rem; font-weight:400; }
+.salon-collection-arrow { position:absolute; right:16px; bottom:16px; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; color:#1e293b; background:#fffffff2; font-size:1.1rem; }
 .salon-collection-body { display:flex; flex:1; flex-direction:column; padding:25px; min-width:0; }
 .salon-collection-location { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:.66rem; letter-spacing:.05em; line-height:1.7; overflow-wrap:anywhere; }
 .salon-collection-location svg { width:15px; height:15px; flex-shrink:0; }
@@ -358,8 +358,8 @@ html.dark .salon-booking [role=alert],html.dark .salon-reviews [role=alert] { co
 @media(prefers-reduced-motion:reduce) { .salon-collection-card,.salon-collection-image > img { transition:none; } .salon-collection-card:hover .salon-collection-image > img { transform:none; } }
 
 /* Customer workspace: a personal extension of the salon collection. */
-.customer-luxury { --sand:#fff; --paper:#fff; --cream:#f2f6f1; --line:#e2e7e1; --ink:#24382c; --muted:#667268; --terra:#16733c; }
-html.dark .customer-luxury { --sand:#0b0b0b; --paper:#151515; --cream:#202620; --line:#333833; --ink:#f1f0e8; --muted:#bdbdb7; --terra:#8ed5a5; }
+.customer-luxury { --sand:#fff; --paper:#fff; --cream:#eaf2f9; --line:#dce5ef; --ink:#1e293b; --muted:#64748b; --terra:#2271b1; }
+html.dark .customer-luxury { --sand:#0f172a; --paper:#172033; --cream:#1e293b; --line:#334155; --ink:#f1f5f9; --muted:#b0bfd1; --terra:#78b7e6; }
 .customer-workspace { padding-block:45px 70px; }
 .customer-page-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:22px; margin-bottom:32px; }
 .customer-page-heading h1 { font-family:var(--lux-serif,Georgia,serif); font-size:clamp(2rem,4vw,3rem); font-weight:400; letter-spacing:-.05em; margin-top:13px; }
@@ -482,8 +482,8 @@ html.dark .customer-luxury { --sand:#0b0b0b; --paper:#151515; --cream:#202620; -
 
 .salon-collection-card { position:relative; }
 .salon-card-favorite { position:absolute; top:16px; right:16px; z-index:3; }
-.salon-card-heart { display:grid; place-items:center; width:44px; height:44px; border-radius:50%; border:1px solid #ffffffb3; background:#fffffff2; color:#244d35; box-shadow:0 3px 14px #00000012; }
+.salon-card-heart { display:grid; place-items:center; width:44px; height:44px; border-radius:50%; border:1px solid #ffffffb3; background:#fffffff2; color:#2271b1; box-shadow:0 3px 14px #00000012; }
 .salon-card-heart svg { width:21px; height:21px; }
-.salon-card-heart:hover,.salon-card-heart[aria-pressed=true] { background:#e4f5e9; color:#16733c; border-color:#c2e5cd; }
+.salon-card-heart:hover,.salon-card-heart[aria-pressed=true] { background:#eaf2f9; color:#2271b1; border-color:#bdd8ee; }
 .salon-card-heart:disabled { opacity:.65; cursor:wait; }
 .salon-card-favorite-error { position:absolute; top:52px; right:0; width:210px; padding:10px 12px; border-radius:6px; background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:.7rem; line-height:1.6; box-shadow:0 6px 20px #0002; }

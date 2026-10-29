@@ -1,5 +1,7 @@
 <?php
 
+use App\Filament\Admin\Pages\SubscriptionCheckout;
+use App\Filament\Admin\Pages\SubscriptionPlans;
 use App\Models\Booking;
 use App\Models\Category;
 use App\Models\Department;
@@ -126,26 +128,26 @@ it('renders active renewal plans in LKR with local assets and only available pac
         'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5, 'is_active' => true, 'start_date' => today()->addDay()]);
     SubscriptionPackage::create(['name' => 'Ended hidden', 'slug' => 'ended', 'price' => 200,
         'duration_days' => 30, 'max_salons' => 5, 'max_staff' => 5, 'max_services' => 5, 'is_active' => true, 'end_date' => today()->subDay()]);
-    $response = $this->actingAs($this->owner)->get('/subscription/required')->assertOk()
+    $response = $this->actingAs($this->owner)->get(SubscriptionPlans::getUrl(panel: 'admin'))->assertOk()
         ->assertSee('Your current plan is Basic')->assertSee('LKR 100.00')->assertSee('Request renewal')
         ->assertDontSee('expired')->assertDontSee('Future hidden')->assertDontSee('Ended hidden')
         ->assertDontSee('cdn.tailwindcss.com')->assertDontSee('unpkg.com');
     expect($response->headers->get('Cache-Control'))->toContain('no-store');
     $this->get('/subscription/packages')->assertRedirect(route('subscription.required'));
-    $this->get('/subscription/checkout/'.$this->package->id)->assertOk()->assertSee('Transaction reference');
+    $this->get(SubscriptionCheckout::getUrl(['package' => $this->package->id], panel: 'admin'))->assertOk()->assertSee('Transaction reference');
 });
 
 it('allows an expired owner to request recovery while ignoring forged owner amount status and dates', function () {
     $this->paid->update(['ends_at' => now()->subDay()]);
-    $this->actingAs($this->owner)->get('/subscription/required')->assertOk();
-    $this->get('/subscription/checkout/'.$this->package->id)->assertOk();
+    $this->actingAs($this->owner)->get(SubscriptionPlans::getUrl(panel: 'admin'))->assertOk();
+    $this->get(SubscriptionCheckout::getUrl(['package' => $this->package->id], panel: 'admin'))->assertOk();
     $this->post('/subscription/subscribe/'.$this->package->id, $this->payment + ['user_id' => $this->customer->id,
         'amount_paid' => 999, 'status' => 'active', 'starts_at' => today(), 'ends_at' => today()->addYear()])
         ->assertRedirect('/filament/user-subscriptions');
     $pending = $this->owner->subscriptions()->pending()->firstOrFail();
     expect($pending->amount_paid)->toBe('0.00')->and($pending->starts_at)->toBeNull()
         ->and($pending->ends_at)->toBeNull()->and($this->paid->fresh()->amount_paid)->toBe('100.00');
-    $this->get('/subscription/required')->assertSee('request is pending approval')->assertDontSee('Choose plan');
+    $this->get(SubscriptionPlans::getUrl(panel: 'admin'))->assertSee('request is pending approval')->assertDontSee('Choose plan');
     $this->get('/subscription/checkout/'.$this->package->id)->assertRedirect(route('subscription.required'));
     $this->post('/subscription/subscribe/'.$this->package->id, $this->payment)->assertRedirect(route('subscription.required'));
     expect($this->owner->subscriptions()->pending()->count())->toBe(1);
@@ -228,3 +230,32 @@ it('rechecks verification in shared booking writes even when the caller holds a 
     expect($booking->fresh()->status)->toBe('pending')->and(Booking::count())->toBe(1);
     Mail::assertNothingSent();
 })->with(['owner', 'admin']);
+
+it('moves subscription bookmarks into Filament and protects direct panel access', function () {
+    $plans = SubscriptionPlans::getUrl(panel: 'admin');
+    $checkout = SubscriptionCheckout::getUrl(['package' => $this->package->id], panel: 'admin');
+    $this->actingAs($this->owner)->get('/subscription/required')->assertRedirect($plans);
+    $this->get('/subscription/checkout/'.$this->package->id)->assertRedirect($checkout);
+    $this->get($plans)->assertOk()->assertSee('fi-sidebar', false);
+    $this->get($checkout)->assertOk()->assertSee('data-subscription-request', false);
+    $this->from($checkout)->post('/subscription/subscribe/'.$this->package->id, ['payment_method' => 'bank_transfer'])
+        ->assertRedirect($checkout)->assertSessionHasErrors('transaction_id');
+    $this->get($checkout)->assertOk()->assertSee('transaction id field is required');
+    foreach ([$this->customer, $this->admin] as $actor) {
+        $this->actingAs($actor)->get($plans)->assertForbidden();
+        $this->get($checkout)->assertForbidden();
+    }
+    $this->actingAs($this->owner);
+    $this->package->update(['is_active' => false]);
+    $this->get($checkout)->assertNotFound();
+});
+
+it('shows trial dates and prevents duplicate requests through the Filament checkout', function () {
+    $this->paid->update(['is_trial' => true]);
+    $plans = SubscriptionPlans::getUrl(panel: 'admin');
+    $checkout = SubscriptionCheckout::getUrl(['package' => $this->package->id], panel: 'admin');
+    $this->actingAs($this->owner)->get($plans)->assertOk()->assertSee('Free trial')->assertSee('days remaining')->assertSee('Started');
+    $this->subscriptions->request($this->owner, $this->package, $this->payment, $this->owner);
+    $this->get($checkout)->assertRedirect($plans);
+    expect($this->owner->subscriptions()->pending()->count())->toBe(1);
+});

@@ -44,13 +44,9 @@ class Dashboard extends Page
         abort_unless(static::canAccess(), 403);
         $subscriptionRevenue = UserSubscription::whereIn('status', ['active', 'expired', 'canceled'])->sum('amount_paid');
 
-        $bookingRevenue = BookingValue::query()
-            ->get()
-            ->sum(fn ($b) => $b->service?->price ?? 0);
+        $bookingRevenue = BookingValue::total(BookingValue::query());
 
-        $todayBookingRevenue = BookingValue::query()->whereDate('date', today())
-            ->get()
-            ->sum(fn ($b) => $b->service?->price ?? 0);
+        $todayBookingRevenue = BookingValue::total(BookingValue::query()->whereDate('date', today()));
 
         $totalBookings = Booking::count();
 
@@ -67,7 +63,11 @@ class Dashboard extends Page
         abort_unless(static::canAccess(), 403);
         $subscriptions = UserSubscription::whereIn('status', ['active', 'expired', 'canceled'])
             ->where('starts_at', '>=', now()->startOfMonth()->subMonthsNoOverflow(11))
-            ->get();
+            ->where('starts_at', '<', now()->startOfMonth()->addMonth())
+            ->toBase()
+            ->selectRaw('SUBSTR(starts_at, 1, 7) as month, SUM(amount_paid) as total')
+            ->groupByRaw('SUBSTR(starts_at, 1, 7)')
+            ->pluck('total', 'month');
 
         $months = [];
         $data = [];
@@ -76,9 +76,7 @@ class Dashboard extends Page
             $date = now()->startOfMonth()->subMonthsNoOverflow($i);
             $key = $date->format('Y-m');
             $months[] = $date->format('M Y');
-            $data[] = $subscriptions
-                ->filter(fn ($s) => $s->starts_at?->format('Y-m') === $key)
-                ->sum('amount_paid');
+            $data[] = (float) ($subscriptions[$key] ?? 0);
         }
 
         return ['labels' => $months, 'data' => $data];
@@ -104,20 +102,20 @@ class Dashboard extends Page
 
         return UserSubscription::query()
             ->active()
+            ->select('package_id')
+            ->selectRaw('COUNT(*) as subscription_count, SUM(amount_paid) as payment_total')
+            ->groupBy('package_id')
+            ->orderByDesc('subscription_count')
+            ->limit(5)
             ->with('package')
             ->get()
-            ->groupBy('package_id')
-            ->map(function ($group) {
-                $package = $group->first()->package;
-
+            ->map(function ($subscription) {
                 return [
-                    'name' => $package?->name ?? 'Unknown',
-                    'count' => $group->count(),
-                    'revenue' => $group->sum('amount_paid'),
+                    'name' => $subscription->package?->name ?? 'Unknown',
+                    'count' => (int) $subscription->subscription_count,
+                    'revenue' => (float) $subscription->payment_total,
                 ];
             })
-            ->sortByDesc('count')
-            ->take(5)
             ->values();
     }
 

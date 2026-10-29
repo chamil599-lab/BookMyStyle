@@ -3,7 +3,7 @@
 
 <title>{{ $title ?? config('app.name') }}</title>
 
-<link rel="icon" href="{{ asset('images/site-icon.png') }}" type="image/png">
+<link rel="icon" href="{{ asset('images/brand-mark-blue.svg') }}" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{{ asset('images/site-icon.png') }}">
 
 <link rel="preconnect" href="https://fonts.bunny.net">

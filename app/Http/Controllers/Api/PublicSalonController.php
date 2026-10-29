@@ -68,6 +68,7 @@ class PublicSalonController extends Controller
             'open_time' => $salon->open_time?->format('H:i') ?? '09:00',
             'close_time' => $salon->close_time?->format('H:i') ?? '18:00',
             'number_of_staff' => $salon->number_of_staff ?? 1,
+            'closed_dates' => $salon->closedDates()->where('date', '>=', today()->format('Y-m-d'))->orderBy('date')->pluck('date')->all(),
         ]);
     }
 
@@ -94,6 +95,7 @@ class PublicSalonController extends Controller
         })->values();
 
         return response()->json([
+            'is_closed' => $salon->isClosedOn($validated['date']),
             'booked_times' => $bookedTimes,
             'staff_count' => $salon->number_of_staff ?? 1,
         ]);

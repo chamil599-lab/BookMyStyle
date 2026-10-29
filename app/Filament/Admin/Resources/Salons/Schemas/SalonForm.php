@@ -60,6 +60,14 @@ class SalonForm
                                             ->label('Location')
                                             ->maxLength(255),
 
+                                        TextInput::make('map_url')
+                                            ->label('Map URL')
+                                            ->url()
+                                            ->maxLength(2048)
+                                            ->placeholder('https://maps.app.goo.gl/...')
+                                            ->helperText('Paste the salon location link from your map app. Leave blank to use the address for directions.')
+                                            ->columnSpanFull(),
+
                                         Textarea::make('description')
                                             ->label('Description')
                                             ->rows(4)

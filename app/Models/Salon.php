@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -17,6 +18,7 @@ class Salon extends Model implements HasMedia
         'name',
         'owner_name',
         'location',
+        'map_url',
         'phone',
         'email',
         'open_time',
@@ -99,13 +101,33 @@ class Salon extends Model implements HasMedia
 
     public function scopePubliclyVisible($query)
     {
-        return $query->whereHas('owner', fn ($owner) => $owner->where('is_approved', true)
+        return $query->whereNull('salons.deleted_at')->whereHas('owner', fn ($owner) => $owner->where('is_approved', true)
             ->whereHas('roles', fn ($roles) => $roles->where('name', 'owner')->where('guard_name', 'web')));
     }
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getMapLinkAttribute(): ?string
+    {
+        $url = PublicUrl::link($this->map_url);
+        if ($url && preg_match('~^https?://~i', $url)) {
+            return $url;
+        }
+
+        return $this->location ? 'https://www.google.com/maps/search/?api=1&query='.rawurlencode($this->location) : null;
+    }
+
+    public function closedDates()
+    {
+        return $this->hasMany(SalonClosedDate::class);
+    }
+
+    public function isClosedOn(string $date): bool
+    {
+        return $this->closedDates()->where('date', $date)->exists();
     }
 
     public function bookings()

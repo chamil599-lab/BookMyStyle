@@ -110,7 +110,7 @@ class CatalogueManagement
     private function salonData(array $data): array
     {
         $validated = Validator::make($data, ['name' => 'required|string|max:255', 'owner_name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255', 'location' => 'nullable|string|max:255', 'description' => 'nullable|string|max:20000',
+            'slug' => 'nullable|string|max:255', 'location' => 'nullable|string|max:255', 'map_url' => 'nullable|url:http,https|max:2048', 'description' => 'nullable|string|max:20000',
             'phone' => 'nullable|string|max:30', 'email' => 'nullable|email|max:255', 'number_of_staff' => 'required|integer|min:0|max:10000',
             'show_price' => 'required|boolean', 'open_time' => 'nullable|date_format:H:i,H:i:s',
             'close_time' => 'nullable|date_format:H:i,H:i:s|after:open_time',

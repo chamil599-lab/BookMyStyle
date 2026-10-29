@@ -13,7 +13,7 @@
     <meta property="og:description" content="{{ $description }}">
     <meta property="og:url" content="{{ $canonical }}">
     <meta property="og:type" content="website">
-    <link rel="icon" href="{{ asset('images/site-icon.png') }}">
+    <link rel="icon" href="{{ asset('images/brand-mark-blue.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
 </head>
 <body @class(['customer-mobile-app' => $customerApp, 'home-luxury' => request()->routeIs('home'), 'customer-luxury' => request()->routeIs('dashboard', 'customer.*'), 'salon-detail' => request()->routeIs('salon.show'), 'public-luxury' => request()->routeIs('salons', 'trending', 'popular', 'services', 'deals', 'about', 'privacy', 'terms')])>
 <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 button">Skip to content</a>
-<header class="sticky top-0 z-40 bg-[#1e1710] text-[#fff3e5]" x-data="{ open: false }" @click.outside="open = false">
+<header class="sticky top-0 z-40 bg-[#142d46] text-[#f1f5f9]" x-data="{ open: false }" @click.outside="open = false">
     <div class="shell storefront-nav-inner flex min-h-20 items-center justify-between gap-4">
         <a href="{{ route('home') }}" class="storefront-brand flex items-center gap-3" aria-label="BookMyStyle home">
             <x-app-logo-icon class="storefront-brand-mark" />
@@ -62,9 +62,9 @@
     </nav>
 </header>
 <main id="main">{{ $slot }}</main>
-<footer class="mt-16 bg-[#1e1710] text-[#fff3e5]">
+<footer class="mt-16 bg-[#142d46] text-[#f1f5f9]">
     <div class="shell grid gap-10 py-14 md:grid-cols-3">
-        <div><div class="flex items-center gap-3 mb-4"><x-app-logo-icon class="size-12" /><p class="brand text-xl font-bold">BookMyStyle</p></div><p class="text-sm leading-7 text-white/70 max-w-sm">Your next great style starts here. Discover salons and beauty studios across Sri Lanka.</p><a href="{{ route('register') }}" class="inline-block mt-5 text-[#e07b47]">List your salon →</a></div>
+        <div><div class="flex items-center gap-3 mb-4"><x-app-logo-icon class="size-12" /><p class="brand text-xl font-bold">BookMyStyle</p></div><p class="text-sm leading-7 text-white/70 max-w-sm">Your next great style starts here. Discover salons and beauty studios across Sri Lanka.</p><a href="{{ route('register') }}" class="inline-block mt-5 text-[#a3cff0]">List your salon →</a></div>
         <nav aria-label="Footer navigation" class="grid gap-3 text-sm"><p class="eyebrow mb-2">Explore</p><a href="{{ route('salons') }}">Salons</a><a href="{{ route('trending') }}">Trending salons</a><a href="{{ route('popular') }}">Popular salons</a><a href="{{ route('services') }}">Services</a><a href="{{ route('deals') }}">Deals</a></nav>
         <nav aria-label="Support navigation" class="grid gap-3 text-sm"><p class="eyebrow mb-2">Support</p><a href="{{ route('about') }}">About us</a><a href="{{ route('terms') }}">Terms and conditions</a><a href="{{ route('privacy') }}">Privacy policy</a><a href="mailto:info@bookmystyle.com">info@bookmystyle.com</a></nav>
     </div>

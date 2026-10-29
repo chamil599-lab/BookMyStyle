@@ -14,7 +14,9 @@ use Filament\Actions\DeleteBulkAction as ActionsDeleteBulkAction;
 use Filament\Actions\EditAction as ActionsEditAction;
 use Filament\Actions\ViewAction as ActionsViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -30,28 +32,43 @@ class BookingsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->heading('Appointment list')
+            ->description('Find a booking, review its details, and manage the next step.')
+            ->searchPlaceholder('Search clients, salons or services')
+            ->striped()
+            ->defaultPaginationPageOption(25)
+            ->emptyStateIcon('heroicon-o-calendar-days')
+            ->emptyStateHeading('No bookings to show')
+            ->emptyStateDescription('New appointments will appear here. Try another tab or adjust your filters.')
             ->columns([
                 TextColumn::make('salon.name')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('name')
+                    ->label('Client')
+                    ->weight('semibold')
+                    ->description(fn ($record) => $record->email)
                     ->searchable(),
                 TextColumn::make('email')
                     ->label('Email address')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('service.title')
                     ->label('Service')
                     ->searchable(),
                 TextColumn::make('date')
-                    ->date()
+                    ->label('Appointment')
+                    ->date('D, d M Y')
+                    ->description(fn ($record) => Carbon::parse($record->time)->format('g:i A'))
                     ->sortable(),
                 TextColumn::make('time')
                     ->time()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 BadgeColumn::make('status')
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->colors([
-                        'primary' => 'pending',
+                        'warning' => 'pending',
                         'success' => 'approved',
                         'info' => 'completed',
                         'danger' => 'rejected',
@@ -59,41 +76,51 @@ class BookingsTable
                     ->icons([
                         'heroicon-o-clock' => 'pending',
                         'heroicon-o-check-circle' => 'approved',
+                        'heroicon-o-check-badge' => 'completed',
                         'heroicon-o-x-circle' => 'rejected',
                     ]),
 
-                TextColumn::make('phone')->label('Phone')->placeholder('No phone'),
+                TextColumn::make('phone')->label('Phone')->placeholder('No phone')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                // Column 1: Status + Salon (stacked)
-                SelectFilter::make('status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'approved' => 'Approved',
-                        'completed' => 'Completed',
-                        'rejected' => 'Rejected',
-                    ])
-                    ->placeholder('All Statuses')
-                    ->columnSpan(1),
-
                 SelectFilter::make('salon_id')
                     ->label('Salon')
                     ->relationship('salon', 'name', fn (Builder $query) => $query->when(! auth()->user()->hasRole('admin'), fn ($q) => $q->where('created_by', Auth::id())))
                     ->searchable()
                     ->preload()
-                    ->columnSpan(1),
+                    ->columnSpan(['default' => 1, 'xl' => 2]),
 
-                // Column 2: Date Range
                 Filter::make('date_range')
                     ->form([
+                        Select::make('period')
+                            ->label('Appointment date')
+                            ->options(['today' => 'Today', 'upcoming' => 'Upcoming', 'custom' => 'Custom range'])
+                            ->placeholder('All dates')
+                            ->columnSpan(fn (Get $get): array => ['default' => 1, 'md' => $get('period') === 'custom' ? 1 : 3])
+                            ->live(),
                         DatePicker::make('date_from')
-                            ->label('From Date'),
+                            ->label('From date')
+                            ->visible(fn (Get $get): bool => $get('period') === 'custom'),
                         DatePicker::make('date_until')
-                            ->label('To Date'),
+                            ->label('To date')
+                            ->visible(fn (Get $get): bool => $get('period') === 'custom'),
                     ])
-                    ->columns(1)
+                    ->columns(['default' => 1, 'md' => 3])
                     ->query(function (Builder $query, array $data): Builder {
+                        if (($data['period'] ?? null) === 'today') {
+                            return $query->whereDate('date', today());
+                        }
+
+                        if (($data['period'] ?? null) === 'upcoming') {
+                            return $query->whereDate('date', '>=', today());
+                        }
+
+                        if (($data['period'] ?? null) !== 'custom') {
+                            return $query;
+                        }
+
                         return $query
                             ->when(
                                 $data['date_from'],
@@ -105,6 +132,14 @@ class BookingsTable
                             );
                     })
                     ->indicateUsing(function (array $data): array {
+                        if (($data['period'] ?? null) !== 'custom') {
+                            return match ($data['period'] ?? null) {
+                                'today' => ['Today’s appointments'],
+                                'upcoming' => ['Upcoming appointments'],
+                                default => [],
+                            };
+                        }
+
                         $indicators = [];
 
                         if ($data['date_from'] ?? null) {
@@ -117,28 +152,19 @@ class BookingsTable
 
                         return $indicators;
                     })
-                    ->columnSpan(1),
-
-                // Column 3: Toggle Buttons
-                Filter::make('today')
-                    ->label("Today's Bookings")
-                    ->query(fn (Builder $query): Builder => $query->whereDate('date', today()))
-                    ->toggle()
-                    ->columnSpan(1),
-
-                Filter::make('upcoming')
-                    ->label('Upcoming Bookings')
-                    ->query(fn (Builder $query): Builder => $query->whereDate('date', '>=', today()))
-                    ->toggle()
-                    ->columnSpan(1),
+                    ->columnSpan(['default' => 1, 'md' => 3, 'xl' => 4]),
             ])
+            ->deferFilters(false)
             ->filtersLayout(FiltersLayout::AboveContent)
-            ->filtersFormColumns(3) // ✅ 3 columns layout
-            ->filtersLayout(FiltersLayout::AboveContent) // ✅ Filters above content
+            ->filtersFormColumns(['default' => 1, 'md' => 4, 'xl' => 12])
+            ->filtersFormSchema(fn (array $filters, $livewire): array => [
+                $livewire->getTabsContentComponent()->columnSpan(['default' => 1, 'md' => 4, 'xl' => 6]),
+                ...array_values($filters),
+            ])
             ->recordActions([
                 ActionsAction::make('whatsapp')
                     ->label('Open WhatsApp')->icon('heroicon-o-chat-bubble-left-right')
-                    ->url(fn ($record) => app(BookingWhatsApp::class)->url(auth()->user(), $record))
+                    ->url(fn ($record) => route('bookings.whatsapp', $record))
                     ->visible(fn ($record) => app(BookingWhatsApp::class)->phone($record->phone) !== null)
                     ->openUrlInNewTab()->extraAttributes(['rel' => 'noopener noreferrer']),
                 ActionsActionGroup::make([

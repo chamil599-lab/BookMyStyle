@@ -65,3 +65,6 @@ yarn-error.log
 *.p12
 *.pfx
 *.phar
+
+# Isolated local feature worktrees and their development dependencies.
+/.worktrees/

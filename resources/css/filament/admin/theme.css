@@ -6,14 +6,45 @@
 @source '../../../../resources/views/components/management/**/*';
 @source '../../../../vendor/filament';
 @source '../../../../vendor/guava/calendar/resources';
+.bms-plan-card {
+    background: var(--bms-card);
+    border: 1px solid var(--bms-line);
+    border-radius: 1rem;
+}
+
+.bms-plan-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: .75rem 1.25rem;
+    border-radius: .75rem;
+    background: var(--bms-accent);
+    color: #fff;
+    font-weight: 600;
+}
+
+.bms-plan-button:hover { filter: brightness(.9); }
+.bms-plan-button:focus-visible { outline: 2px solid var(--bms-accent); outline-offset: 3px; }
+html.dark .bms-plan-button { color: #082f49; }
+
+.bms-plan-field {
+    width: 100%;
+    padding: .75rem;
+    border: 1px solid var(--bms-line);
+    border-radius: .75rem;
+    background: var(--bms-paper);
+    color: var(--bms-ink);
+}
+
+.bms-plan-field:focus { outline: 2px solid var(--bms-accent); outline-offset: 2px; }
 :root {
     --bms-paper: #ffffff;
     --bms-card: #fff;
     --bms-ink: #24241f;
     --bms-muted: #707069;
     --bms-line: #e5e7eb;
-    --bms-accent: #15803d;
-    --bms-soft: #f0fdf4;
+    --bms-accent: #2271b1;
+    --bms-soft: #eef6fc;
 }
 
 html.dark {
@@ -22,8 +53,8 @@ html.dark {
     --bms-ink: #f2f0e9;
     --bms-muted: #b1afa7;
     --bms-line: #30302d;
-    --bms-accent: #4ade80;
-    --bms-soft: #17251c;
+    --bms-accent: #7dc3f2;
+    --bms-soft: #152636;
 }
 
 .fi-body {
@@ -79,28 +110,27 @@ html.dark {
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn {
     position: relative;
-    background: linear-gradient(110deg, #ecfdf3, #dcfce7);
-    border-radius: .8rem;
-    box-shadow: inset 0 0 0 1px #bbf7d0, 0 5px 16px -8px #16a34a40;
+    background: #2271b1;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn::before {
     content: '';
     position: absolute;
-    inset-inline-start: 0;
-    top: 28%;
-    bottom: 28%;
-    width: 3px;
-    border-radius: 0 3px 3px 0;
-    background: #16a34a;
+    inset-inline-end: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-block: 8px solid transparent;
+    border-inline-end: 8px solid #f3f4f5;
 }
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn:hover {
-    background: linear-gradient(110deg, #dcfce7, #bbf7d0);
+    background: #1d639c;
 }
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn :is(.fi-sidebar-item-label,.fi-sidebar-item-icon) {
-    color: #166534;
+    color: #ffffff;
 }
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn .fi-sidebar-item-label {
@@ -108,7 +138,7 @@ html.dark {
 }
 
 .fi-sidebar-item.fi-active>.fi-sidebar-item-btn .fi-badge {
-    background: #166534;
+    background: #185783;
     color: #ffffff;
 }
 
@@ -117,8 +147,8 @@ html.dark {
 }
 
 .fi-sidebar .fi-badge {
-    background: #153820;
-    color: #86efac;
+    background: #153149;
+    color: #a5d8fa;
 }
 
 .fi-sidebar-nav {
@@ -422,5 +452,188 @@ html.dark {
     .fi-sidebar-item-btn {
         transition: none;
     }
+}
+
+
+.bms-bookings-overview {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+.fi-resource-bookings.fi-resource-list-records-page > .fi-page-header-main-ctn {
+    padding-top: .5rem;
+    row-gap: 1rem;
+}
+
+.bms-bookings-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) auto;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.bms-bookings-intro {
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--bms-line);
+    background: linear-gradient(115deg, var(--bms-card), var(--bms-soft));
+}
+
+.bms-bookings-intro h2 {
+    color: var(--bms-ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.4rem;
+    line-height: 1.2;
+    letter-spacing: -.03em;
+}
+
+.bms-bookings-intro-description {
+    margin-top: .5rem;
+    color: var(--bms-muted);
+    font-size: .8rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 1023px) {
+    .bms-bookings-header {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .bms-bookings-intro {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+}
+
+@media (max-width: 639px) {
+    .bms-bookings-header {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Compact management workspace. */
+.fi-body {
+    font-size: .8125rem;
+    background: #f3f4f5;
+}
+html.dark .fi-body { background: #101112; }
+
+.fi-main {
+    padding: .75rem 1.25rem;
+}
+@media (min-width: 1600px) {
+    .fi-main { max-width: none; }
+}
+.fi-page-header-main-ctn {
+    padding-block: .5rem;
+    row-gap: 1rem;
+}
+.fi-page-content,
+.bms-dashboard { gap: 1rem; }
+
+.fi-header-heading {
+    font-family: inherit;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -.025em;
+}
+.fi-header-subheading {
+    margin-top: .25rem;
+    font-size: .8125rem;
+    line-height: 1.45;
+}
+.fi-breadcrumbs { font-size: .7rem; }
+
+.fi-sidebar-nav {
+    padding: 1rem 0;
+    gap: 1.1rem;
+}
+.fi-sidebar-nav-groups { gap: 1.1rem; margin-inline: 0; }
+.fi-sidebar-item-btn {
+    min-height: 2.375rem;
+    padding-block: .4rem;
+    padding-inline: .75rem;
+    column-gap: .5rem;
+    border-radius: .3rem;
+}
+.fi-sidebar-item-label { font-size: .75rem; line-height: 1.4; }
+.fi-sidebar-group-label { font-size: .6rem; letter-spacing: .07em; padding-inline: .75rem; }
+.fi-sidebar-item-btn > .fi-icon { width: 1rem; height: 1rem; }
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn { border-radius: 0; box-shadow: none; }
+html.dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn::before {
+    border-inline-end-color: #101112;
+}
+.fi-sidebar-header .fi-logo { font-size: .8rem; }
+
+.fi-section,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat {
+    border-radius: .4rem;
+    box-shadow: 0 1px 3px #00000006;
+}
+.fi-section-header,
+.fi-section-content { padding: .875rem 1rem; }
+.fi-section-header-heading,
+.fi-ta-header-heading { font-size: .875rem; }
+.fi-ta-header,
+.fi-ta-toolbar { padding: .75rem 1rem; }
+.fi-ta-header-description { font-size: .75rem; margin-top: .2rem; }
+.fi-ta-header-cell { padding-block: .65rem; }
+.fi-ta-header-cell-label { font-size: .7rem; letter-spacing: 0; }
+.fi-ta-text:not(.fi-inline) { padding: .55rem .75rem; }
+.fi-ta-text-item { font-size: .75rem; line-height: 1.4; }
+.fi-ta-text-description { font-size: .6875rem; line-height: 1.35; }
+.fi-ta-actions { gap: .5rem; }
+.fi-ta-filters { padding: .75rem 1rem; }
+.fi-resource-bookings .fi-ta-filters-above-content-ctn { padding: .75rem 1rem; }
+.fi-resource-bookings .fi-ta-filters { padding: 0; gap: .5rem; }
+.fi-resource-bookings .fi-ta-filters-header { justify-content: flex-end; }
+.fi-resource-bookings .fi-ta-filters-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+.fi-resource-bookings .fi-ta-filters .fi-sc { row-gap: .75rem; }
+.fi-fo-field-label-content { font-size: .75rem; }
+.fi-input { font-size: .8125rem; }
+.fi-btn { font-size: .75rem; border-radius: .3rem; min-height: 2rem; }
+.fi-input-wrp { border-radius: .3rem; }
+.fi-tabs { border-radius: .35rem; padding: .25rem; gap: .25rem; }
+.fi-tabs-item { padding: .4rem .65rem; font-size: .75rem; }
+
+.bms-welcome {
+    padding: 1rem 1.25rem;
+    border-radius: .4rem;
+    gap: 1rem;
+}
+.bms-welcome h2 { font-family: inherit; font-size: 1.25rem; font-weight: 600; }
+.bms-welcome p:not(.bms-eyebrow) { margin-top: .35rem; font-size: .75rem; }
+.bms-eyebrow { margin-bottom: .35rem; font-size: .6rem; letter-spacing: .1em; }
+.bms-bookings-header { gap: 1rem; }
+.bms-bookings-intro { padding: .75rem 1rem; border-radius: .4rem; }
+.bms-bookings-intro h2 { font-family: inherit; font-size: 1rem; font-weight: 600; }
+.bms-bookings-intro-description { margin-top: .3rem; font-size: .75rem; line-height: 1.45; }
+.bms-stat-grid { gap: .75rem; }
+.bms-stat { padding: .875rem 1rem; border-radius: .4rem; box-shadow: none; }
+.bms-stat-label { font-size: .7rem; }
+.bms-stat-icon { padding: .4rem; border-radius: .35rem; }
+.bms-stat-icon svg { width: 1rem; height: 1rem; }
+.bms-stat-value { margin-top: .35rem; font-size: 1.5rem; }
+.bms-stat-meta { margin-top: .2rem; font-size: .65rem; }
+.bms-overview { gap: 1rem; }
+.bms-overview dd { font-size: 1.25rem; margin-top: .2rem; }
+.bms-subscription { gap: 1rem; }
+.bms-subscription h3 { font-size: 1rem; }
+.bms-subscription p { font-size: .75rem; line-height: 1.5; }
+.bms-actions { gap: .5rem; }
+
+@media (max-width: 639px) {
+    .fi-main { padding: .5rem .75rem; }
+    .bms-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bms-stat { padding: .75rem; }
+    .bms-stat-value { font-size: 1.25rem; }
 }
 

@@ -38,7 +38,7 @@
                     @if(\App\Filament\Admin\Pages\AnalyticsDashboard::canAccess())
                         <x-filament::button color="gray" tag="a" :href="\App\Filament\Admin\Pages\AnalyticsDashboard::getUrl()" icon="heroicon-o-chart-bar">View analytics</x-filament::button>
                     @endif
-                    <x-filament::button tag="a" :href="route('subscription.required')" icon="heroicon-o-arrow-up-right">View subscription options</x-filament::button>
+                    <x-filament::button tag="a" :href="\App\Filament\Admin\Pages\SubscriptionPlans::getUrl(panel: 'admin')" icon="heroicon-o-arrow-up-right">View subscription options</x-filament::button>
                 </div>
             </div>
         </x-filament::section>
@@ -47,7 +47,7 @@
             <p class="text-sm">Appointments use salon time ({{ config('app.timezone') }}). Select an event to view details; change appointments from Bookings.</p>
             @livewire(\App\Filament\Admin\Widgets\BookingCalendarWidget::class)
         @else
-            <p>Your plan does not include the booking calendar. <a class="underline" href="{{ route('subscription.required') }}">View subscription options</a></p>
+            <p>Your plan does not include the booking calendar. <a class="underline" href="{{ \App\Filament\Admin\Pages\SubscriptionPlans::getUrl(panel: 'admin') }}">View subscription options</a></p>
         @endif
 
     </div>
